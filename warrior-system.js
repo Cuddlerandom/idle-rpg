@@ -64,8 +64,9 @@ const s=isPreview?p.previewSpecs:p.specs,cap=isPreview?51:p.purchased;
 let next=copy(s);if(!TREES[i]||!TREES[i].nodes[j])return false;next[i][j]++;
 return (isPreview||unlockedSpecs())&&validSpecs(next,cap);
 }
+function reload(){state=null;return get()}
 function resetForTests(){state=empty();save()}
-const api={trees:TREES,core:CORE,milestones:MILESTONES,load:get,soulCost,remainingCore,unlockedSpecs,earnThrough,soulReward,awardSouls,learnCore,buy,mutateSpec,resetPreview,setPreview,respec,snapshot,checkNode,validSpecs,points,treePoints,activeCount,tier,resetForTests};
+const api={trees:TREES,core:CORE,milestones:MILESTONES,load:get,soulCost,remainingCore,unlockedSpecs,earnThrough,soulReward,awardSouls,learnCore,buy,mutateSpec,resetPreview,setPreview,respec,snapshot,checkNode,validSpecs,points,treePoints,activeCount,tier,reload,resetForTests};
 root.Warrior=api;
 if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })(typeof globalThis!=='undefined'?globalThis:this);
