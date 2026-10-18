@@ -70,3 +70,35 @@ test('normal run completion awards repeatable class souls exactly once',()=>{
  const e=environment(s,true);e.game.endRun();assert.equal(e.w.load().souls,1);
  e.game.endRun();assert.equal(e.w.load().souls,1);
 });
+
+
+test('blood skills build a guaranteed bleed and Bloodbath consumes it',()=>{
+ const specs=Array.from({length:3},()=>Array(18).fill(0));specs[0][6]=1;specs[0][17]=1;
+ const saved={coins:0,run:{wave:1,highest:1,level:1,hp:100,active:true,preview:true,enemyHp:1000,build:{core:Array(9).fill(1),specs,preview:true},fx:{time:0,cd:{},bleeds:[],corrupt:[],resolve:[]}}};
+ const s=storage({'idle-rpg-core-v01':JSON.stringify(saved)}),e=environment(s,true);
+ assert.equal(e.game.cast('rush'),true);assert.equal(s.dump('idle-rpg-core-v01').run.fx.bleeds.length,1);
+ assert.equal(e.game.cast('bloodbath'),true);assert.equal(s.dump('idle-rpg-core-v01').run.fx.bleeds.length,0);
+ assert.equal(e.game.cast('bloodbath'),false,'cast on cooldown must fail');
+});
+test('corruption and resolve abilities create status stacks, without resetting other CDs',()=>{
+ const specs=Array.from({length:3},()=>Array(18).fill(0));specs[1][6]=1;specs[2][5]=1;specs[2][6]=1;
+ const saved={coins:0,run:{wave:2,highest:2,level:1,hp:100,active:true,preview:true,enemyHp:1000,build:{core:Array(9).fill(1),specs,preview:true},fx:{time:0,cd:{},bleeds:[],corrupt:[],resolve:[]}}};
+ const s=storage({'idle-rpg-core-v01':JSON.stringify(saved)}),e=environment(s,true);
+ assert.equal(e.game.cast('curse'),true);assert.equal(s.dump('idle-rpg-core-v01').run.fx.corrupt.length,3);
+ assert.equal(e.game.cast('breaker'),true);assert.ok(s.dump('idle-rpg-core-v01').run.fx.resolve.length>=3);
+ assert.equal(e.game.cast('curse'),false);
+});
+test('core passives change maximum HP and attack stats instead of just the planner',()=>{
+ const specs=Array.from({length:3},()=>Array(18).fill(0));
+ const saved={coins:0,run:{wave:1,highest:1,level:1,hp:100,active:true,preview:false,enemyHp:50,build:{core:[1,1,1,1,1,1,1,1,1],specs,preview:false},fx:{time:0,cd:{},bleeds:[],corrupt:[],resolve:[]}}};
+ const e=environment(storage({'idle-rpg-core-v01':JSON.stringify(saved)}),true);
+ assert.ok(e.elems.get('hpText').textContent.includes('/ 110 HP'));
+ assert.ok(e.elems.get('combatStats').textContent.includes('⚔️ 10'),'Core +5 % must affect attack base of 10');
+});
+test('auto skill automation is saved and independently toggleable',()=>{
+ const saved={coins:0,settings:{auto:{}},run:{wave:1,highest:1,level:1,hp:100,active:true,preview:false,enemyHp:50,build:{core:Array(9).fill(0),specs:Array.from({length:3},()=>Array(18).fill(0)),preview:false},fx:{time:0,cd:{},bleeds:[],corrupt:[],resolve:[]}}};
+ const s=storage({'idle-rpg-core-v01':JSON.stringify(saved)}),e=environment(s,true);
+ e.game.toggleAuto('base');assert.equal(s.dump('idle-rpg-core-v01').settings.auto.base,true);
+ e.game.nextFrame(100);e.game.nextFrame(200);
+ assert.ok(s.dump('idle-rpg-core-v01').run.fx.cd.base>=10000,'Base skill should cast automatically');
+});
