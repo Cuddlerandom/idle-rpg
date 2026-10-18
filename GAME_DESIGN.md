@@ -401,3 +401,22 @@ Der Nutzer hat die folgende vollständige Liste ausdrücklich freigegeben. **All
 | 7 | Unbezwingbar **AKTIVES ENDTALENT** | 1 | Kurzzeitig massive Schadensreduktion und Selbstheilung |
 
 **Build-Tests für die nächste Designiteration:** 31 Blutrausch / 20 Schattenmacht, 31 Blutrausch / 20 Unbezwingbar, 31 Blutrausch / 10 Schattenmacht / 10 Unbezwingbar und 51 Punkte in einem einzigen Zweig. Der erste aktive Talentknoten aus einem fremden Zweig erfordert dort 11 investierte Punkte, sodass 31/10/10 ausschliesslich Blutiger Ansturm und Blutbad als zusätzliche aktive Fähigkeiten hat. Das Vier-Skill-Limit bleibt unverändert.
+
+## Build-Vergleich und Balance-Leitplanken V1.0 (18.10.2026; Analyse, keine Freigabe)
+
+Verglichen werden vier legale 51-Punkte-Verteilungen: **51/0/0** (reiner Blutberserker), **31/20/0** (Schattenberserker), **31/0/20** (Unsterblicher Berserker), **31/10/10** (Allround-Hybrid), Reihenfolge Blutrausch/Schattenmacht/Unbezwingbar. Der 31-Punkte-Blutrausch-Entwurf des Nutzers dient als Testgrundlage; Talentvoraussetzungen müssen vor dem Implementieren endgültig festgelegt werden.
+
+| Build | Soll-Profil | Bewusster Nachteil | Zusätzliche aktive Skills |
+|---|---|---|---|
+| 51/0/0 | Höchster eigener Blutungs-/Direktschaden | Geringe Überlebensfähigkeit | Blutiger Ansturm, Blutbad |
+| 31/20/0 | Hoher Schaden durch Flüche und Blutungs-Synergien | Weniger Eigenschaden als rein Blutrausch; Fluch-Setup | Blutiger Ansturm, Blutbad, Schattenfluch (wenn erworben) |
+| 31/0/20 | Hohe Ausdauer und Boss-Sicherheit | Niedrigere Killgeschwindigkeit | Blutiger Ansturm, Blutbad, Schildbrecher (wenn erworben) |
+| 31/10/10 | Flexible Mischung aus frühen passiven Offensiv- und Defensivboni | Kein tiefes Nebentalent, kein weiterer aktiver Skill | Blutiger Ansturm, Blutbad |
+
+**Balancing-Anforderungen:**
+1. Reiner Blutrausch muss durch weitere 20 Punkte im Hauptzweig spürbar mehr offensives Potenzial erhalten; Blutbad darf nicht automatisch der Punkt sein, ab dem jeder optimale Build wechseln muss.
+2. Schattenmacht darf keinen dauerhaft kostenlosen, universellen Schadensmultiplikator bereitstellen, der alle anderen Optionen verdrängt. *Verfluchte Wunden* braucht eine relevante Bedingung, z. B. aktiver Fluch, begrenzte Wirkzeit oder begrenzte Stapelung.
+3. Unbezwingbar braucht Grenzen bei Lebensraub/Schadensreduktion, damit defensive Hybrid-Builds nicht unangreifbar werden.
+4. Die ersten 5–10 Punkte jedes Zweigs sollen eigenständig funktionieren, damit sich Hybrid-Investitionen schon vor Reihe 3 lohnen.
+5. **Noch keine numerische Siegbehauptung:** Ohne finale Zahlen und Kampfsimulation sind die Profile Designziele, keine empirisch bestätigten Rankings.
+6. Vier-Skill-Hardcap und die je zwei aktiven Fähigkeiten pro Zweig bleiben unverändert.
