@@ -25,11 +25,13 @@ Diese Datei ist die zentrale Quelle für die gemeinsam beschlossenen Spielregeln
 - Helden-Zielpriorität während des Runs einstellbar: Nächster, Schwächster, Stärkster, Gefährlichster (Frage 80).
 - Ziel: langfristig auch Runs über zwei Stunden. Run endet bei Tod oder freiwilligem Abbruch. Danach Run-Zusammenfassung, Hauptmenü und neuer Start bei Welle 1.
 
-## Drei Währungen und Fortschritt
-1. **Gold:** Im Run verdient, manuell für temporäre Upgrades verwendet; am Run-Ende verloren. Verkauf von Ausrüstung bringt ausschliesslich Gold (Frage 57).
-2. **Münzen:** Direkt durch Gegnerkills verdient, dauerhaft gespeichert; für permanente Werkstatt-Upgrades und Talent-Respec.
-3. **Seelen:** Erst am Run-Ende anhand der höchsten erreichten Welle vergeben; dauerhaft, zum Kauf von Talentpunkten und Prestige-Wirtschaftsboni.
-- **Belohnungsskalierung (Frage 88):** Gold, Münzen und XP steigen mit jeder Welle; Bosse geben Extra-Belohnungen, neue Gebiete bringen zusätzliche Belohnungssprünge. Seelen bleiben ausschliesslich Run-Ende-Belohnung.
+## Drei Währungsebenen und Fortschritt (Klassenökonomie)
+1. **Gold – Run-Währung:** Im Run verdient, manuell für temporäre Upgrades verwendet; beim Ende des Runs vollständig zurückgesetzt. Verkauf von Ausrüstung bringt Gold.
+2. **Münzen – accountweite permanente Währung:** Bleiben dauerhaft erhalten und kaufen allgemeine Verbesserungen, die für alle Helden gelten (globale Werkstatt/Prestige). Sie dürfen nicht an eine einzelne Klasse gebunden sein.
+3. **Klassenseelen – separate Währung je Klasse:** Jede Klasse hat einen eigenen Seelenvorrat. Klassenseelen werden beim Run-Ende anhand der höchsten erreichten Welle vergeben, erstmals ab Welle 5, und dienen der Entwicklung dieser Klasse, insbesondere deren Talentpunkten und möglichen klassenspezifischen Verbesserungen. Seelen einer Klasse können nicht für eine andere Klasse ausgegeben werden.
+
+**Verbindliche Währungsentscheidung:** Gold = temporärer Run-Fortschritt; Münzen = permanente, klassenübergreifende Verbesserungen; Klassenseelen = permanente Entwicklung der jeweiligen Klasse. Dies ersetzt die frühere Annahme, dass dieselbe Seelenwährung gleichzeitig Talentpunkte und einen gemeinsamen Prestige-Baum finanziert. Die konkrete Aufteilung der Klassenseelen zwischen Talentpunkten und klassenbezogenen Verbesserungen sowie die genaue Seelenformel sind noch offen.
+- **Belohnungsskalierung (Frage 88):** Gold, Münzen und XP steigen mit jeder Welle; Bosse geben Extra-Belohnungen, neue Gebiete bringen zusätzliche Belohnungssprünge. Klassenseelen bleiben ausschliesslich Run-Ende-Belohnung und werden dem aktiven Helden zugeordnet.
 - Kein automatischer Gold-Upgrade-Kauf.
 - Werkstatt: viele dauerhafte Stats, u. a. Angriff, HP, flache Verteidigung, prozentuale Verteidigung, Regeneration, Angriffstempo, Krit-Chance, Krit-Schaden, Lebensraub. Unterschiedliche Maximallevel je Stat, hohe Caps für Angriff/HP.
 - Prestige-Wirtschaft: verzweigter Baum mit Goldbonus, XP-Bonus, Seelenbonus, Loot-Glück, günstigeren Upgrades, **Erhöhung des Caps für prozentuale Verteidigung (Schritt 3)** und Spielgeschwindigkeit. Neue Äste durch vorherige Investitionen; exponentielle Kosten, feste Caps.
@@ -178,3 +180,4 @@ Erste implementierte Basis: automatischer Kampf, einfache exponentiell skalieren
 - 18.10.2026: Schritt 2 (K07) durch Nutzer entschieden: 50 Inventarplätze als ein scrollbares Raster; neun Ausrüstungsplätze separat.
 
 - 18.10.2026: Schritt 3 (K14) durch Nutzer entschieden: hartes, anfangs niedriges Cap für Prozentverteidigung; dauerhaft per Prestige steigerbar, aber nie 100 %. Exakte Werte und Schadensformel bleiben Balancing-Aufgabe.
+- 18.10.2026: Währungsmodell präzisiert: Gold ist Run-Währung und wird zurückgesetzt; Münzen finanzieren permanente Verbesserungen für alle Helden; jede Klasse hat ihren eigenen Seelenvorrat für klassenspezifischen Fortschritt. Gemeinsame und klassengebundene Währungen sind strikt getrennt.
