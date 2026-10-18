@@ -257,3 +257,21 @@ Erste implementierte Basis: automatischer Kampf, einfache exponentiell skalieren
 - 18.10.2026: Nutzerentscheidung A: Rüstungsbruch-Boni aus den drei Spezialisierungsbäumen addieren sich (+1 Prozentpunkt je Rang, maximal +15 Prozentpunkte bzw. 25 % gesamt bei 5/5 in allen drei Zweigen).
 
 - 18.10.2026: Nutzerentscheidung B: Rüstungsbruch-Talent (5 Ränge) liegt in allen drei Spezialisierungen in Reihe 2 und erfordert zuvor fünf investierte Punkte im jeweiligen Zweig.
+
+## Dunkler Krieger – neun passive Grundtalente (freigegeben, 18.10.2026)
+
+Der Nutzer hat die folgende vollständige Liste ausdrücklich freigegeben. **Alle neun Grundtalente haben genau einen Rang (1/1)**, kosten jeweils einen der neun durch Wellen-Meilensteine verdienten Hauptbaum-Punkte und dürfen zwischen Runs in beliebiger Reihenfolge gewählt werden. Sie gelten spezialisierungsneutral für Blutrausch, Schattenmacht und Unbezwingbar:
+
+| Grundtalent | Passiver Effekt |
+|---|---|
+| Brutale Stärke | +5 % Angriffsschaden |
+| Zäher Körper | +10 % maximales Leben |
+| Eisenhaut | +5 % Verteidigung |
+| Kampferfahrung | +5 % Angriffsgeschwindigkeit |
+| Lebenswille | +10 % Lebensregeneration |
+| Präziser Schlag | +5 Prozentpunkte kritische Trefferchance |
+| Tödliche Präzision | +10 % kritischer Trefferschaden |
+| Unnachgiebig | −5 % erlittener Schaden |
+| Henker | +10 % Schaden gegen Gegner unter 30 % Leben |
+
+**Zusätzlich kostenlos ab Spielbeginn:** die aktive Klassenfähigkeit *Vernichtender Hieb* (separat definiert). Die neun Punkte werden bei den Wellen 10, 15, 20, 25, 30, 35, 40, 45 und 50 dauerhaft pro Klasse freigeschaltet und nur zwischen Runs verteilt. Die 51 Spezialisierungspunkte bleiben separat. **Arbeitsmodus:** Der Assistent gestaltet die detaillierten Spezialisierungs-Talente, Zahlen und Verbindungen weitgehend selbstständig und legt dem Nutzer nur wesentliche Richtungsentscheidungen vor; möglichst früh spielbare Versionen testen.
