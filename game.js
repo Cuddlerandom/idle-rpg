@@ -88,7 +88,7 @@ function applyResolve(forced=false){
  fx.resolve.push(fx.time+8000);return true;
 }
 function attack(power=1,kind='normal'){
- const s=stats(),isNormal=kind==='normal',base=kind==='base',wasBleeding=bleeds()>0||killedByBleed,wasCorrupt=corrupt()>0;
+ const s=stats(),isNormal=kind==='normal',base=kind==='base',wasBleeding=bleeds()>0,wasCorrupt=corrupt()>0;
  let defense=enemy.def*(expiring(fx.armorUntil)?1-(10+R(0,3)+R(1,3)+R(2,3))/100:1);
  let dmg=Math.max(1,s.atk*power*(1+.02*R(0,1)+.02*R(1,1)+(resolve()>=3?.02*R(2,15):0))-defense);
  const critical=Math.random()*100<s.crit;
@@ -137,7 +137,7 @@ function autoCast(){for(const skill of available()){if(state.settings.auto[skill
 function toggleAuto(id){state.settings.auto[id]=!state.settings.auto[id];save();render()}
 function gainLevel(){const r=state.run;while(r.xp>=r.level*40){r.xp-=r.level*40;r.level++;heal(10);message='⭐ Level '+r.level+' erreicht!'}}
 function win(killedByBleed=false){
- const r=state.run,w=r.wave,boss=w%10===0,wasBleeding=bleeds()>0,wasCorrupt=corrupt()>0;
+ const r=state.run,w=r.wave,boss=w%10===0,wasBleeding=bleeds()>0||killedByBleed,wasCorrupt=corrupt()>0;
  if(wasBleeding&&R(0,16))fx.hungerUntil=fx.time+6000;
  if(wasCorrupt&&R(1,13))fx.soulUntil=fx.time+5000;
  fx.bleeds=[];fx.corrupt=[];fx.armorUntil=0; // Eigene Buffs und Cooldowns laufen über die Wellen weiter.
