@@ -131,7 +131,7 @@ function audit(gameHtml,plannerHtml){
  check('Kern-Henker erhöht auch Blutungsschaden unter 30 %',()=>{const base=spawn(0,0,false,.99,-1),withCore=spawn(0,0,true,.99,8);for(const a of [base,withCore]){a.enemyHp=20000;a.effects.bleeds=[{end:9000,remaining:100,dps:.1}]}const before=base.enemyHp,other=withCore.enemyHp;base.tick(1000);withCore.tick(1000);return (other-withCore.enemyHp)>(before-base.enemyHp)*1.09});
  check('Speicherung bewahrt laufende Cooldowns',()=>{const a=spawn(0,0);a.cast(0);a.save();const saved=JSON.parse(a.storage.getItem('idle-rpg-core-v01'));return saved.run.effects.cooldowns[0]===10000});
  function plannerBoot({saved=null,active=false,coins=1000,purchased=51,souls=100}={}){
-   const script=plannerHtml.match(/<script>([\\s\\S]*?)<\\/script>/)?.[1];
+   const script=plannerHtml.match(/<script>([\s\S]*?)<\/script>/)?.[1];
    if(!script)throw Error('Planner script missing');
    const data={
      'idle-rpg-warrior-build-v1':JSON.stringify(saved||[Array(18).fill(0),Array(18).fill(0),Array(18).fill(0)]),
@@ -141,7 +141,7 @@ function audit(gameHtml,plannerHtml){
    const storage={getItem:k=>data[k]??null,setItem:(k,v)=>data[k]=String(v)};
    const elems={},element=()=>({style:{},dataset:{},classList:{add(){},remove(){},toggle(){}},appendChild(){},addEventListener(){},innerHTML:'',textContent:''});
    const doc={getElementById:id=>elems[id]??(elems[id]=element()),createElement:element};
-   const plan=new Function('document','localStorage','confirm',script+'\\nreturn {ranks,spent,canAdd,change,buyPoint,progress,render};')(doc,storage,()=>true);
+   const plan=new Function('document','localStorage','confirm',script+'\nreturn {ranks,spent,canAdd,change,buyPoint,progress,render};')(doc,storage,()=>true);
    return {plan,elems,storage};
  }
  check('Talentplaner stellt gespeicherten Build wieder her',()=>{
