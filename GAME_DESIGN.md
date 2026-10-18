@@ -287,3 +287,30 @@ Der Nutzer hat die folgende vollständige Liste ausdrücklich freigegeben. **All
 ## Spezialisierungsbäume nach WoW-Classic-Vorbild (ausdrücklich bestätigt, 18.10.2026)
 
 **Verbindliche Designrichtung:** Die drei Spezialisierungsbäume sollen in **Grösse, Struktur und Entscheidungsdichte deutlich näher an WoW Classic** liegen: je **7 Talentreihen**, ungefähr **18 unterschiedliche Talentknoten pro Zweig** als Richtwert und **mehr verfügbare Talentränge, als mit den insgesamt 51 Spezialisierungspunkten gekauft werden können**. Selbst ein reiner Spezialisierungs-Build kann seinen Baum nicht vollständig maximieren. Der Nutzer will echte Alternativen, klare Talentvoraussetzungen, Synergien und unverwechselbare Spielmechaniken statt einer linearen Liste kleiner Prozentboni. Die Zahl 59 Punkte aus dem WoW-Waffen-Vergleich ist eine **Orientierung, keine verbindliche exakte Sollsumme** für unsere Bäume. Die zuvor gezeigte Blutrausch-V1.0-Liste war ein **nicht freigegebener Entwurf** und wird nicht als finale Talentliste übernommen. Bestehende verbindliche Regeln bleiben: 51 Punkte über alle drei Zweige, Reihenfreischaltung alle 5 Punkte je Zweig, Rüstungsbruch 5/5 in Reihe 2 jedes Zweigs, je eine aktive Fähigkeit in Reihe 3 und eine aktive Endfähigkeit in Reihe 7, maximal drei zusätzlich zur kostenlosen Startfähigkeit erlernbare aktive Fähigkeiten. Die konkrete Talentgestaltung erfolgt als zusammenhängender Entwurf zur Freigabe, ohne Einzelabfrage jeder Kachel.
+
+## Blutrausch – Talentbaum V2.0 (ENTWURF, noch nicht freigegeben; 18.10.2026)
+
+**Leitidee:** Blutungen sind bereits in Talentreihe 1 zugänglich; alle späteren Reihen bauen auf ihnen auf. Dieser Abschnitt ist ein Designvorschlag, keine Nutzerfreigabe. 7 Reihen, **18 Talentknoten, insgesamt 64 mögliche Ränge** (mehr als die 51 verfügbaren Spezialisierungspunkte). Schwellen: Reihe 1 = 0, Reihe 2 = 5, Reihe 3 = 10, Reihe 4 = 15, Reihe 5 = 20, Reihe 6 = 25, Reihe 7 = 30 investierte Punkte im Zweig. Rüstungsbruch bleibt wie beschlossen in Reihe 2 mit 5 Rängen. Genau zwei aktive Spezialisierungsfähigkeiten (Reihe 3 und 7); alle anderen Talente sind passiv.
+
+| Reihe | Talent | Ränge | Entwurfswirkung |
+|---|---|---:|---|
+| 1 | Aufreissende Hiebe | 5 | +5 Prozentpunkte Blutungschance bei normalen Angriffen pro Rang; 25 % bei 5/5 |
+| 1 | Blutige Klinge | 5 | Erhöht Blutungsschaden |
+| 1 | Kampfhunger | 5 | Angriffstempo gegen blutende Gegner |
+| 2 | Rüstungsbruch | 5 | +1 Prozentpunkt Verteidigungsreduktion von Vernichtender Hieb pro Rang |
+| 2 | Tiefe Wunden | 3 | Verlängert Blutungsdauer |
+| 2 | Blutgeruch | 3 | Kritische Treffer gegen blutende Gegner verstärken Blutung |
+| 3 | Blutiger Ansturm | 1 | **AKTIV**: Angriff mit garantierter Blutung |
+| 3 | Offene Adern | 3 | Blutungen können stapeln |
+| 3 | Raserei | 5 | Mehr Angriffstempo durch blutende Gegner |
+| 4 | Bluternte | 3 | Blutungsschaden heilt den Krieger leicht |
+| 4 | Grausamer Schnitt | 5 | Kritische Treffer verlängern Blutungen |
+| 4 | Gerinnungsbruch | 3 | Blutungen ignorieren einen Teil der gegnerischen Verteidigung |
+| 5 | Blutrausch | 1 | Passiv: Bei niedrigem Leben werden Blutungen gefährlicher |
+| 5 | Schlachtrausch | 5 | Blutungen verstärken normale Angriffe |
+| 5 | Blutige Vergeltung | 3 | Erlittener Schaden verstärkt die nächste Blutung |
+| 6 | Zerfetzende Schläge | 5 | Zusatzschaden gegen stark blutende Gegner |
+| 6 | Unstillbarer Hunger | 3 | Besiegte blutende Gegner verleihen kurzzeitig Lebensraub |
+| 7 | Blutbad | 1 | **AKTIVES ENDTALENT**: Entfesselt angesammelte Blutungen für hohen Schaden |
+
+**Vorläufige Basis-Blutung:** 6 Sekunden Dauer, insgesamt 30 % Angriffsschaden über Zeit. Die konkrete Berechnung, Stapelgrenzen, Voraussetzungen und Balancing-Werte der anderen Talente werden vor der Implementierung geprüft. Die 51-Punkte-Grenze und das Limit von insgesamt vier aktiven Fähigkeiten bleiben bestehen. 
