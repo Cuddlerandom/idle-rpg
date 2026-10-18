@@ -48,6 +48,8 @@ Diese Datei ist die zentrale Quelle für die gemeinsam beschlossenen Spielregeln
 - Klassische Effekte: Blutung, Gift, Verbrennung, Verlangsamung, Betäubung, Schwächung, Rüstungsreduktion (Frage 53).
 - Ein allgemeiner Widerstand reduziert die Wahrscheinlichkeit negativer Effekte; nach Betäubung kurzzeitiger Schutz gegen weitere Betäubung (Frage 54).
 
+**Aktuelle Vereinfachungsentscheidung (18.10.2026):** Pro Klasse gibt es **nur einen grossen WoW-Classic-inspirierten Talentbaum**, nicht zwei parallele Talent-/Klassen-Prestige-Bäume. Der Baum umfasst den gemeinsamen Einstieg und drei Spezialisierungszweige, normale Talente, aktive Fähigkeiten sowie tiefe Schlüsselmechaniken und deren Verstärkungen. Misch-Builds sind möglich; ein festes Punktelimit verhindert das vollständige Ausbauen aller Zweige. **Noch offen:** Wie die bisher separat vorgesehenen 51 normalen Talentpunkte, die Klassenseelen-Kosten und der Begriff «Klassen-Prestige» in diesem einen Baum genau zusammengeführt werden. Frühere Beschreibungen zweier getrennter Bäume gelten insoweit als überholt. Das accountweite Münz-Prestige bleibt separat bestehen.
+
 ## Klassen, Talentbäume und Fähigkeiten
 - Mehrere Klassen geplant; erste Klasse **Dunkler Krieger**.
 - Drei WoW-Classic-inspirierte Spezialisierungen:
@@ -192,3 +194,5 @@ Erste implementierte Basis: automatischer Kampf, einfache exponentiell skalieren
 - 18.10.2026: Nutzerentscheidung C: Normale Klassen-Prestige-Talente haben feste Kosten; tiefe Schlüsselmechaniken und deren Verstärkungen kosten deutlich mehr. Exakte Kosten noch offen.
 
 - 18.10.2026: Nutzerentscheidung A: Klassen-Prestige hat ein festes Punktelimit pro Klasse. Nicht alle drei Zweige können vollständig ausgebaut werden; exakte Höhe noch offen. Kostenregel für normale Knoten und teure Schlüsselmechaniken im Haupttext ergänzt.
+
+- 18.10.2026: Nutzerentscheidung: Statt zwei separaten WoW-artigen Talent-/Klassen-Prestige-Bäumen soll es **einen einzigen grossen Klassen-Talentbaum** geben. Zusammenführung der Punkt-/Kostenregeln ist noch zu klären; globales Münz-Prestige bleibt bestehen.
