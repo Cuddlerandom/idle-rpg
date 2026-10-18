@@ -23,6 +23,7 @@ const CORE_NAMES=["Brutale Stärke","Zäher Körper","Eisenhaut","Kampferfahrung
 function loadProgress(){let v={souls:0,purchased:0,core:Array(9).fill(0),milestones:[]};try{const x=JSON.parse(localStorage.getItem(PROG_KEY)||'null');if(x){v.souls=Math.max(0,Math.floor(Number(x.souls)||0));v.purchased=Math.max(0,Math.min(51,Math.floor(Number(x.purchased)||0)));v.core=Array.isArray(x.core)?CORE_NAMES.map((_,i)=>x.core[i]===1?1:0):v.core;v.milestones=Array.isArray(x.milestones)?MILESTONES.filter(w=>x.milestones.includes(w)):[]}}catch{}return v}
 let progress=loadProgress();function saveProgress(){try{localStorage.setItem(PROG_KEY,JSON.stringify(progress))}catch{}}
 const core=i=>progress.core[i]||0;
+if(build.flat().reduce((a,b)=>a+b,0)>progress.purchased){build=[Array(18).fill(0),Array(18).fill(0),Array(18).fill(0)];try{localStorage.setItem('idle-rpg-warrior-build-v1',JSON.stringify(build))}catch{}}
 const rank=(t,n)=>build[t][n]||0;
 let effects={bleeds:[],corrupt:[],resolve:[],cooldowns:[0,0,0,0],time:0};
 const resetEffects=()=>{effects={bleeds:[],corrupt:[],resolve:[],cooldowns:[0,0,0,0],time:0}};
