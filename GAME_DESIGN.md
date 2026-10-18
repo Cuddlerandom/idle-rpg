@@ -470,3 +470,28 @@ Verglichen werden vier legale 51-Punkte-Verteilungen: **51/0/0** (reiner Blutber
 **Rechenbeispiele ohne sonstige Modifikatoren:** Bei 100 Angriffsschaden entsprechen fünf volle Blutungsstapel **150 Schaden über deren gesamte jeweilige Laufzeit**, nicht 150 DPS. Drei Verderbnisstapel multiplizieren relevanten ausgeteilten Schaden mit **1,09**. Fünf Entschlossenheitsstapel multiplizieren relevanten eingehenden Schaden mit **0,90**. Diese Prozentwerte sind zunächst **additiv innerhalb derselben Mechanik** und wirken als getrennte Multiplikatoren zu anderen Mechaniken; keine unbeschränkte multiplikative Stapelung pro Einzelstapel.
 
 **Noch auszuarbeiten vor Implementierung:** Präzise Auslösechancen und Trigger (insbesondere Entschlossenheit ohne Gegnerangriff), Taktfrequenz für Schaden über Zeit, Überschreiben/Refresh bei maximalen Stapeln, Verhalten bei Zielwechsel und Tod, Reihenfolge mit Verteidigung, Crit und Rüstungsbruch, mögliche Caps aus weiteren Talenten, Schadensvergleich über kurze und lange Kämpfe. Die hier angegebenen Zahlen sind **Balance-Startwerte, nicht freigegeben oder getestet**.
+
+
+## Entwicklungsstand V0.3 – Dunkler Krieger (18.10.2026)
+
+**Quellstand:** Branch `feature/warrior-progression-v03`, neu eingeführte Dateien `warrior-system.js`, `game.js`, `tests/warrior.test.cjs` und `.github/workflows/warrior-tests.yml`; überarbeitete `index.html` und `talentplaner.html`.
+
+### Implementiert (technische Prototypversion)
+- **Neun passive Grundtalente**, je 1 Rang, zwischen Runs verteilbar; einmalige permanente Punkte beim Abschluss der Wellen **10, 15, 20, 25, 30, 35, 40, 45 und 50**. Die früher diskutierten zehn Hauptbaum-Punkte / 61 Gesamtpunkte sind überholt.
+- Die kostenlose Startfähigkeit **Vernichtender Hieb** ist ab Beginn vorhanden. **51 weitere Spezialisierungspunkte** werden *nach* vollständiger Verteilung der neun Grundtalente mit Klassenseelen gekauft. Kaufpreis des nächsten Punktes: `ceil(5 * 1.15^bereitsGekauftePunkte)`. Insgesamt maximal **60 investierbare Punkte + 1 kostenlose Startfähigkeit**.
+- Klassenseelen beim einmaligen Abschluss eines **normalen** Runs: `w < 5 ? 0 : floor((w/5)^1.5)` anhand der höchsten erreichten Welle. Wiederholte Runs geben die volle Belohnung. Ende durch Tod oder freiwillig; keine doppelte Auszahlung beim erneuten Beenden oder Laden.
+- Klassenseelen, gekaufte Punkte, Hauptbaum-Meilensteine und Verteilungen werden dauerhaft getrennt vom Run-Fortschritt gespeichert. Die bestehende lokale Münzen-/Werkstatt-/Run-Speicherung unter `idle-rpg-core-v01` bleibt lesbar.
+- Der Talentplaner erzwingt Reihen-Schwellen je Baum (0/5/10/15/20/25/30), Talentvoraussetzungen, Ränge, drei zusätzliche aktive Fähigkeiten und die Anzahl tatsächlich gekaufter Punkte. Verteilung und Umskillen nur zwischen Runs; bezahlter Respec kostet 500 globale Münzen, gekaufte Talentpunkte bleiben.
+- Der frühere freie 51-Punkte-Build wird als **getrennter Vorschau-/Test-Build** migriert. Ein bewusst aktivierter Test-Run erlaubt freie Vorschau, verdient aber weder permanente Münzen noch Klassenseelen noch Hauptbaum-Meilensteine und verändert keine Rekordwelle. Normale Runs verwenden nur die regulär freigeschalteten Talente.
+- Das Kampfsystem verarbeitet die **neun passiven Grundtalente und 54 Spezialisierungspositionen** einschliesslich der sechs spezialisierten aktiven Fähigkeiten. Die konkreten in `talentplaner.html` beschriebenen Effekte sind in `game.js` angebunden; Durchschlagsbonus der Startfähigkeit addiert Rüstungsbruch aus allen drei Bäumen (10 % + 1 Prozentpunkt pro investiertem Rang).
+- Spieler-Buffs, gegnerische Debuffs und Abklingzeiten überdauern Gegnerwechsel mit ihrer jeweils verbleibenden Laufzeit, werden innerhalb laufender Runs lokal gespeichert und beim neuen Run zurückgesetzt. Beim Schliessen oder Verlassen der Seite findet **keine Offline-Simulation** statt.
+- Jede verfügbare aktive Fähigkeit hat eine **separat an- und ausschaltbare Auto-Nutzung**. Bedingungsgesteuerte Automatik ist eine vorläufige Regelbasis; direkte manuelle Benutzung bleibt jederzeit möglich, sofern nicht auf Cooldown.
+- Die Kampfoberfläche zeigt die aktiven Stapel von Blutung, Verderbnis und Kampfentschlossenheit und die Fähigkeit-Cooldowns. Ein eigener Testmodus ist sichtbar gekennzeichnet.
+
+**Technische Definition ergänzt (vorläufig bis Balancefreigabe):** Das Auftragen von Verderbnis verursacht einen kleinen unmittelbaren Schattenimpuls von 10 % Angriffsschaden. Dadurch wirken die frühen Schattenverstärker schon ohne eine spät freigeschaltete Aktivfähigkeit; Verderbnis bleibt primär ein Schadensverstärkungs-Debuff und ist kein dauerhafter DoT.
+
+### Qualitätssicherung und offene Arbeiten
+- GitHub Actions führt Node-Syntaxchecks, automatische Regressionstests für Punkte-Meilensteine, Seelen, Voraussetzungen, Cooldowns, Statusfähigkeiten, kostenlose Vorschau und Statuspersistenz aus.
+- Zusätzlich wird **`index.html` und `talentplaner.html` in Headless Chrome** geöffnet; dynamische Kampfanzeige, Fähigkeiten und Grundtalente müssen erscheinen. Automatisierte Checks sind ein technischer Smoke-Test, **keine umfassende iPhone-Freigabe**.
+- **Noch offen:** Ausrüstung, Tränke, Grafiken, umfangreiche Wirtschaft/Prestige-Systeme sowie quantitative Simulationen für alle Talentkombinationen. Insbesondere der Welle-10-Boss muss nach abgeschlossener Integration noch gezielt auf Fairness geprüft werden.
+- Die neuen Zahlen und die genaue prozentuale Schadensreihenfolge gelten als technische Balance-Startwerte, nicht als finale Nutzerfreigabe. Keine weiteren manuell verlangten Build-Tests, bevor die grundlegende Regressionprüfung erfolgreich ist.

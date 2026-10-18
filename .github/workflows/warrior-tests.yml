@@ -1,0 +1,35 @@
+name: Warrior regression tests
+on:
+  push:
+    branches:
+      - feature/warrior-progression-v03
+      - main
+  pull_request:
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax checks
+        run: |
+          node --check warrior-system.js
+          node --check game.js
+          node --check tests/warrior.test.cjs
+      - name: Combat and progression regression tests
+        run: node --test tests/warrior.test.cjs
+      - name: Browser smoke test (Chrome headless)
+        run: |
+          python3 -m http.server 8765 > /tmp/idle-http.log 2>&1 &
+          sleep 2
+          CHROME=$(command -v google-chrome || command -v chromium || true)
+          test -n "$CHROME"
+          "$CHROME" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=1200 --dump-dom http://127.0.0.1:8765/ > /tmp/idle-game-dom.html 2>/tmp/idle-game-errors.log
+          grep -q "Welle 1" /tmp/idle-game-dom.html
+          grep -q "Vernichtender Hieb" /tmp/idle-game-dom.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=1200 --dump-dom http://127.0.0.1:8765/talentplaner.html > /tmp/idle-talents-dom.html 2>/tmp/idle-planner-errors.log
+          grep -q "Brutale Stärke" /tmp/idle-talents-dom.html
+          grep -q "Blutrausch" /tmp/idle-talents-dom.html
+          echo "Headless browser pages rendered successfully."
