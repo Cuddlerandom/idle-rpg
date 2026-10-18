@@ -49,7 +49,7 @@ function stats(){
  hp:rawHp*(1+.10*C(1)+.03*R(2,0)+.02*R(2,9)),
  def:rawDef*(1+.05*C(2)+.03*R(2,2)+(.03*R(2,14)*(resolve()===5?1:0))),
  regen:(.5+.35*w.regen+.35*r.runUp.regen)*(1+.10*C(4)+.04*R(2,8)),
- speed:Math.max(280,1100-24*(w.speed+r.runUp.speed))/(1+.05*C(3)+.02*R(0,2)+(r.hp/Math.max(1,rawHp)<.4&&R(0,12)? .15:0)+(expiring(fx.hungerUntil)?.02*R(0,16):0)),
+ speed:Math.max(280,1100-24*(w.speed+r.runUp.speed))/(1+.05*C(3)+.02*R(0,2)+(r.hp/Math.max(1,rawHp*(1+.10*C(1)+.03*R(2,0)+.02*R(2,9)))<.4&&R(0,12)? .15:0)+(expiring(fx.hungerUntil)?.02*R(0,16):0)),
  crit:clamp(5+w.crit+r.runUp.crit+5*C(5)+2*R(0,8),0,95),
  critMult:1.5+.10*C(6)
  };
@@ -193,11 +193,11 @@ function tick(dt){
   if(r.hp/stats().hp<.4)incoming*=1-.02*R(2,10);
   if(expiring(fx.bastionUntil))incoming*=.7;
   r.hp-=Math.max(1,incoming);
+  if(r.hp<=0){r.hp=0;finish('💀 Besiegt');return}
   fx.revenge=true;
   if(specTotal(2)>0)applyResolve(true);
   if(Math.random()<.04*R(2,7))counter();
   if(enemyHp<=0){win();return}
-  if(r.hp<=0){r.hp=0;finish('💀 Besiegt');return}
  }
  autoCast();
 }
