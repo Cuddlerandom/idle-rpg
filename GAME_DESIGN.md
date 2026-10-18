@@ -187,3 +187,4 @@ Erste implementierte Basis: automatischer Kampf, einfache exponentiell skalieren
 - 18.10.2026: Nutzerpräferenz für den Aufbau des Klassen-Prestige-Baums: ein echter WoW-Classic-artiger Talentbaum mit verbundenen Talenten und Freischaltvoraussetzungen, keine lineare Liste oder lose Upgrade-Kacheln.
 - 18.10.2026: Nutzerentscheidung zur Baumstruktur: ein gemeinsamer Hauptbaum mit drei Spezialisierungszweigen je Klasse (beim Dunklen Krieger: Blutrausch, Schattenmacht, Unbezwingbar).
 - 18.10.2026: Nutzerpräferenz zur Talentverteilung: Zweige dürfen gemischt werden, aber tiefe neue Klassenmechaniken benötigen hohe Investitionen; dadurch verhindern begrenzte Punkte, dass ein Build alle tiefen Schlüsselmechaniken mehrerer Zweige zugleich erhält (WoW-Classic-Prinzip).
+- 18.10.2026: Nutzerentscheidung C: Normale Klassen-Prestige-Talente haben feste Kosten; tiefe Schlüsselmechaniken und deren Verstärkungen kosten deutlich mehr. Exakte Kosten noch offen.
