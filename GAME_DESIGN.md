@@ -66,7 +66,7 @@ Diese Datei ist die zentrale Quelle für die gemeinsam beschlossenen Spielregeln
 - Gegenstände benötigen ein Mindest-Heldenlevel innerhalb des Runs (Frage 62).
 - Unterschiedliche Waffen je Klasse mit Unterschieden bei Schaden, Tempo und Affixen.
 - Ausrüstungsplätze: Waffe, Helm, Schultern, Brust, Handschuhe, Hose, Stiefel, Ring, Amulett (9 Slots).
-- Inventarlimit **50 Gegenstände**, manuelle Verwaltung und Verkauf, kein automatischer Lootfilter. Die frühere Aussage 'fünf Plätze je Slot' passt rechnerisch nicht zu neun Ausrüstungsslots; verbindlich ist zunächst **50 Gesamtplätze**, die genaue UI-Aufteilung ist offen.
+- Inventarlimit **50 Gegenstände**, manuelle Verwaltung und Verkauf, kein automatischer Lootfilter. **Verbindlich (Schritt 2, Option A): Ein einziges scrollbares Raster mit 50 Inventarplätzen auf dem iPhone; die 9 Ausrüstungsplätze werden separat dargestellt.** Die frühere Formulierung 'fünf Plätze je Slot' wird damit für die Inventar-UI durch diese explizite Entscheidung ersetzt.
 - Bei vollem Inventar bleibt neue Beute auf dem Boden; nicht eingesammelte Beute verschwindet nach **fünf weiteren Wellen** (Fragen 55–56).
 - Beim Öffnen des Inventars **pausiert der Kampf vollständig** (Frage 64).
 - Ausrüstungssets mit unterschiedlichen Grössen und gestaffelten Boni (Frage 58).
@@ -130,7 +130,7 @@ Erste implementierte Basis: automatischer Kampf, einfache exponentiell skalieren
 | K04 | Mittel | Exponentielle Gegnerstärke; Bosssprünge und Gebietssprünge (F87); Belohnungssprünge (F88); Fairness | Mehrere multiplikative Skalierungen können Bosse unverhältnismässig stark machen. V0.1-Boss auf Welle 10 bereits als zu schwer gemeldet. Separate Kurven und frühe Balancingtests nötig. | Balancing offen |
 | K05 | Hoch | Automatisches Speichern des aktiven Runs (F90); kein Offline-Fortschritt; Pause und Run-Ende | Bei Wiederaufnahme exakt gespeicherten Zustand laden; **keine** Nachberechnung anhand verstrichener Realzeit. Ein abgeschlossener Run darf nicht wieder als aktiv geladen werden. | Technische Festlegung nötig |
 | K06 | Hoch | Export/Import (F90); temporäre Ausrüstung/Tränke; permanente Werte | Backup muss **aktiven Run inklusive temporärer Gegenstände** und **permanenten Fortschritt** sichern. Temporäre Ausrüstung verschwindet erst bei tatsächlichem Run-Ende, nicht beim Schliessen, Export oder Import. | Konsistent, Tests nötig |
-| K07 | Mittel | 50 Inventarplätze; frühere Formulierung „jeder Slot 5 Plätze“; 9 Ausrüstungsslots | Unklare UI-Aufteilung; 50 Inventarplätze sind vereinbart, aber „Slot“ könnte Inventarseite statt Ausrüstungsslot meinen. Nicht ohne Rückfrage auf neunmal fünf Plätze umdeuten. | Nutzerklärung offen |
+| K07 | Gelöst | 50 Inventarplätze; frühere Formulierung „jeder Slot 5 Plätze“; 9 Ausrüstungsslots | **Verbindlich geklärt (Schritt 2, Option A): 50 Plätze in einem scrollbaren Raster, 9 Ausrüstungsplätze separat.** Keine Aufteilung nach Seiten oder Kategorien erforderlich. | **Entschieden und dokumentiert** |
 | K08 | Mittel | Eigene Gegner pro Zone (F83); keine Umgebungseffekte; Bosse mit Spezialmechaniken (F84) | Eigene Zonenfähigkeiten sind **Gegner-/Bossfähigkeiten**, keine zwingenden passiven Umweltschäden. Damit sind F83 und die ältere Regel zu fehlenden Umgebungseffekten vereinbar. | Konsistent |
 | K09 | Mittel | Vier aktive Skills; Auto/manuell je Skill (F85); Bedingungen je Auto-Skill (F86); manuelle Tränke | Skill-Automatik und Trank-Automatik sind **getrennte Einstellungen**. Vier-Slot-Grenze betrifft aktive Klassenfähigkeiten, nicht Verbrauchstränke. | Konsistent, UI trennen |
 | K10 | Mittel | Held bewegt sich automatisch (F79); Zielpriorität (F80); unterschiedliche Gegner-KI (F73) | Zielwahl und Bewegung sind verschiedene Systeme. Fernkämpfer halten Abstand zu ihrem **gewählten** Ziel; Gegner können unabhängig andere Ziele wählen. | Konsistent, erst später implementieren |
@@ -145,7 +145,7 @@ Erste implementierte Basis: automatischer Kampf, einfache exponentiell skalieren
 
 ### Vor Umsetzung gezielt klären
 1. **K03 erledigt:** Zonenboss ersetzt normalen Boss auf jeder 50. Welle (Schritt 1: A).
-2. **K07:** Bedeutet „5 Plätze je Slot“ fünf sichtbare Inventarfelder pro Seite, oder eine andere Aufteilung? 50 Gesamtplätze bleiben fest.
+2. **K07 erledigt:** 50 Inventarplätze in einem scrollbaren Raster; 9 Ausrüstungsplätze separat (Schritt 2: A).
 3. **K14:** Prozentverteidigung, Stat-Caps und Schadenformel im Balancing festlegen; dabei keine Designentscheidung überschreiben.
 
 ### Verbindliche technische Prüfliste für kommende Versionen
@@ -160,13 +160,12 @@ Erste implementierte Basis: automatischer Kampf, einfache exponentiell skalieren
 - [ ] Talent-Respec darf gekaufte Punkte nicht vernichten (K13).
 - [ ] Skalierung von Gegnern, Bossen, Gebieten und Belohnungen gemeinsam testen (K04, K14).
 - [ ] Beschlossene Zonenboss-Ersetzung auf Wellen 50/100 im Spiel umsetzen und testen (K03; Design geklärt).
-- [ ] Inventaraufteilung mit Nutzer klären, bevor die endgültige UI entsteht (K07).
+- [ ] Beschlossenes scrollbares 50er-Inventarraster und separate 9 Ausrüstungsplätze im Spiel umsetzen und auf iPhone testen (K07; Design geklärt).
 - [ ] Nach jeder Version diese Prüfliste und den Implementierungsstand aktualisieren.
 
 ## Noch offene Entscheidungen
 - Exakte Item-/Trankdropraten, konkrete Balancing-Formeln und Feintuning der vorläufigen 15-Sekunden-Trankabklingzeit.
 - Präzise Ausgestaltung aller Talentknoten, Skill- und Bosslisten.
-- UI-Verteilung der 50 Inventarplätze.
 
 ## Änderungsprotokoll
 - 18.10.2026: Entscheidungen bis Frage 81 zusammengetragen; 0.1 als bewusster kleiner technischer Anfang definiert.
@@ -174,3 +173,5 @@ Erste implementierte Basis: automatischer Kampf, einfache exponentiell skalieren
 - 18.10.2026: Konsistenzprüfung mit 18 Prüfpunkten, 3 gezielten Klärungsfällen und technischer Checkliste ergänzt; keine bestehenden Nutzerentscheidungen eigenmächtig geändert.
 
 - 18.10.2026: Schritt 1 (K03) durch Nutzer entschieden: Auf jeder 50. Welle ersetzt der Zonenboss den normalen Boss; keine zwei Bosse gleichzeitig oder nacheinander.
+
+- 18.10.2026: Schritt 2 (K07) durch Nutzer entschieden: 50 Inventarplätze als ein scrollbares Raster; neun Ausrüstungsplätze separat.
