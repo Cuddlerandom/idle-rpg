@@ -313,4 +313,31 @@ Der Nutzer hat die folgende vollständige Liste ausdrücklich freigegeben. **All
 | 6 | Unstillbarer Hunger | 3 | Besiegte blutende Gegner verleihen kurzzeitig Lebensraub |
 | 7 | Blutbad | 1 | **AKTIVES ENDTALENT**: Entfesselt angesammelte Blutungen für hohen Schaden |
 
+### Blutrausch V2.1 – gezielte Talentverbindungen (Entwurf, 18.10.2026)
+
+**Grundsatz:** Die Freischaltung jeder Reihe erfordert weiterhin 5 Punkte je vorheriger Reihe im selben Spezialisierungszweig (0/5/10/15/20/25/30 Punkte insgesamt). Nicht jeder Knoten hat einen Pfeil: Der Baum soll zusammenhängende **Blutungs-Kombinationspfade** anbieten, ohne alle Talente auf einen einzigen linearen Pfad zu zwingen. Eine direkte Voraussetzung erfordert den angegebenen Rang im Vorgängertalent und wird im UI als Pfeil dargestellt. **Wichtig:** Voraussetzungen gelten zusätzlich zur Reihenschwelle; gekaufte Vorgängerränge zählen normal zu den 51 Punkten.
+
+| Talent (Reihe) | Direkte Voraussetzung | Verbindungsidee |
+|---|---|---|
+| Aufreissende Hiebe (1) | Keine | Blutungseinstieg |
+| Blutige Klinge (1) | Keine | Blutungsstärke, unabhängig vom Proc |
+| Kampfhunger (1) | Keine | Angriffstempo gegen Blutende |
+| Rüstungsbruch (2) | Keine | Universelles Vernichtender-Hieb-Talent, auch in anderen Zweigen |
+| Tiefe Wunden (2) | Aufreissende Hiebe 3/5 | Häufige Blutungen länger wirken lassen |
+| Blutgeruch (2) | Blutige Klinge 3/5 | Stärkere Blutungen durch kritische Treffer |
+| Blutiger Ansturm (3, AKTIV) | Aufreissende Hiebe 3/5 | Garantierte Blutung als Kernfähigkeit |
+| Offene Adern (3) | Tiefe Wunden 2/3 | Mehrere Blutungsstapel |
+| Raserei (3) | Kampfhunger 3/5 | Blutungsabhängiges Angriffstempo |
+| Bluternte (4) | Offene Adern 2/3 | Heilung aus Blutungsschaden |
+| Grausamer Schnitt (4) | Blutgeruch 2/3 | Kritische Treffer halten Blutungen aktiv |
+| Gerinnungsbruch (4) | Keine | Alternativer Blutungsdurchdringungsweg |
+| Blutrausch (5) | Blutiger Ansturm 1/1 | Risikoreiche Verstärkung bei wenig Leben |
+| Schlachtrausch (5) | Raserei 3/5 | Blutungen verstärken Angriffe |
+| Blutige Vergeltung (5) | Bluternte 2/3 | Erlittener Schaden stärkt nächste Blutung |
+| Zerfetzende Schläge (6) | Schlachtrausch 3/5 | Schaden gegen stark blutende Gegner |
+| Unstillbarer Hunger (6) | Bluternte 2/3 | Lebensraub nach Kills |
+| Blutbad (7, AKTIVES ENDTALENT) | Blutiger Ansturm 1/1 **und** Offene Adern 3/3 | Blutungen aufbauen und für einen Finisher nutzen |
+
+**Spielbarkeit / Punktprüfung:** 18 Talentknoten und **64 mögliche Ränge** bei nur 51 verteilbaren Punkten. *Blutbad* ist erreichbar: Aufreissende Hiebe 3/5, Tiefe Wunden 2/3, Offene Adern 3/3 und Blutiger Ansturm 1/1 kosten zusammen 9 Punkte; zusätzlich werden 21 frei wählbare, nach Reihenfreischaltung legale Punkte im Blutrausch-Zweig investiert, um vor Kauf von Blutbad die 30-Punkte-Schwelle zu erreichen; der Kauf von Blutbad ist Punkt 31. **Rüstungsbruch bleibt in Reihe 2 ohne direkte Voraussetzung**. Es gibt keine Pflicht, alle 18 Knoten zu kaufen. Das aktive Fähigkeitensystem begrenzt wie beschlossen auf insgesamt vier aktive Fähigkeiten.
+
 **Vorläufige Basis-Blutung:** 6 Sekunden Dauer, insgesamt 30 % Angriffsschaden über Zeit. Die konkrete Berechnung, Stapelgrenzen, Voraussetzungen und Balancing-Werte der anderen Talente werden vor der Implementierung geprüft. Die 51-Punkte-Grenze und das Limit von insgesamt vier aktiven Fähigkeiten bleiben bestehen. 
