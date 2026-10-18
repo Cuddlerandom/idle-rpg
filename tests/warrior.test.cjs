@@ -102,3 +102,12 @@ test('auto skill automation is saved and independently toggleable',()=>{
  e.game.nextFrame(100);e.game.nextFrame(200);
  assert.ok(s.dump('idle-rpg-core-v01').run.fx.cd.base>=10000,'Base skill should cast automatically');
 });
+
+test('talent cache can reload purchases made on another page (Safari back navigation)',()=>{
+ const s=storage();const {w}=environment(s);
+ assert.equal(w.load().souls,0);
+ const saved=w.load();saved.souls=123;
+ s.setItem('idle-rpg-warrior-progression-v03',JSON.stringify(saved));
+ assert.equal(w.load().souls,0,'old in-memory cache still present');
+ assert.equal(w.reload().souls,123,'reload picks up permanent progress from another page');
+});
