@@ -7,7 +7,7 @@ Diese Datei ist die zentrale Quelle für die gemeinsam beschlossenen Spielregeln
 
 ## Spielidee und Präsentation
 - Einfach zugängliches, aber langfristig tiefes Idle RPG für den mobilen Browser (insbesondere iPhone).
-- 2D-Pixel-Art in Seitenansicht; endgültiger grafischer Detailstil noch **nicht** entschieden (Frage 82 offen).
+- **Moderne 2D-Pixel-Art** in Seitenansicht mit detaillierten Charakteren, flüssigen Animationen und stimmungsvollen Effekten (Frage 82).
 - Echtzeitkampf ohne Runden; normale Angriffe automatisch, wichtige aktive Fähigkeiten manuell.
 - Bildschirmaufbau: **Kampf oben, Menüs und Upgrades unten** (Frage 81).
 - Keine Offline-Fortschritte. Aktiven Run automatisch speichern und später ohne Offline-Simulation fortsetzen.
@@ -15,11 +15,11 @@ Diese Datei ist die zentrale Quelle für die gemeinsam beschlossenen Spielregeln
 - Bei unter ca. 20 % HP roter Bildschirmrand und leicht abgedunkelte Kampfszene; keine automatische Pause.
 
 ## Run, Wellen und Gegner
-- Endlose, fortlaufend nummerierte Wellen. Alle 50 Wellen neue Zone mit anderen Hintergründen und Gegnern; Zonenwechsel hauptsächlich optisch, keine besonderen Umgebungseffekte.
-- Normale Bosse alle 10 Wellen mit eigenen Fähigkeiten; besonders mächtige Zonenbosse alle 50 Wellen, eventuell mehrphasig.
+- Endlose, fortlaufend nummerierte Wellen. Alle 50 Wellen eine neue Zone mit eigenem Hintergrund, **eigenen Gegnertypen und Fähigkeiten sowie einzigartigem Zonenboss** (Frage 83). Keine verpflichtenden Umgebungsschäden oder vollständig neuen Zonenregeln.
+- Normale Bosse alle 10 Wellen mit eigenen Fähigkeiten; besonders mächtige Zonenbosse alle 50 Wellen. **Unterschiedliche Bossmechaniken** je nach Gegner: erkennbare Angriffsmuster, Phasenwechsel, Beschwörungen, Schilde und Spezialfähigkeiten. Nicht jeder Boss braucht jede Mechanik (Frage 84).
 - Unterschiedliche Wellentypen: Gruppen schwacher Gegner, Einzelgegner, schnelle Gegner usw.
 - Gegnerrollen: Krieger, Magier, Fernkämpfer, Tanks, Heiler etc. mit Gift, Heilung, Schilden, Stuns und anderen Fähigkeiten.
-- Gegner-HP und -Schaden steigen **exponentiell** mit der Welle.
+- Gegner-HP und -Schaden steigen **exponentiell** mit der Welle. Schwierigkeit kombiniert kontinuierliche Skalierung, spürbare Bosshürden alle 10 Wellen und zusätzliche Sprünge bei neuen Gebieten alle 50 Wellen (Frage 87). Frühe Bosse müssen mit vernünftigen Upgrades erreichbar sein; Fairness und Fortschrittsgefühl gehen vor übertriebener Härte.
 - Unterschiedliche Gegner-KI und Zielwahl je nach Gegnertyp (Frage 73): meistens nächstes Ziel, Spezialgegner können Held oder verwundbare Begleiter priorisieren.
 - Held bewegt sich automatisch: Nahkampf schliesst Distanz, Fernkampf hält geeigneten Abstand (Frage 79).
 - Helden-Zielpriorität während des Runs einstellbar: Nächster, Schwächster, Stärkster, Gefährlichster (Frage 80).
@@ -29,6 +29,7 @@ Diese Datei ist die zentrale Quelle für die gemeinsam beschlossenen Spielregeln
 1. **Gold:** Im Run verdient, manuell für temporäre Upgrades verwendet; am Run-Ende verloren. Verkauf von Ausrüstung bringt ausschliesslich Gold (Frage 57).
 2. **Münzen:** Direkt durch Gegnerkills verdient, dauerhaft gespeichert; für permanente Werkstatt-Upgrades und Talent-Respec.
 3. **Seelen:** Erst am Run-Ende anhand der höchsten erreichten Welle vergeben; dauerhaft, zum Kauf von Talentpunkten und Prestige-Wirtschaftsboni.
+- **Belohnungsskalierung (Frage 88):** Gold, Münzen und XP steigen mit jeder Welle; Bosse geben Extra-Belohnungen, neue Gebiete bringen zusätzliche Belohnungssprünge. Seelen bleiben ausschliesslich Run-Ende-Belohnung.
 - Kein automatischer Gold-Upgrade-Kauf.
 - Werkstatt: viele dauerhafte Stats, u. a. Angriff, HP, flache Verteidigung, prozentuale Verteidigung, Regeneration, Angriffstempo, Krit-Chance, Krit-Schaden, Lebensraub. Unterschiedliche Maximallevel je Stat, hohe Caps für Angriff/HP.
 - Prestige-Wirtschaft: verzweigter Baum mit Goldbonus, XP-Bonus, Seelenbonus, Loot-Glück, günstigeren Upgrades und Spielgeschwindigkeit. Neue Äste durch vorherige Investitionen; exponentielle Kosten, feste Caps.
@@ -51,7 +52,7 @@ Diese Datei ist die zentrale Quelle für die gemeinsam beschlossenen Spielregeln
   - **Unbezwingbar:** Tank, Lebensraub, Schadensreduktion.
 - Talentpunkte beliebig zwischen den drei Bäumen verteilbar, insgesamt maximal **51 Punkte**.
 - Talentpunkte dauerhaft einzeln mit Seelen kaufen, Preise exponentiell steigend. Rücksetzung im Hauptmenü gegen permanente Münzen; gekaufte Punkte bleiben.
-- Aktive Fähigkeiten werden ausschliesslich über Talentbäume freigeschaltet. Mehr als vier erlernbar, aber **vier aktive Slots gleichzeitig**. Passive Effekte und Standardangriffe automatisch, wichtige aktive Skills manuell.
+- Aktive Fähigkeiten werden ausschliesslich über Talentbäume freigeschaltet. Mehr als vier erlernbar, aber **vier aktive Slots gleichzeitig**. Passive Effekte und Standardangriffe automatisch. **Jede der vier ausgerüsteten aktiven Fähigkeiten kann individuell zwischen manuell und automatisch umgestellt werden** (Frage 85). Für automatisch genutzte Fähigkeiten lassen sich **eigene Einsatzbedingungen** definieren, z. B. Heilung unter 40 % HP oder starke Attacke nur bei Bossen (Frage 86). Keine zwingende komplexe KI; deterministische, konfigurierbare Regeln.
 - Begleiter und Beschwörungen sind **klassenabhängig** (Frage 74), werden durch Talentbäume freigeschaltet und übernehmen anteilig Heldenwerte plus Talentboni (Frage 75).
 - Maximalzahl von Begleitern klassenabhängig (Frage 76), ebenso Wiederbelebung/Neubeschwörung (Frage 77).
 - Begleiterhaltungen einstellbar: Aggressiv, Defensiv, Unterstützung (Frage 78).
@@ -80,6 +81,18 @@ Diese Datei ist die zentrale Quelle für die gemeinsam beschlossenen Spielregeln
 - Kurz wirkende starke Kampftränke und länger wirkende moderate Elixiere.
 - Verschiedene Buff-Effekte gleichzeitig möglich, **identische Buffs nicht stapelbar**.
 
+## Statistiken und Run-Historie (Frage 89)
+- **Vollständige Statistikübersicht** mit persönlichen Rekorden (höchste Welle, höchstes Level, längster Run), Kampfstatistiken (Schaden, besiegte Gegner, Bosse, kritische Treffer) und Wirtschaftsstatistiken (insgesamt Gold, Münzen, Seelen, Upgrades).
+- Historie der letzten Runs, inklusive erreichter Welle, Dauer, relevanter Build-/Ausrüstungsdaten und Ergebnis.
+- Datenerfassung möglichst ressourcenschonend, damit der Kampf auf Mobilgeräten flüssig bleibt.
+
+## Speichern, Backup und spätere Cloud (Frage 90)
+- **Automatische lokale Speicherung** von permanentem Fortschritt und aktivem Run im Browser, ohne Offline-Fortschritt.
+- **Manueller Export und Import** eines vollständigen Spielstands als Datei, inklusive permanenten Upgrades, Seelen, Talenten, Statistiken und laufendem Run. Export-/Importfunktion ist **noch nicht implementiert**.
+- Bei Import: Dateiformat/Version prüfen, Daten validieren und vor Überschreiben des bestehenden Spielstands bestätigen lassen. Migrationsfähigkeit für zukünftige Versionen einplanen.
+- **Optionale Cloud-Synchronisierung mit Benutzerkonto erst später**, nicht Voraussetzung für V0.1 und nicht bereits zugesagt als fertig implementiert.
+- Browserdaten können gelöscht werden: Bis Export/Import verfügbar ist, ist der Fortschritt nur lokal gesichert.
+
 ## Stand der tatsächlichen Implementierung
 ### Version 0.1 – technischer Kern (18.10.2026)
 Erste implementierte Basis: automatischer Kampf, einfache exponentiell skalierende Gegner, fortlaufende Wellen, Bossmarkierung jede 10. und Zonenboss jede 50. Welle, Gold und Münzen, manuelle Run-Upgrades, einfache permanente Werkstatt, Level/XP, HP-Regeneration, Pause, freiwilliges Run-Ende, Run-Zusammenfassung, Speicherung im Browser.
@@ -90,21 +103,24 @@ Erste implementierte Basis: automatischer Kampf, einfache exponentiell skalieren
 - Werkstatt enthält nur einige Grundwerte; prozentuale Verteidigung, Krit-Schaden, Lebensraub etc. fehlen.
 - Münzen werden bereits beim Kill verdient; Gold-Upgrades gehen am Run-Ende verloren.
 - Kampfszene nutzt vorläufige Emoji-Platzhalter statt Pixel-Art.
-- **Noch nicht browsergetestet**; nicht als fehlerfrei oder ausbalanciert deklarieren.
+- **Erster manueller iPhone-Test durch den Nutzer erfolgreich:** Kampf läuft, Welle 10 wird erreicht. **Boss auf Welle 10 wurde als praktisch unbesiegbar erlebt.** Ursache noch nicht abschliessend analysiert; Balancing und tatsächlicher Bosskampf müssen getestet werden. Kein vollständiger Regressionstest erfolgt.
 - Bei Tod Run-Zusammenfassung, Neustart über Button. Bei freiwilligem Ende dasselbe.
 - Weitere Systeme schrittweise implementieren und jeweils testen.
 
-## Priorisierte Entwicklungsphasen
-1. **V0.1:** Kernloop spielbar und im Browser verifizieren; Fehler korrigieren.
-2. **V0.2:** Inventar, Ausrüstung, Seltenheiten, Drops und Tränke.
-3. **V0.3:** Drei Talentbäume des Dunklen Kriegers, vier aktive Skills, Seelen und Prestige.
-4. **V0.4+:** Sets, legendäre Sondermechaniken, weitere Klassen, Begleiter, intelligentere Gegner, Pixel-Art, längere Balancingtests.
+## Priorisierte Entwicklungsphasen und nächster Arbeitsauftrag
+1. **V0.1.1 – Stabilität und Balancing (NÄCHSTES):** Boss auf Welle 10 mit echten Runs prüfen und fair abstimmen; Angriff/Verteidigung, Regeneration, Gold- und Münzökonomie überprüfen; Boss-Skalierung für spätere Wellen prüfen. Tod, Run-Zusammenfassung, Neustart, Pause, Speichern/Wiederaufnahme und iPhone-Darstellung gezielt testen. Regressionen vermeiden.
+2. **V0.1.2 – Datensicherheit und Qualität:** Spielstand-Export/-Import mit Versionsprüfung und Validierung; Statistikerfassung und erste Run-Historie; auf mobilen Geräten testen.
+3. **V0.2 – RPG-Systeme:** Inventar, Ausrüstung, Seltenheiten, Drops, Tränke und passende UI.
+4. **V0.3 – Langzeitfortschritt:** Drei Talentbäume des Dunklen Kriegers, vier aktive Skills samt individueller Auto-Regeln, Seelen und Prestige.
+5. **V0.4+ – Ausbau:** Sets, legendäre Sondermechaniken, weitere Klassen, Begleiter, abwechslungsreiche Bossmechaniken, moderne Pixel-Art, Gebiete und längere Balancingtests.
+
+**Entwicklungsregeln:** Vor Codeänderungen diese Datei und den aktuellen Code lesen; Änderungen in kleinen, überprüfbaren Schritten umsetzen. Nach jedem Schritt Browser-/iPhone-Test anstreben. `main` ist der spielbare Stand; grössere Arbeiten zuerst auf separatem Branch. Feature-Status in dieser Datei aktualisieren. Die 90 Konzeptfragen sind abgeschlossen; offene Implementierungsdetails gezielt im Zuge der Entwicklung klären, statt erneut eine allgemeine Fragerunde zu beginnen.
 
 ## Noch offene Entscheidungen
-- Grafikstil innerhalb der Pixel-Art (Frage 82 wurde bewusst unterbrochen).
-- Exakte Item-/Trankdropraten, konkrete Balancing-Formeln, endgültige Abklingzeiten.
+- Exakte Item-/Trankdropraten, konkrete Balancing-Formeln und Feintuning der vorläufigen 15-Sekunden-Trankabklingzeit.
 - Präzise Ausgestaltung aller Talentknoten, Skill- und Bosslisten.
 - UI-Verteilung der 50 Inventarplätze.
 
 ## Änderungsprotokoll
 - 18.10.2026: Entscheidungen bis Frage 81 zusammengetragen; 0.1 als bewusster kleiner technischer Anfang definiert.
+- 18.10.2026: **Alle 90 Designfragen abgeschlossen**; Fragen 82–90 ergänzt. Erster iPhone-Spieltest bestätigt grundlegenden Loop, meldet aber viel zu schweren Boss auf Welle 10. V0.1.1 und weitere Schritte priorisiert.
