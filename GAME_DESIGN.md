@@ -16,7 +16,7 @@ Diese Datei ist die zentrale Quelle für die gemeinsam beschlossenen Spielregeln
 
 ## Run, Wellen und Gegner
 - Endlose, fortlaufend nummerierte Wellen. Alle 50 Wellen eine neue Zone mit eigenem Hintergrund, **eigenen Gegnertypen und Fähigkeiten sowie einzigartigem Zonenboss** (Frage 83). Keine verpflichtenden Umgebungsschäden oder vollständig neuen Zonenregeln.
-- Normale Bosse alle 10 Wellen mit eigenen Fähigkeiten; besonders mächtige Zonenbosse alle 50 Wellen. **Unterschiedliche Bossmechaniken** je nach Gegner: erkennbare Angriffsmuster, Phasenwechsel, Beschwörungen, Schilde und Spezialfähigkeiten. Nicht jeder Boss braucht jede Mechanik (Frage 84).
+- Normale Bosse alle 10 Wellen mit eigenen Fähigkeiten; besonders mächtige Zonenbosse alle 50 Wellen. **Verbindlich: Auf Welle 50, 100, 150 usw. ersetzt der Zonenboss den normalen Boss; es erscheint genau ein Boss (Schritt 1, Nutzerentscheidung A).** **Unterschiedliche Bossmechaniken** je nach Gegner: erkennbare Angriffsmuster, Phasenwechsel, Beschwörungen, Schilde und Spezialfähigkeiten. Nicht jeder Boss braucht jede Mechanik (Frage 84).
 - Unterschiedliche Wellentypen: Gruppen schwacher Gegner, Einzelgegner, schnelle Gegner usw.
 - Gegnerrollen: Krieger, Magier, Fernkämpfer, Tanks, Heiler etc. mit Gift, Heilung, Schilden, Stuns und anderen Fähigkeiten.
 - Gegner-HP und -Schaden steigen **exponentiell** mit der Welle. Schwierigkeit kombiniert kontinuierliche Skalierung, spürbare Bosshürden alle 10 Wellen und zusätzliche Sprünge bei neuen Gebieten alle 50 Wellen (Frage 87). Frühe Bosse müssen mit vernünftigen Upgrades erreichbar sein; Fairness und Fortschrittsgefühl gehen vor übertriebener Härte.
@@ -126,7 +126,7 @@ Erste implementierte Basis: automatischer Kampf, einfache exponentiell skalieren
 | --- | --- | --- | --- | --- |
 | K01 | Hoch | Inventar pausiert Kampf (F64); aktive Fähigkeiten manuell/automatisch (F85–86); Pause und Fortsetzen | Inventaröffnung muss **alle** Kampftimer, Gegneraktionen und automatische Fähigkeiten anhalten. Auto-Fähigkeiten dürfen während pausiertem Inventar nicht ausgelöst werden. Bei Rückkehr keine nachträgliche Kampfsimulation. | Technische Festlegung nötig |
 | K02 | Hoch | Seelen ausschliesslich bei Run-Ende; Münzen sofort bei Kills; Prestige-/Talentökonomie; freiwilliges Run-Ende | Die drei Währungen dürfen nicht vermischt werden. Auch freiwilliges Run-Ende zählt für die Seelenabrechnung; Münzen bleiben bereits vorher erhalten. Es muss definiert werden, ob Seelen nur für die höchste Welle oder zusätzlich für andere Werte berechnet werden – bislang gilt **höchste Welle**. | Konsistent, bei Implementierung absichern |
-| K03 | Hoch | Alle 10 Wellen Boss; alle 50 Wellen Zonenboss (F83–84) | Welle 50, 100 usw. erfüllt **beide** Bedingungen. Empfehlung zur widerspruchsfreien Umsetzung: **ein Zonenboss ersetzt an diesen Wellen den normalen Boss**, kein ungeplanter Doppelboss. Dies ist ein technischer Vorschlag, noch kein ausdrücklich bestätigter Beschluss. | Bestätigung offen |
+| K03 | Gelöst | Alle 10 Wellen Boss; alle 50 Wellen Zonenboss (F83–84) | Welle 50, 100 usw. erfüllt **beide** Bedingungen. **Verbindlich bestätigt (Schritt 1, Option A): Der Zonenboss ersetzt den normalen Boss.** Genau ein Boss auf Welle 50/100 usw. | **Entschieden und dokumentiert** |
 | K04 | Mittel | Exponentielle Gegnerstärke; Bosssprünge und Gebietssprünge (F87); Belohnungssprünge (F88); Fairness | Mehrere multiplikative Skalierungen können Bosse unverhältnismässig stark machen. V0.1-Boss auf Welle 10 bereits als zu schwer gemeldet. Separate Kurven und frühe Balancingtests nötig. | Balancing offen |
 | K05 | Hoch | Automatisches Speichern des aktiven Runs (F90); kein Offline-Fortschritt; Pause und Run-Ende | Bei Wiederaufnahme exakt gespeicherten Zustand laden; **keine** Nachberechnung anhand verstrichener Realzeit. Ein abgeschlossener Run darf nicht wieder als aktiv geladen werden. | Technische Festlegung nötig |
 | K06 | Hoch | Export/Import (F90); temporäre Ausrüstung/Tränke; permanente Werte | Backup muss **aktiven Run inklusive temporärer Gegenstände** und **permanenten Fortschritt** sichern. Temporäre Ausrüstung verschwindet erst bei tatsächlichem Run-Ende, nicht beim Schliessen, Export oder Import. | Konsistent, Tests nötig |
@@ -144,7 +144,7 @@ Erste implementierte Basis: automatischer Kampf, einfache exponentiell skalieren
 | K18 | Mittel | Moderne Pixel-Art (F82); mobiler Bildschirm Kampf oben/Menüs unten (F81) | Detaillierte Animationen dürfen die Lesbarkeit und Performance auf dem iPhone nicht beeinträchtigen. Grafik ist eine Stilvorgabe, kein Grund, zuerst aufwendige Assets statt Gameplay zu bauen. | Konsistent |
 
 ### Vor Umsetzung gezielt klären
-1. **K03:** Zonenboss ersetzt normalen Boss auf jeder 50. Welle? Vorgeschlagen: ja.
+1. **K03 erledigt:** Zonenboss ersetzt normalen Boss auf jeder 50. Welle (Schritt 1: A).
 2. **K07:** Bedeutet „5 Plätze je Slot“ fünf sichtbare Inventarfelder pro Seite, oder eine andere Aufteilung? 50 Gesamtplätze bleiben fest.
 3. **K14:** Prozentverteidigung, Stat-Caps und Schadenformel im Balancing festlegen; dabei keine Designentscheidung überschreiben.
 
@@ -159,7 +159,7 @@ Erste implementierte Basis: automatischer Kampf, einfache exponentiell skalieren
 - [ ] Run-Historie von tatsächlich nutzbarem Inventar trennen (K12).
 - [ ] Talent-Respec darf gekaufte Punkte nicht vernichten (K13).
 - [ ] Skalierung von Gegnern, Bossen, Gebieten und Belohnungen gemeinsam testen (K04, K14).
-- [ ] Zonenbosse auf Wellen 50/100 eindeutig behandeln (K03).
+- [ ] Beschlossene Zonenboss-Ersetzung auf Wellen 50/100 im Spiel umsetzen und testen (K03; Design geklärt).
 - [ ] Inventaraufteilung mit Nutzer klären, bevor die endgültige UI entsteht (K07).
 - [ ] Nach jeder Version diese Prüfliste und den Implementierungsstand aktualisieren.
 
@@ -172,3 +172,5 @@ Erste implementierte Basis: automatischer Kampf, einfache exponentiell skalieren
 - 18.10.2026: Entscheidungen bis Frage 81 zusammengetragen; 0.1 als bewusster kleiner technischer Anfang definiert.
 - 18.10.2026: **Alle 90 Designfragen abgeschlossen**; Fragen 82–90 ergänzt. Erster iPhone-Spieltest bestätigt grundlegenden Loop, meldet aber viel zu schweren Boss auf Welle 10. V0.1.1 und weitere Schritte priorisiert.
 - 18.10.2026: Konsistenzprüfung mit 18 Prüfpunkten, 3 gezielten Klärungsfällen und technischer Checkliste ergänzt; keine bestehenden Nutzerentscheidungen eigenmächtig geändert.
+
+- 18.10.2026: Schritt 1 (K03) durch Nutzer entschieden: Auf jeder 50. Welle ersetzt der Zonenboss den normalen Boss; keine zwei Bosse gleichzeitig oder nacheinander.
