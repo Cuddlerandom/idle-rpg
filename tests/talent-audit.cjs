@@ -166,6 +166,9 @@ function audit(gameHtml,plannerHtml){
     const x=plannerBoot({saved:build,coins:499});x.elems.reset.onclick();
     return x.plan.spent()===5&&JSON.parse(x.storage.getItem('idle-rpg-core-v01')).coins===499;
  });
+ check('Fluchkunde verlängert Blutung und Rüstungsbruch',()=>{const a=spawn(1,2,true),b=spawn(1,2,false);a.addBleed(true);b.addBleed(true);a.cast(0);b.cast(0);return a.effects.bleeds[0].end>b.effects.bleeds[0].end&&a.effects.armorUntil>b.effects.armorUntil});
+ check('Keine kostenlose Entschlossenheit ohne Unbezwingbar-Talente',()=>{const a=spawn(0,0);a.enemy.speed=1000;a.tick(1000);return a.effects.resolve.length===0});
+ check('Unbezwingbar-Talent schaltet Entschlossenheit bei Treffern frei',()=>{const a=spawn(2,0,true);a.enemy.speed=1000;a.tick(1000);return a.effects.resolve.length===1});
  check('Rüstungsbruch verschwindet beim Gegnerwechsel',()=>{const a=spawn(0,3,true);a.cast(0);const active=a.effects.armorUntil>0;a.win();return active&&a.effects.armorUntil===0});
  check('Bastion und Finsternis laufen nach Wellenwechsel weiter',()=>{
     const a=spawn(1,17,true);a.cast(1);const d=a.effects.darkUntil;a.win();
