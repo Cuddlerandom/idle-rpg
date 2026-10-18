@@ -18,8 +18,11 @@ jobs:
           node --check warrior-system.js
           node --check game.js
           node --check tests/warrior.test.cjs
+          node --check tests/talent-full-audit.cjs
       - name: Combat and progression regression tests
-        run: node --test tests/warrior.test.cjs
+        run: |
+          node --test tests/warrior.test.cjs
+          node tests/talent-full-audit.cjs
       - name: Browser smoke test (Chrome headless)
         run: |
           python3 -m http.server 8765 > /tmp/idle-http.log 2>&1 &
