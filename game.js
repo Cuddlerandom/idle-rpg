@@ -93,7 +93,7 @@ function attack(power=1,kind='normal'){
  let dmg=Math.max(1,s.atk*power*(1+.02*R(0,1)+.02*R(1,1)+(resolve()>=3?.02*R(2,15):0))-defense);
  const critical=Math.random()*100<s.crit;
  if(critical){
-  dmg*=s.critMult+(wasCorrupt?.02*R(1,7):0);
+  dmg*=s.critMult+((wasCorrupt||wasBleeding||expiring(fx.armorUntil))?.02*R(1,7):0);
   if(R(0,10)){for(const b of fx.bleeds)b.end+=400*R(0,10)} // Nur Laufzeit, keine zusätzliche Gesamtschadensmenge.
  }
  dmg*=damageMult()*executeMult()*(wasBleeding?1+.03*R(0,13):1)*(base&&wasCorrupt?1+.05*R(1,8):1);
