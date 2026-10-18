@@ -18,7 +18,7 @@ function audit(gameHtml,plannerHtml){
   const document={hidden:false,addEventListener(){},getElementById:id=>elems[id]??(elems[id]={style:{},classList:{remove(){},toggle(){},add(){}},innerHTML:'',textContent:''})};
   const math=Object.create(Math);math.random=()=>rng;
   const a=init(storage,document,{now:()=>0},()=>{},{addEventListener(){}},()=>true,math);
-  if(enabled&&coreIndex<0)a.build[t][j]=trees[t].nodes[j][1];
+  if(enabled&&coreIndex<0)a.build[t][j]=typeof enabled==='number'?enabled:trees[t].nodes[j][1];
   a.enemy={...a.enemy,maxHp:100000,atk:12,def:0,speed:999999};a.enemyHp=80000;
   a.storage=storage;
   return a;
@@ -88,7 +88,7 @@ function audit(gameHtml,plannerHtml){
  // All tests assert a real effect in the intended scenario.
  const decrease=new Set(['0:2','0:12']);
  const higherHp=new Set(['1:4','1:10','1:14','2:4','2:10']);
- const details=[];
+ const details=[];let rankChecks=0;
  for(let t=0;t<3;t++)for(let j=0;j<18;j++){
    const name=trees[t].nodes[j][0],key=t+':'+j,roll=rng[key]??.99,probe=probes[t][j];
    let baseline,actual,pass=false,error='';
@@ -96,6 +96,7 @@ function audit(gameHtml,plannerHtml){
     baseline=probe(spawn(t,j,false,roll));actual=probe(spawn(t,j,true,roll));
     pass=Number.isFinite(baseline)&&Number.isFinite(actual)&&(decrease.has(key)?actual<baseline:actual>baseline);
     if(higherHp.has(key))pass=actual>baseline;
+    if(pass){let previous=baseline;for(let r=1;r<=trees[t].nodes[j][1];r++){const current=probe(spawn(t,j,r,roll));rankChecks++;const downward=decrease.has(key);const monotonic=downward?current<=previous+.0000001:current>=previous-.0000001;if(!monotonic||!Number.isFinite(current)){pass=false;error='Effect does not scale monotonically at rank '+r;break}previous=current}}
    }catch(e){error=String(e)}
    details.push({tree:trees[t].name,name,key,pass,baseline,actual,error});
  }
@@ -165,13 +166,14 @@ function audit(gameHtml,plannerHtml){
     const x=plannerBoot({saved:build,coins:499});x.elems.reset.onclick();
     return x.plan.spent()===5&&JSON.parse(x.storage.getItem('idle-rpg-core-v01')).coins===499;
  });
+ check('Rüstungsbruch verschwindet beim Gegnerwechsel',()=>{const a=spawn(0,3,true);a.cast(0);const active=a.effects.armorUntil>0;a.win();return active&&a.effects.armorUntil===0});
  check('Bastion und Finsternis laufen nach Wellenwechsel weiter',()=>{
     const a=spawn(1,17,true);a.cast(1);const d=a.effects.darkUntil;a.win();
     const b=spawn(2,17,true);b.cast(1);const x=b.effects.bastionUntil;b.win();
     return d===a.effects.darkUntil&&x===b.effects.bastionUntil;
  });
  const failures=[...details.filter(x=>!x.pass),...extras.filter(x=>!x.pass)];
- return {total:details.length,passed:details.filter(x=>x.pass).length,coreAndIntegration:extras.length,extraPassed:extras.filter(x=>x.pass).length,failures,details,extras};
+ return {total:details.length,passed:details.filter(x=>x.pass).length,rankChecks,coreAndIntegration:extras.length,extraPassed:extras.filter(x=>x.pass).length,failures,details,extras};
 }
 if(typeof module!=='undefined'&&module.exports)module.exports=audit;
 if(typeof require==='function'&&typeof module!=='undefined'&&require.main===module){
