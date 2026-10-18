@@ -28,8 +28,8 @@ const rank=(t,n)=>build[t][n]||0;
 let effects={bleeds:[],corrupt:[],resolve:[],cooldowns:[0,0,0,0],time:0};
 const resetEffects=()=>{effects={bleeds:[],corrupt:[],resolve:[],cooldowns:[0,0,0,0],time:0}};
 const count=(a)=>a.filter(x=>x>effects.time).length;
-const bleedDuration=()=>6000+1000*rank(0,4);
-const corruptDuration=()=>8000*(1+.03*rank(1,2))+600*rank(1,15);
+const bleedDuration=()=> (6000+1000*rank(0,4))*(1+.03*rank(1,2));
+const corruptDuration=()=> (8000+600*rank(1,15))*(1+.03*rank(1,2));
 const bleedDamage=()=>stats().atk*.30*(1+.10*rank(0,5));
 const boss=()=>state.run.wave%10===0;
 const debuffed=()=>count(effects.corrupt)>0;
@@ -66,7 +66,7 @@ function heroHit(mult=1,base=false,normal=false){
   if(normal){addBleed();addCorrupt()}
   if(effects.darkUntil>effects.time)addCorrupt(true);
   addResolve();
-  if(base)effects.armorUntil=effects.time+5000;
+  if(base)effects.armorUntil=effects.time+5000*(1+.03*rank(1,2));
   return physical;
 }
 function availableSkills(){const skills=[{id:'base',name:'Vernichtender Hieb'}];const nodes=[[0,6,'rush','Blutiger Ansturm'],[0,17,'bloodbath','Blutbad'],[1,6,'curse','Schattenfluch'],[1,17,'dark','Finsternis'],[2,6,'breaker','Schildbrecher'],[2,17,'bastion','Letzte Bastion']];for(const [t,j,id,name] of nodes)if(rank(t,j)>0&&skills.length<4)skills.push({id,name});return skills}
@@ -116,7 +116,7 @@ function tick(dt){
    enemyClock-=enemyAttackInterval();
    const damageReduction=Math.max(.1,1-.05*core(7)-.02*count(effects.resolve)-.02*rank(2,4)-(effects.bastionUntil>effects.time?.30:0)-(r.hp/s.hp<.4?.02*rank(2,10):0)-(debuffed()?.02*rank(1,14):0));
    const damage=Math.max(1,enemy.atk*enemyAttackMultiplier()-s.def)*damageReduction;
-   r.hp-=damage;effects.revenge=true;addResolve(true);
+   r.hp-=damage;effects.revenge=true;if(build[2].some(v=>v>0))addResolve(true);
    if(Math.random()<.04*rank(2,7)){
       const counter=s.atk*.5*(1+.03*rank(2,11)*count(effects.resolve))*(effects.bastionUntil>effects.time?1.15:1)*targetMultiplier();
       enemyHp-=counter;if(enemyHp<=0){win();return}
