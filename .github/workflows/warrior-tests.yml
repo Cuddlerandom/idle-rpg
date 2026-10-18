@@ -1,0 +1,22 @@
+name: Warrior regression tests
+on:
+  push:
+    branches:
+      - feature/warrior-progression-v03
+      - main
+  pull_request:
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax checks
+        run: |
+          node --check warrior-system.js
+          node --check game.js
+          node --check tests/warrior.test.cjs
+      - name: Combat and progression regression tests
+        run: node --test tests/warrior.test.cjs
