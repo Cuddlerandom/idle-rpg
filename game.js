@@ -99,7 +99,7 @@ function attack(power=1,kind='normal'){
  dmg*=damageMult()*executeMult()*(wasBleeding?1+.03*R(0,13):1)*(base&&wasCorrupt?1+.05*R(1,8):1);
  if(fx.revenge){dmg*=1+.06*R(0,14)+.04*R(2,13);fx.revenge=false}
  enemyHp-=dmg;heal(dmg*.01*R(2,1));
- if(base)fx.armorUntil=fx.time+5000;
+ if(base)fx.armorUntil=fx.time+debuffDuration(5000);
  if(isNormal)applyBleed(false,true);
  if(isNormal||expiring(fx.darkUntil))applyCorrupt(expiring(fx.darkUntil),isNormal);
  applyResolve();return dmg;
@@ -136,8 +136,8 @@ function skillAuto(id){
 function autoCast(){for(const skill of available()){if(state.settings.auto[skill.id]===true&&fx.cd[skill.id]<=fx.time&&skillAuto(skill.id)){cast(skill.id);break}}}
 function toggleAuto(id){state.settings.auto[id]=!state.settings.auto[id];save();render()}
 function gainLevel(){const r=state.run;while(r.xp>=r.level*40){r.xp-=r.level*40;r.level++;heal(10);message='⭐ Level '+r.level+' erreicht!'}}
-function win(){
- const r=state.run,w=r.wave,boss=w%10===0,wasBleeding=bleeds()>0,wasCorrupt=corrupt()>0;
+function win(killedByBleed=false){
+ const r=state.run,w=r.wave,boss=w%10===0,wasBleeding=bleeds()>0||killedByBleed,wasCorrupt=corrupt()>0;
  if(wasBleeding&&R(0,16))fx.hungerUntil=fx.time+6000;
  if(wasCorrupt&&R(1,13))fx.soulUntil=fx.time+5000;
  fx.bleeds=[];fx.corrupt=[];fx.armorUntil=0; // Eigene Buffs und Cooldowns laufen über die Wellen weiter.
@@ -185,7 +185,7 @@ function tick(dt){
  let bleedDamage=0;for(const b of fx.bleeds){const left=Math.max(0,b.end-(fx.time-dt));const step=Math.min(dt,left);const dealt=left>0?b.remaining*step/left:0;b.remaining=Math.max(0,b.remaining-dealt);bleedDamage+=dealt}
  fx.bleeds=fx.bleeds.filter(b=>b.end>fx.time&&b.remaining>.00001);
  if(bleedDamage){const real=bleedDamage*damageMult()*executeMult()*(enemy.wave%10===0?1+.04*R(0,15):1);enemyHp-=real;heal(real*.01*R(0,9))}
- if(enemyHp<=0){win();return}
+ if(enemyHp<=0){win(bleedDamage>0);return}
  heroClock+=dt;enemyClock+=dt;
  if(heroClock>=s.speed){heroClock-=s.speed;attack();if(enemyHp<=0){win();return}}
  if(enemyClock>=enemy.speed*(corrupt()>0?1+.02*R(1,10):1)){
