@@ -99,7 +99,7 @@ function attack(power=1,kind='normal'){
  dmg*=damageMult()*executeMult()*(wasBleeding?1+.03*R(0,13):1)*(base&&wasCorrupt?1+.05*R(1,8):1);
  if(fx.revenge){dmg*=1+.06*R(0,14)+.04*R(2,13);fx.revenge=false}
  enemyHp-=dmg;heal(dmg*.01*R(2,1));
- if(base)fx.armorUntil=fx.time+5000;
+ if(base)fx.armorUntil=fx.time+debuffDuration(5000);
  if(isNormal)applyBleed(false,true);
  if(isNormal||expiring(fx.darkUntil))applyCorrupt(expiring(fx.darkUntil),isNormal);
  applyResolve();return dmg;
