@@ -130,6 +130,46 @@ function audit(gameHtml,plannerHtml){
  check('Seelenfessel verändert nicht gegnerischen Angriffsschaden',()=>{const a=spawn(1,10,true),b=spawn(1,10,false);for(const x of [a,b]){x.addCorrupt(true);x.enemy.speed=1000;x.tick(3000)}return Math.abs(a.state.run.hp-b.state.run.hp)<.0001});
  check('Kern-Henker erhöht auch Blutungsschaden unter 30 %',()=>{const base=spawn(0,0,false,.99,-1),withCore=spawn(0,0,true,.99,8);for(const a of [base,withCore]){a.enemyHp=20000;a.effects.bleeds=[{end:9000,remaining:100,dps:.1}]}const before=base.enemyHp,other=withCore.enemyHp;base.tick(1000);withCore.tick(1000);return (other-withCore.enemyHp)>(before-base.enemyHp)*1.09});
  check('Speicherung bewahrt laufende Cooldowns',()=>{const a=spawn(0,0);a.cast(0);a.save();const saved=JSON.parse(a.storage.getItem('idle-rpg-core-v01'));return saved.run.effects.cooldowns[0]===10000});
+ function plannerBoot({saved=null,active=false,coins=1000,purchased=51,souls=100}={}){
+   const script=plannerHtml.match(/<script>([\\s\\S]*?)<\\/script>/)?.[1];
+   if(!script)throw Error('Planner script missing');
+   const data={
+     'idle-rpg-warrior-build-v1':JSON.stringify(saved||[Array(18).fill(0),Array(18).fill(0),Array(18).fill(0)]),
+     'idle-rpg-warrior-progression-v1':JSON.stringify({purchased,souls,core:Array(9).fill(0),milestones:[]}),
+     'idle-rpg-core-v01':JSON.stringify({coins,run:{active}})
+   };
+   const storage={getItem:k=>data[k]??null,setItem:(k,v)=>data[k]=String(v)};
+   const elems={},element=()=>({style:{},dataset:{},classList:{add(){},remove(){},toggle(){}},appendChild(){},addEventListener(){},innerHTML:'',textContent:''});
+   const doc={getElementById:id=>elems[id]??(elems[id]=element()),createElement:element};
+   const plan=new Function('document','localStorage','confirm',script+'\\nreturn {ranks,spent,canAdd,change,buyPoint,progress,render};')(doc,storage,()=>true);
+   return {plan,elems,storage};
+ }
+ check('Talentplaner stellt gespeicherten Build wieder her',()=>{
+    const build=[Array(18).fill(0),Array(18).fill(0),Array(18).fill(0)];build[0][0]=5;build[1][1]=3;
+    const x=plannerBoot({saved:build});return x.plan.spent()===8&&x.plan.ranks[0][0]===5&&x.plan.ranks[1][1]===3;
+ });
+ check('Punktekauf zieht Klassenseelen korrekt ab',()=>{
+    const x=plannerBoot({purchased:0,souls:25});x.plan.buyPoint();const p=JSON.parse(x.storage.getItem('idle-rpg-warrior-progression-v1'));return p.souls===20&&p.purchased===1;
+ });
+ check('Skillen während aktivem Run gesperrt',()=>{
+    const x=plannerBoot({active:true});const b=x.plan.canAdd(0,0);x.plan.change(0,0,1);return !b&&x.plan.spent()===0;
+ });
+ check('Rücksetzung kostet exakt 500 Münzen, gekaufte Punkte bleiben',()=>{
+    const build=[Array(18).fill(0),Array(18).fill(0),Array(18).fill(0)];build[0][0]=5;
+    const x=plannerBoot({saved:build,coins:900});x.elems.reset.onclick();
+    const game=JSON.parse(x.storage.getItem('idle-rpg-core-v01'));const prog=JSON.parse(x.storage.getItem('idle-rpg-warrior-progression-v1'));
+    return game.coins===400&&x.plan.spent()===0&&prog.purchased===51;
+ });
+ check('Rücksetzung bei zu wenigen Münzen gesperrt',()=>{
+    const build=[Array(18).fill(0),Array(18).fill(0),Array(18).fill(0)];build[0][0]=5;
+    const x=plannerBoot({saved:build,coins:499});x.elems.reset.onclick();
+    return x.plan.spent()===5&&JSON.parse(x.storage.getItem('idle-rpg-core-v01')).coins===499;
+ });
+ check('Bastion und Finsternis laufen nach Wellenwechsel weiter',()=>{
+    const a=spawn(1,17,true);a.cast(1);const d=a.effects.darkUntil;a.win();
+    const b=spawn(2,17,true);b.cast(1);const x=b.effects.bastionUntil;b.win();
+    return d===a.effects.darkUntil&&x===b.effects.bastionUntil;
+ });
  const failures=[...details.filter(x=>!x.pass),...extras.filter(x=>!x.pass)];
  return {total:details.length,passed:details.filter(x=>x.pass).length,coreAndIntegration:extras.length,extraPassed:extras.filter(x=>x.pass).length,failures,details,extras};
 }
