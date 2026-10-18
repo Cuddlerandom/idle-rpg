@@ -420,3 +420,14 @@ Verglichen werden vier legale 51-Punkte-Verteilungen: **51/0/0** (reiner Blutber
 4. Die ersten 5–10 Punkte jedes Zweigs sollen eigenständig funktionieren, damit sich Hybrid-Investitionen schon vor Reihe 3 lohnen.
 5. **Noch keine numerische Siegbehauptung:** Ohne finale Zahlen und Kampfsimulation sind die Profile Designziele, keine empirisch bestätigten Rankings.
 6. Vier-Skill-Hardcap und die je zwei aktiven Fähigkeiten pro Zweig bleiben unverändert.
+
+## Drei gleichwertige Spezialisierungsidentitäten – Kurskorrektur (18.10.2026; Designrichtung, Detailwerte Entwurf)
+
+**Problem:** Die bisherigen Bäume wurden zu stark um Blutbad als Hauptziel herum entworfen. Schattenmacht und Unbezwingbar dürfen keine blossen Support-Zweige für Blutrausch sein. Jede Spezialisierung muss mit 31 Punkten ein eigenständiges, begehrenswertes Endtalent und mit 51 Punkten einen konkurrenzfähigen vollständigen Build bieten.
+
+- **Blutrausch:** Blutungsstapel von Reihe 1 an; Endfähigkeit **Blutbad** entfesselt angesammelte Blutungen. Offensive Stärke, dafür verwundbar und auf Vorbereitung angewiesen.
+- **Schattenmacht:** **Schattenmale** als eigenständige Kernmechanik von Reihe 1 an; Flüche, magischer Schaden, Kontroll-/Schwächungseffekte; Endfähigkeit **Finsternis** löst Schattenmale in mächtigen Schattenexplosionen aus. Kein Blutrausch nötig.
+- **Unbezwingbar:** **Kampfentschlossenheit** als eigenständige Kernmechanik von Reihe 1 an, erzeugt durch erlittene bzw. abgewehrte Treffer; nutzbar für Gegenangriffe, Schutz und Heilung; Endfähigkeit **Letzte Bastion** nutzt diese Ressource für eine starke defensive und offensive Phase. Kein Blutrausch nötig. Der frühere Entwurfsname des Endtalents 'Unbezwingbar' wird durch 'Letzte Bastion' ersetzt.
+- **Hybrid-Builds:** Frühe Zweig-Talente bieten sinnvolle Wechselwirkungen, ohne dass eine Kernmechanik eines anderen Zweigs Pflicht wird. Reine 51/0/0-, 0/51/0- und 0/0/51-Builds müssen gleichwertige, aber unterschiedlich starke Szenarien besitzen. 31/20-Hybride sind Alternativen, nicht automatisch optimal.
+- **Zu prüfen:** Endfähigkeiten anhand Boss-, Wellen-, kurzer und langer Kämpfe numerisch testen; keine objektive Gleichwertigkeit behaupten, bevor Simulationen existieren.
+- **Unverändert:** 7 Reihen, 51 Gesamtpunkte, 2 aktive Skills pro Zweig in Reihen 3 und 7, höchstens 3 zusätzliche aktive Skills, Rüstungsbruch in Reihe 2 aller drei Zweige. Bestehende 18-Knoten-Entwürfe für Schattenmacht/Unbezwingbar müssen in einer nächsten Iteration auf die neuen Kernmechaniken angepasst werden.
