@@ -351,3 +351,53 @@ Der Nutzer hat die folgende vollständige Liste ausdrücklich freigegeben. **All
 - **Kampfhunger (5/5):** Bereits mit Rang 1 steigt das Angriffstempo beim fortgesetzten Angriff auf einen Gegner, **ohne dass dieser bluten muss**. Weitere Ränge verstärken das Tempo; Fokus auf schnelle Angriffe.
 
 **Voraussetzungen anpassen:** Blutiger Ansturm (Reihe 3) ist **nicht mehr** von Aufreissende Hiebe abhängig; seine eigene garantierte Blutung macht ihn für jeden Einstiegsweg nützlich. Der Endtalentpfad Blutbad darf nicht ausschliesslich über Aufreissende Hiebe -> Tiefe Wunden -> Offene Adern zugänglich sein. Vor der finalen Freigabe sind alternative Zugänge zu Offene Adern/Blutbad zu definieren, sodass alle drei Startwege eine realistische, punktökonomisch konkurrenzfähige Route zum Endtalent haben. Die in V2.1 dokumentierten gegenteiligen Voraussetzungen gelten als überholt. Die Gesamtstruktur (7 Reihen, 18 Talente, 64 Ränge, 51 verfügbare Punkte, 2 aktive Spezialisierungsfähigkeiten) bleibt bestehen.
+
+## Schattenmacht und Unbezwingbar – vollständige Talententwürfe V1.0 (18.10.2026; NICHT freigegeben)
+
+**Gemeinsame Regeln:** Je 7 Reihen mit Schwellen 0/5/10/15/20/25/30 Punkte im jeweiligen Zweig; 18 Talentknoten und 68 mögliche Ränge pro Zweig, aber 51 Spezialisierungspunkte über alle drei Zweige zusammen. Jeweils genau zwei aktive Fähigkeiten: Reihe 3 (frühestens Punkt 11) und Reihe 7 (frühestens Punkt 31). Rüstungsbruch 5/5 ist in Reihe 2 jedes Zweigs; seine +1 Prozentpunkt Verteidigungsreduktion pro Rang stapelt mit Rüstungsbruch aus anderen Zweigen. Direkte Talentvoraussetzungen und konkrete Balancezahlen werden vor Freigabe ausgearbeitet. Die Entwürfe sollen Blutrausch nicht duplizieren: Schattenmacht = Flüche, Debuffs, Schattenmagie und indirekte Schadensverstärkung; Unbezwingbar = Lebensraub, Verteidigung und lange Kämpfe. Früh zugängliche Talente müssen für Hybrid-Builds attraktiv sein.
+
+### Schattenmacht (18 Knoten, 68 Ränge)
+| Reihe | Talent | Max. | Entwurfswirkung |
+|---|---|---:|---|
+| 1 | Schattenberührung | 5 | Normale Angriffe verursachen zusätzlichen Schattenschaden |
+| 1 | Fluch der Schwäche | 5 | Angriffe können gegnerischen Schaden senken |
+| 1 | Dunkle Erkenntnis | 5 | Mehr Schaden gegen geschwächte Gegner |
+| 2 | Rüstungsbruch | 5 | Verbessert Vernichtender Hieb |
+| 2 | Verfluchte Wunden | 3 | Verfluchte Gegner erleiden mehr Schaden aus allen Quellen, auch Blutungen |
+| 2 | Schattenecho | 3 | Schatteneffekte können Zusatzschaden auslösen |
+| 3 | Schattenfluch **AKTIV** | 1 | Starker Fluch auf ein Ziel |
+| 3 | Seelenbrand | 5 | Schattenschaden verstärkt laufende Flüche |
+| 3 | Dunkler Sog | 3 | Verfluchte Gegner verlieren Angriffstempo |
+| 4 | Verderbnis | 5 | Flüche verursachen Schaden über Zeit |
+| 4 | Seelenfessel | 3 | Kritische Treffer schwächen verfluchte Gegner zusätzlich |
+| 4 | Schwarze Magie | 5 | Mehr Schattenschaden gegen geschwächte Gegner |
+| 5 | Fluchmeister | 5 | Verstärkt aktive Flüche |
+| 5 | Seelenraub | 3 | Kills an verfluchten Gegnern stärken nächsten Schattenangriff |
+| 5 | Schattenrüstung | 3 | Verfluchte Gegner verursachen weniger Schaden |
+| 6 | Ewige Verdammnis | 5 | Flüche dauern länger und werden stärker |
+| 6 | Abgrundmacht | 3 | Mehr Schaden gegen mehrfach geschwächte Gegner |
+| 7 | Finsternis **AKTIVES ENDTALENT** | 1 | Entfesselt Schatteneffekte und schwächt das Ziel massiv |
+
+### Unbezwingbar (18 Knoten, 68 Ränge)
+| Reihe | Talent | Max. | Entwurfswirkung |
+|---|---|---:|---|
+| 1 | Eisenwille | 5 | Maximale Lebenspunkte |
+| 1 | Vampirische Klinge | 5 | Lebensraub auf direkte Angriffe |
+| 1 | Gehärtete Rüstung | 5 | Verteidigung |
+| 2 | Rüstungsbruch | 5 | Verbessert Vernichtender Hieb |
+| 2 | Zäher Widerstand | 3 | Weniger erlittener Schaden |
+| 2 | Blutpakt | 3 | Mehr Heilung aus Lebensraub |
+| 3 | Schildbrecher **AKTIV** | 1 | Schwerer Angriff schwächt Gegner und schützt den Krieger |
+| 3 | Unbeugsamer Körper | 5 | Lebensregeneration |
+| 3 | Vergeltung | 3 | Chance auf Gegenangriff bei erlittenem Schaden |
+| 4 | Kampfrausch | 5 | Kritische Treffer verstärken Lebensraub kurzzeitig |
+| 4 | Stahlhaut | 3 | Schadensreduktion bei niedrigem Leben |
+| 4 | Standhaftigkeit | 5 | Reduktion besonders starker Treffer |
+| 5 | Unsterblicher Wille | 5 | Stärkere Heilung bei niedrigem Leben |
+| 5 | Zorn der Gefallenen | 3 | Erlittener Schaden stärkt nächsten Angriff |
+| 5 | Knochenpanzer | 3 | Zeitweiser zusätzlicher Schutz |
+| 6 | Ewiger Krieger | 5 | Heilung und Schadensreduktion in langen Kämpfen |
+| 6 | Letzter Atemzug | 3 | Kann tödlichen Treffer abfangen, langer interner Cooldown |
+| 7 | Unbezwingbar **AKTIVES ENDTALENT** | 1 | Kurzzeitig massive Schadensreduktion und Selbstheilung |
+
+**Build-Tests für die nächste Designiteration:** 31 Blutrausch / 20 Schattenmacht, 31 Blutrausch / 20 Unbezwingbar, 31 Blutrausch / 10 Schattenmacht / 10 Unbezwingbar und 51 Punkte in einem einzigen Zweig. Der erste aktive Talentknoten aus einem fremden Zweig erfordert dort 11 investierte Punkte, sodass 31/10/10 ausschliesslich Blutiger Ansturm und Blutbad als zusätzliche aktive Fähigkeiten hat. Das Vier-Skill-Limit bleibt unverändert.
