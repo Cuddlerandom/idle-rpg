@@ -116,6 +116,53 @@ Erste implementierte Basis: automatischer Kampf, einfache exponentiell skalieren
 
 **Entwicklungsregeln:** Vor Codeänderungen diese Datei und den aktuellen Code lesen; Änderungen in kleinen, überprüfbaren Schritten umsetzen. Nach jedem Schritt Browser-/iPhone-Test anstreben. `main` ist der spielbare Stand; grössere Arbeiten zuerst auf separatem Branch. Feature-Status in dieser Datei aktualisieren. Die 90 Konzeptfragen sind abgeschlossen; offene Implementierungsdetails gezielt im Zuge der Entwicklung klären, statt erneut eine allgemeine Fragerunde zu beginnen.
 
+## Konsistenzprüfung der 90 Designentscheidungen (18.10.2026)
+
+**Prüfumfang:** Abgleich der in dieser Datei dokumentierten Beschlüsse aus Fragen 1–90 und der im Gespräch konkret bestätigten Fragen 81–90. Nicht jede ursprüngliche Frage ist hier wörtlich überliefert; deshalb keine Behauptung einer lückenlosen Wort-für-Wort-Prüfung aller ursprünglichen Antwortoptionen. **Keine Nutzerentscheidung wird durch diese Prüfung eigenmächtig geändert.**
+
+### Ergebnis: keine zwingend unvereinbare Grundmechanik, aber folgende Überschneidungen und Klärungsfälle
+
+| ID | Priorität | Betroffene Regeln | Befund / sichere Auslegung | Status |
+| --- | --- | --- | --- | --- |
+| K01 | Hoch | Inventar pausiert Kampf (F64); aktive Fähigkeiten manuell/automatisch (F85–86); Pause und Fortsetzen | Inventaröffnung muss **alle** Kampftimer, Gegneraktionen und automatische Fähigkeiten anhalten. Auto-Fähigkeiten dürfen während pausiertem Inventar nicht ausgelöst werden. Bei Rückkehr keine nachträgliche Kampfsimulation. | Technische Festlegung nötig |
+| K02 | Hoch | Seelen ausschliesslich bei Run-Ende; Münzen sofort bei Kills; Prestige-/Talentökonomie; freiwilliges Run-Ende | Die drei Währungen dürfen nicht vermischt werden. Auch freiwilliges Run-Ende zählt für die Seelenabrechnung; Münzen bleiben bereits vorher erhalten. Es muss definiert werden, ob Seelen nur für die höchste Welle oder zusätzlich für andere Werte berechnet werden – bislang gilt **höchste Welle**. | Konsistent, bei Implementierung absichern |
+| K03 | Hoch | Alle 10 Wellen Boss; alle 50 Wellen Zonenboss (F83–84) | Welle 50, 100 usw. erfüllt **beide** Bedingungen. Empfehlung zur widerspruchsfreien Umsetzung: **ein Zonenboss ersetzt an diesen Wellen den normalen Boss**, kein ungeplanter Doppelboss. Dies ist ein technischer Vorschlag, noch kein ausdrücklich bestätigter Beschluss. | Bestätigung offen |
+| K04 | Mittel | Exponentielle Gegnerstärke; Bosssprünge und Gebietssprünge (F87); Belohnungssprünge (F88); Fairness | Mehrere multiplikative Skalierungen können Bosse unverhältnismässig stark machen. V0.1-Boss auf Welle 10 bereits als zu schwer gemeldet. Separate Kurven und frühe Balancingtests nötig. | Balancing offen |
+| K05 | Hoch | Automatisches Speichern des aktiven Runs (F90); kein Offline-Fortschritt; Pause und Run-Ende | Bei Wiederaufnahme exakt gespeicherten Zustand laden; **keine** Nachberechnung anhand verstrichener Realzeit. Ein abgeschlossener Run darf nicht wieder als aktiv geladen werden. | Technische Festlegung nötig |
+| K06 | Hoch | Export/Import (F90); temporäre Ausrüstung/Tränke; permanente Werte | Backup muss **aktiven Run inklusive temporärer Gegenstände** und **permanenten Fortschritt** sichern. Temporäre Ausrüstung verschwindet erst bei tatsächlichem Run-Ende, nicht beim Schliessen, Export oder Import. | Konsistent, Tests nötig |
+| K07 | Mittel | 50 Inventarplätze; frühere Formulierung „jeder Slot 5 Plätze“; 9 Ausrüstungsslots | Unklare UI-Aufteilung; 50 Inventarplätze sind vereinbart, aber „Slot“ könnte Inventarseite statt Ausrüstungsslot meinen. Nicht ohne Rückfrage auf neunmal fünf Plätze umdeuten. | Nutzerklärung offen |
+| K08 | Mittel | Eigene Gegner pro Zone (F83); keine Umgebungseffekte; Bosse mit Spezialmechaniken (F84) | Eigene Zonenfähigkeiten sind **Gegner-/Bossfähigkeiten**, keine zwingenden passiven Umweltschäden. Damit sind F83 und die ältere Regel zu fehlenden Umgebungseffekten vereinbar. | Konsistent |
+| K09 | Mittel | Vier aktive Skills; Auto/manuell je Skill (F85); Bedingungen je Auto-Skill (F86); manuelle Tränke | Skill-Automatik und Trank-Automatik sind **getrennte Einstellungen**. Vier-Slot-Grenze betrifft aktive Klassenfähigkeiten, nicht Verbrauchstränke. | Konsistent, UI trennen |
+| K10 | Mittel | Held bewegt sich automatisch (F79); Zielpriorität (F80); unterschiedliche Gegner-KI (F73) | Zielwahl und Bewegung sind verschiedene Systeme. Fernkämpfer halten Abstand zu ihrem **gewählten** Ziel; Gegner können unabhängig andere Ziele wählen. | Konsistent, erst später implementieren |
+| K11 | Mittel | Bossbelohnungen; Seelen nur am Run-Ende; Belohnungssystem F88 | „Bosse geben zusätzliche Belohnungen“ bezieht sich unmittelbar auf **Gold, Münzen, XP und Loot**, nicht auf direkt ausgeschüttete Seelen. Gebietsbelohnungssprünge ebenfalls keine direkten Seelendrops. | Konsistent, explizit abgegrenzt |
+| K12 | Mittel | Set-Items und legendäre Items nur pro Run; Statistiken/Run-Historie (F89) | Run-Historie darf Namen/Statistiken ehemaliger Ausrüstung als **historische Daten** speichern, aber Gegenstände nicht wieder nutzbar machen. | Konsistent |
+| K13 | Mittel | Permanente Talentpunkte, Respec mit Münzen; Talentfähigkeiten; Run-Reset | Freigeschaltete Talentpunkte und deren Verteilung bleiben über Runs erhalten; ein Respec setzt nur die **Verteilung** zurück, nicht die Anzahl gekaufter Punkte. Run-Reset löscht keine permanenten Talente. | Konsistent |
+| K14 | Mittel | Prozentuale Verteidigung und flache Verteidigung; exponentieller Gegnerangriff | Berechnungsreihenfolge und Caps sind noch offen; ohne Caps könnte prozentuale Verteidigung spätere Wellen trivialisieren. Keine willkürliche Formel als bereits beschlossen behandeln. | Balancing offen |
+| K15 | Niedrig | Hohe Wellen mit legendärer Beute; Levelanforderung für Ausrüstung; Run-Level-Reset | Levelanforderungen dürfen Items innerhalb eines Runs vorübergehend untragbar machen. Itemlevel und Heldenlevel sind getrennte Werte. | Konsistent |
+| K16 | Mittel | Begleiterhaltungen (F78); gegnerische Zielwahl (F73); Klassenabhängigkeit (F74–77) | Haltungen steuern Begleiterverhalten, **nicht** direkt die Zielpriorität gegnerischer KI. Begleiterzahlen und Wiederbelebung bleiben klassenabhängig. | Konsistent |
+| K17 | Hoch | „Run endet bei Tod oder freiwilligem Abbruch“; Speicherung/Backup; manuelles Beenden | Eine normale Pause oder das Schliessen des Browsers **beendet keinen Run** und vergibt keine Seelen. Nur Tod und bestätigtes freiwilliges Beenden rechnen den Run ab. | Konsistent, bei Implementierung absichern |
+| K18 | Mittel | Moderne Pixel-Art (F82); mobiler Bildschirm Kampf oben/Menüs unten (F81) | Detaillierte Animationen dürfen die Lesbarkeit und Performance auf dem iPhone nicht beeinträchtigen. Grafik ist eine Stilvorgabe, kein Grund, zuerst aufwendige Assets statt Gameplay zu bauen. | Konsistent |
+
+### Vor Umsetzung gezielt klären
+1. **K03:** Zonenboss ersetzt normalen Boss auf jeder 50. Welle? Vorgeschlagen: ja.
+2. **K07:** Bedeutet „5 Plätze je Slot“ fünf sichtbare Inventarfelder pro Seite, oder eine andere Aufteilung? 50 Gesamtplätze bleiben fest.
+3. **K14:** Prozentverteidigung, Stat-Caps und Schadenformel im Balancing festlegen; dabei keine Designentscheidung überschreiben.
+
+### Verbindliche technische Prüfliste für kommende Versionen
+- [ ] Boss Welle 10 fair abstimmen; Welle 20/50 mitprüfen (K04).
+- [ ] Tod, freiwilliges Run-Ende und Seelenabrechnung getrennt testen (K02, K17).
+- [ ] Pausieren durch Inventar und manuelle Pause ohne Timer-Nachlauf testen (K01).
+- [ ] Speichern/Wiederaufnahme ohne Offline-Erträge und ohne doppeltes Run-Ende testen (K05).
+- [ ] Export/Import inklusive aktivem Run und permanenter Werte mit Datenvalidierung testen (K06).
+- [ ] Skill-Auto-Regeln und Trank-Auto-Regeln getrennt implementieren (K09).
+- [ ] Direkte Seelendrops aus Bossen oder Gebieten ausschliessen (K11).
+- [ ] Run-Historie von tatsächlich nutzbarem Inventar trennen (K12).
+- [ ] Talent-Respec darf gekaufte Punkte nicht vernichten (K13).
+- [ ] Skalierung von Gegnern, Bossen, Gebieten und Belohnungen gemeinsam testen (K04, K14).
+- [ ] Zonenbosse auf Wellen 50/100 eindeutig behandeln (K03).
+- [ ] Inventaraufteilung mit Nutzer klären, bevor die endgültige UI entsteht (K07).
+- [ ] Nach jeder Version diese Prüfliste und den Implementierungsstand aktualisieren.
+
 ## Noch offene Entscheidungen
 - Exakte Item-/Trankdropraten, konkrete Balancing-Formeln und Feintuning der vorläufigen 15-Sekunden-Trankabklingzeit.
 - Präzise Ausgestaltung aller Talentknoten, Skill- und Bosslisten.
@@ -124,3 +171,4 @@ Erste implementierte Basis: automatischer Kampf, einfache exponentiell skalieren
 ## Änderungsprotokoll
 - 18.10.2026: Entscheidungen bis Frage 81 zusammengetragen; 0.1 als bewusster kleiner technischer Anfang definiert.
 - 18.10.2026: **Alle 90 Designfragen abgeschlossen**; Fragen 82–90 ergänzt. Erster iPhone-Spieltest bestätigt grundlegenden Loop, meldet aber viel zu schweren Boss auf Welle 10. V0.1.1 und weitere Schritte priorisiert.
+- 18.10.2026: Konsistenzprüfung mit 18 Prüfpunkten, 3 gezielten Klärungsfällen und technischer Checkliste ergänzt; keine bestehenden Nutzerentscheidungen eigenmächtig geändert.
