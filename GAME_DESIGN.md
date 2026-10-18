@@ -456,3 +456,17 @@ Verglichen werden vier legale 51-Punkte-Verteilungen: **51/0/0** (reiner Blutber
 3. **Unbezwingbar – Kampfentschlossenheit:** Erlittene oder abgewehrte Treffer bauen eine Ressource auf, die Gegenangriffe und Schutz-/Heileffekte verstärkt. Auch dieser Baum muss Gegner selbst besiegen können, ohne Blutrausch als Pflicht.
 
 **Offen und ausdrücklich noch nicht beschlossen:** Konkrete Stapelgrenzen, Auslösewahrscheinlichkeiten, Schadensformeln, Verfallsregeln, Bossverhalten und die Balance zwischen kurzen und langen Kämpfen. Die Mechaniken sind Vorschläge zur Nutzerfreigabe; keine endgültigen Implementierungsvorgaben.
+
+## Gemeinsame Kampfeffekte – mathematischer Basisentwurf V1.0 (18.10.2026; vorläufig, Balancetest ausstehend)
+
+**Grundsatz:** Keine zusätzlichen klassenspezifischen Ressourcenleisten. Stattdessen universell auswertbare Buffs/Debuffs, die durch frühe Talente jeder Spezialisierung verfügbar werden. Mechaniken funktionieren unabhängig voneinander und können kombiniert werden.
+
+| Mechanik | Träger | Dauer | Stapelgrenze | Basiswirkung |
+|---|---|---:|---:|---|
+| **Blutung** (Blutrausch) | Gegner | 6 s pro Stapel | 5 | Jeder Stapel verursacht insgesamt **30 % des Angriffsschadens zum Auslösezeitpunkt** über seine 6 s; Stapel haben unabhängige Laufzeiten |
+| **Verderbnis** (Schattenmacht) | Gegner | 8 s pro Stapel | 3 | **+3 % erlittener Schaden pro Stapel**, maximal +9 %; gilt für direkte Angriffe, Schattenmagie, Blutungen und Gegenangriffe; Stapel laufen unabhängig |
+| **Kampfentschlossenheit** (Unbezwingbar) | Spieler | 8 s pro Stapel | 5 | **−2 % erlittener Schaden pro Stapel**, maximal −10 %; entsteht durch erfolgreiche eigene Angriffe und abgewehrte Treffer, spätere Talente können Gegenangriffe damit verstärken |
+
+**Rechenbeispiele ohne sonstige Modifikatoren:** Bei 100 Angriffsschaden entsprechen fünf volle Blutungsstapel **150 Schaden über deren gesamte jeweilige Laufzeit**, nicht 150 DPS. Drei Verderbnisstapel multiplizieren relevanten ausgeteilten Schaden mit **1,09**. Fünf Entschlossenheitsstapel multiplizieren relevanten eingehenden Schaden mit **0,90**. Diese Prozentwerte sind zunächst **additiv innerhalb derselben Mechanik** und wirken als getrennte Multiplikatoren zu anderen Mechaniken; keine unbeschränkte multiplikative Stapelung pro Einzelstapel.
+
+**Noch auszuarbeiten vor Implementierung:** Präzise Auslösechancen und Trigger (insbesondere Entschlossenheit ohne Gegnerangriff), Taktfrequenz für Schaden über Zeit, Überschreiben/Refresh bei maximalen Stapeln, Verhalten bei Zielwechsel und Tod, Reihenfolge mit Verteidigung, Crit und Rüstungsbruch, mögliche Caps aus weiteren Talenten, Schadensvergleich über kurze und lange Kämpfe. Die hier angegebenen Zahlen sind **Balance-Startwerte, nicht freigegeben oder getestet**.
