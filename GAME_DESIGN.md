@@ -57,7 +57,7 @@ Diese Datei ist die zentrale Quelle für die gemeinsam beschlossenen Spielregeln
   - **Schattenmacht:** Schattenmagie und Flüche.
   - **Unbezwingbar:** Tank, Lebensraub, Schadensreduktion.
 - Talentpunkte beliebig zwischen den drei Bäumen verteilbar, insgesamt maximal **51 Punkte**.
-- Talentpunkte dauerhaft einzeln mit Seelen kaufen, Preise exponentiell steigend. Rücksetzung im Hauptmenü gegen permanente Münzen; gekaufte Punkte bleiben.
+- **Talentpunkt-Kosten verbindlich (18.10.2026, Option B):** Pro Klasse maximal 51 dauerhaft gekaufte Talentpunkte. Der erste Punkt kostet **5 Klassenseelen**, jeder weitere Punkt kostet **15 % mehr als der vorherige**. Preis für Punkt n (1–51): `ceil(5 × 1.15^(n−1))` Klassenseelen; auf ganze Seelen pro Punkt aufrunden. Punkte werden ausschliesslich mit den Klassenseelen der jeweiligen Klasse gekauft. Das Punktelimit gilt für den einzigen grossen Talentbaum über alle drei Zweige. Rücksetzung im Hauptmenü gegen permanente Münzen; gekaufte Punkte bleiben.
 - Aktive Fähigkeiten werden ausschliesslich über Talentbäume freigeschaltet. Mehr als vier erlernbar, aber **vier aktive Slots gleichzeitig**. Passive Effekte und Standardangriffe automatisch. **Jede der vier ausgerüsteten aktiven Fähigkeiten kann individuell zwischen manuell und automatisch umgestellt werden** (Frage 85). Für automatisch genutzte Fähigkeiten lassen sich **eigene Einsatzbedingungen** definieren, z. B. Heilung unter 40 % HP oder starke Attacke nur bei Bossen (Frage 86). Keine zwingende komplexe KI; deterministische, konfigurierbare Regeln.
 - Begleiter und Beschwörungen sind **klassenabhängig** (Frage 74), werden durch Talentbäume freigeschaltet und übernehmen anteilig Heldenwerte plus Talentboni (Frage 75).
 - Maximalzahl von Begleitern klassenabhängig (Frage 76), ebenso Wiederbelebung/Neubeschwörung (Frage 77).
@@ -198,3 +198,5 @@ Erste implementierte Basis: automatischer Kampf, einfache exponentiell skalieren
 - 18.10.2026: Nutzerentscheidung: Statt zwei separaten WoW-artigen Talent-/Klassen-Prestige-Bäumen soll es **einen einzigen grossen Klassen-Talentbaum** geben. Zusammenführung der Punkt-/Kostenregeln ist noch zu klären; globales Münz-Prestige bleibt bestehen.
 
 - 18.10.2026: Nutzerentscheidung A: Der einzige grosse Klassen-Talentbaum besitzt insgesamt **51 verteilbare Talentpunkte** pro Klasse; kein zusätzliches separates Klassen-Prestige-Punktelimit.
+
+- 18.10.2026: Nutzerentscheidung B: Die 51 Talentpunkte pro Klasse werden mit Klassenseelen gekauft; Punkt 1 kostet 5 Seelen, jeder folgende 15 % mehr (`ceil(5 × 1.15^(n−1))`).
