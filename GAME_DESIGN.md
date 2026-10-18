@@ -341,3 +341,13 @@ Der Nutzer hat die folgende vollständige Liste ausdrücklich freigegeben. **All
 **Spielbarkeit / Punktprüfung:** 18 Talentknoten und **64 mögliche Ränge** bei nur 51 verteilbaren Punkten. *Blutbad* ist erreichbar: Aufreissende Hiebe 3/5, Tiefe Wunden 2/3, Offene Adern 3/3 und Blutiger Ansturm 1/1 kosten zusammen 9 Punkte; zusätzlich werden 21 frei wählbare, nach Reihenfreischaltung legale Punkte im Blutrausch-Zweig investiert, um vor Kauf von Blutbad die 30-Punkte-Schwelle zu erreichen; der Kauf von Blutbad ist Punkt 31. **Rüstungsbruch bleibt in Reihe 2 ohne direkte Voraussetzung**. Es gibt keine Pflicht, alle 18 Knoten zu kaufen. Das aktive Fähigkeitensystem begrenzt wie beschlossen auf insgesamt vier aktive Fähigkeiten.
 
 **Vorläufige Basis-Blutung:** 6 Sekunden Dauer, insgesamt 30 % Angriffsschaden über Zeit. Die konkrete Berechnung, Stapelgrenzen, Voraussetzungen und Balancing-Werte der anderen Talente werden vor der Implementierung geprüft. Die 51-Punkte-Grenze und das Limit von insgesamt vier aktiven Fähigkeiten bleiben bestehen. 
+
+### Blutrausch V2.2 – drei gleichwertige Einstiege (Designkorrektur, 18.10.2026)
+
+**Problem V2.1:** Aufreissende Hiebe war eine dominante Pflichtwahl, weil es sowohl den frühen Blutungszugang als auch zu viele spätere Voraussetzungen kontrollierte. **Neue Richtung:** Die drei Talente in Reihe 1 müssen unabhängig voneinander sofort spielbar sein und jeweils einen eigenständigen Blutungszugang bzw. offensiven Nutzen eröffnen:
+
+- **Aufreissende Hiebe (5/5):** Normale Angriffe können Blutungen verursachen. Häufigkeits-/Stapelspielstil.
+- **Blutige Klinge (5/5):** Bereits mit Rang 1 fügt **Vernichtender Hieb** garantiert eine Blutung zu. Weitere Ränge verstärken diesen gezielten Blutungsweg (genaue Zahlen noch balancieren).
+- **Kampfhunger (5/5):** Bereits mit Rang 1 steigt das Angriffstempo beim fortgesetzten Angriff auf einen Gegner, **ohne dass dieser bluten muss**. Weitere Ränge verstärken das Tempo; Fokus auf schnelle Angriffe.
+
+**Voraussetzungen anpassen:** Blutiger Ansturm (Reihe 3) ist **nicht mehr** von Aufreissende Hiebe abhängig; seine eigene garantierte Blutung macht ihn für jeden Einstiegsweg nützlich. Der Endtalentpfad Blutbad darf nicht ausschliesslich über Aufreissende Hiebe -> Tiefe Wunden -> Offene Adern zugänglich sein. Vor der finalen Freigabe sind alternative Zugänge zu Offene Adern/Blutbad zu definieren, sodass alle drei Startwege eine realistische, punktökonomisch konkurrenzfähige Route zum Endtalent haben. Die in V2.1 dokumentierten gegenteiligen Voraussetzungen gelten als überholt. Die Gesamtstruktur (7 Reihen, 18 Talente, 64 Ränge, 51 verfügbare Punkte, 2 aktive Spezialisierungsfähigkeiten) bleibt bestehen.
