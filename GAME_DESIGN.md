@@ -446,3 +446,13 @@ Verglichen werden vier legale 51-Punkte-Verteilungen: **51/0/0** (reiner Blutber
 - Frühreihen enthalten sowohl eigenständig brauchbare allgemeine Boni als auch Spezialmechaniken; spätere Reihen bringen starke, verzweigte Synergien. 51/0/0, 0/51/0 und 0/0/51 sollen jeweils interessant sein, 31/20-Hybride ebenfalls.
 - Die zuvor dokumentierten 18-Knoten-Listen sind **Arbeitsentwürfe**, nicht final freigegeben. Bei der nächsten vollständigen Überarbeitung sollen auch Talentverbindungen und Zahlen auf mathematische Erreichbarkeit geprüft werden.
 - Weiterhin verbindlich: 7 Reihen, 51 Punkte über alle drei Zweige, Reihe-3- und Reihe-7-Aktivtalente, höchstens drei zusätzlich zur Startfähigkeit erlernbare aktive Fähigkeiten, Rüstungsbruch 5/5 in Reihe 2 aller drei Bäume.
+
+## Kernmechaniken zuerst – Designpriorität (18.10.2026; zur Diskussion)
+
+**Arbeitsreihenfolge:** Vor weiteren Talentlisten zuerst die eigenständigen Kernmechaniken der drei Dunkler-Krieger-Spezialisierungen festlegen, mit Trigger, Stapel-/Ressourcenlogik, Belohnung, Gegenrisiko und Verhalten bei kurzen bzw. langen Kämpfen. Allgemeine WoW-Classic-inspirierte Talente erst danach ergänzen.
+
+1. **Blutrausch – Blutungen:** Angriffe lösen zeitlich begrenzten Schaden über Zeit aus, mehrere Blutungsstapel können gleichzeitig wirken. Spätere Fähigkeiten können Stapel verstärken oder für unmittelbaren Schaden verwerten. Offensive Identität.
+2. **Schattenmacht – Schattenmale und Flüche:** Schattenangriffe erzeugen Male am Gegner; Flüche schwächen ihn. Male können für starke Schatteneffekte verbraucht oder in längeren Kämpfen genutzt werden. Eigenständiger Spielstil ohne Blutungen.
+3. **Unbezwingbar – Kampfentschlossenheit:** Erlittene oder abgewehrte Treffer bauen eine Ressource auf, die Gegenangriffe und Schutz-/Heileffekte verstärkt. Auch dieser Baum muss Gegner selbst besiegen können, ohne Blutrausch als Pflicht.
+
+**Offen und ausdrücklich noch nicht beschlossen:** Konkrete Stapelgrenzen, Auslösewahrscheinlichkeiten, Schadensformeln, Verfallsregeln, Bossverhalten und die Balance zwischen kurzen und langen Kämpfen. Die Mechaniken sind Vorschläge zur Nutzerfreigabe; keine endgültigen Implementierungsvorgaben.
