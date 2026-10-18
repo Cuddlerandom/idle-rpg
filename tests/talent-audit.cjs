@@ -4,7 +4,7 @@
 function audit(gameHtml,plannerHtml){
  const match=gameHtml.match(/<script>([\s\S]*?)<\/script>/);
  if(!match)throw Error('Combat script missing');
- const m=plannerHtml.match(/const trees=([\s\S]*?);const ranks=/);
+ const m=plannerHtml.match(/const trees=([\s\S]*?);const (?:ranks|PROG_KEY)=/);
  if(!m)throw Error('Planner talent data missing');
  const trees=JSON.parse(m[1]),js=match[1];
  const init=new Function('localStorage','document','performance','requestAnimationFrame','window','confirm','Math',js+
