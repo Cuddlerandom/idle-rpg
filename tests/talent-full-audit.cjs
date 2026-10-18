@@ -119,6 +119,7 @@ function audit(warriorCode,gameCode){
  check('Finsternis: Dauer und Cooldown',()=>{const a=spawn(1,17,true);a.cast(1);return a.effects.darkUntil===10000&&a.effects.cd.dark===35000});
  check('Blutbad entlädt Restschaden und beendet Blutungen',()=>{const a=spawn(0,17,true);a.effects.bleeds=[{end:6000,remaining:80}];const old=a.enemyHp;a.cast(1);return Math.abs(old-a.enemyHp-80)<.00001&&a.effects.bleeds.length===0&&a.effects.cd.bloodbath===30000});
  check('Schadensverstärkung nur gegen verderbte Bosse',()=>{const a=spawn(1,16,true);a.enemy.wave=10;const plain=a.heroHit();const b=spawn(1,16,true);b.enemy.wave=10;b.addCorrupt(true);const cursed=b.heroHit();return cursed>plain});
+ check('Unstillbarer Hunger wirkt auch beim tödlichen letzten Blutungstick',()=>{const a=spawn(0,16,true);a.enemyHp=5;a.effects.bleeds=[{end:1000,remaining:20}];a.tick(1000);return a.state.run.wave===2&&a.effects.hungerUntil===7000});
  const failures=[...details.filter(x=>!x.pass),...extras.filter(x=>!x.pass)];
  return {total:details.length,passed:details.filter(x=>x.pass).length,rankChecks,coreAndIntegration:extras.length,extraPassed:extras.filter(x=>x.pass).length,failures,details,extras};
 }
