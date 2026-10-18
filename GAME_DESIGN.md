@@ -32,13 +32,13 @@ Diese Datei ist die zentrale Quelle für die gemeinsam beschlossenen Spielregeln
 - **Belohnungsskalierung (Frage 88):** Gold, Münzen und XP steigen mit jeder Welle; Bosse geben Extra-Belohnungen, neue Gebiete bringen zusätzliche Belohnungssprünge. Seelen bleiben ausschliesslich Run-Ende-Belohnung.
 - Kein automatischer Gold-Upgrade-Kauf.
 - Werkstatt: viele dauerhafte Stats, u. a. Angriff, HP, flache Verteidigung, prozentuale Verteidigung, Regeneration, Angriffstempo, Krit-Chance, Krit-Schaden, Lebensraub. Unterschiedliche Maximallevel je Stat, hohe Caps für Angriff/HP.
-- Prestige-Wirtschaft: verzweigter Baum mit Goldbonus, XP-Bonus, Seelenbonus, Loot-Glück, günstigeren Upgrades und Spielgeschwindigkeit. Neue Äste durch vorherige Investitionen; exponentielle Kosten, feste Caps.
+- Prestige-Wirtschaft: verzweigter Baum mit Goldbonus, XP-Bonus, Seelenbonus, Loot-Glück, günstigeren Upgrades, **Erhöhung des Caps für prozentuale Verteidigung (Schritt 3)** und Spielgeschwindigkeit. Neue Äste durch vorherige Investitionen; exponentielle Kosten, feste Caps.
 - XP/Heldenlevel nur innerhalb des Runs; beim Level-up automatisch Grundwerte erhöhen, keine manuelle Statverteilung. Level nach Run-Ende wieder 1.
 - Permanente Werkstatt und Seelen/Talentpunkte bleiben beim Run-Ende erhalten.
 
 ## Kampfwerte und Statuseffekte
 - Dauerhafte HP-Regeneration auch während des Kampfes; zusätzlich Heilfähigkeiten, Lebensraub, Ausrüstung, Talente.
-- **Flache und prozentuale Verteidigung** als getrennte Werte, beide dauerhaft und temporär verbesserbar.
+- **Flache und prozentuale Verteidigung** als getrennte Werte, beide dauerhaft und temporär verbesserbar. **Verbindlich (Schritt 3): Prozentuale Verteidigung besitzt ein anfangs niedriges hartes Maximum, das über dauerhafte Prestige-Upgrades erhöht werden kann.** Das Maximum bleibt stets unter 100 %; keine unbegrenzte Schadensimmunität. Konkretes Start-Cap, Prestige-Stufen und End-Cap werden im Balancing festgelegt. Flache Verteidigung bleibt unabhängig.
 - Waffenspezifisches Angriffstempo mit Cap, steigerbar über Werkstatt, Run-Gold und Talente.
 - Krit-Chance und Krit-Schaden getrennt upgradebar.
 - Klassische Effekte: Blutung, Gift, Verbrennung, Verlangsamung, Betäubung, Schwächung, Rüstungsreduktion (Frage 53).
@@ -137,7 +137,7 @@ Erste implementierte Basis: automatischer Kampf, einfache exponentiell skalieren
 | K11 | Mittel | Bossbelohnungen; Seelen nur am Run-Ende; Belohnungssystem F88 | „Bosse geben zusätzliche Belohnungen“ bezieht sich unmittelbar auf **Gold, Münzen, XP und Loot**, nicht auf direkt ausgeschüttete Seelen. Gebietsbelohnungssprünge ebenfalls keine direkten Seelendrops. | Konsistent, explizit abgegrenzt |
 | K12 | Mittel | Set-Items und legendäre Items nur pro Run; Statistiken/Run-Historie (F89) | Run-Historie darf Namen/Statistiken ehemaliger Ausrüstung als **historische Daten** speichern, aber Gegenstände nicht wieder nutzbar machen. | Konsistent |
 | K13 | Mittel | Permanente Talentpunkte, Respec mit Münzen; Talentfähigkeiten; Run-Reset | Freigeschaltete Talentpunkte und deren Verteilung bleiben über Runs erhalten; ein Respec setzt nur die **Verteilung** zurück, nicht die Anzahl gekaufter Punkte. Run-Reset löscht keine permanenten Talente. | Konsistent |
-| K14 | Mittel | Prozentuale Verteidigung und flache Verteidigung; exponentieller Gegnerangriff | Berechnungsreihenfolge und Caps sind noch offen; ohne Caps könnte prozentuale Verteidigung spätere Wellen trivialisieren. Keine willkürliche Formel als bereits beschlossen behandeln. | Balancing offen |
+| K14 | Teilweise gelöst | Prozentuale Verteidigung und flache Verteidigung; exponentieller Gegnerangriff | **Schritt 3 entschieden:** Prozentverteidigung hat ein anfänglich niedriges hartes Cap, das über Prestige dauerhaft erhöht wird; immer unter 100 %. Flache Verteidigung ist separat. Die genaue Berechnungsreihenfolge, Start-/Endwerte und Kosten sind weiterhin Balancing-Details. | Grundprinzip entschieden; Zahlen offen |
 | K15 | Niedrig | Hohe Wellen mit legendärer Beute; Levelanforderung für Ausrüstung; Run-Level-Reset | Levelanforderungen dürfen Items innerhalb eines Runs vorübergehend untragbar machen. Itemlevel und Heldenlevel sind getrennte Werte. | Konsistent |
 | K16 | Mittel | Begleiterhaltungen (F78); gegnerische Zielwahl (F73); Klassenabhängigkeit (F74–77) | Haltungen steuern Begleiterverhalten, **nicht** direkt die Zielpriorität gegnerischer KI. Begleiterzahlen und Wiederbelebung bleiben klassenabhängig. | Konsistent |
 | K17 | Hoch | „Run endet bei Tod oder freiwilligem Abbruch“; Speicherung/Backup; manuelles Beenden | Eine normale Pause oder das Schliessen des Browsers **beendet keinen Run** und vergibt keine Seelen. Nur Tod und bestätigtes freiwilliges Beenden rechnen den Run ab. | Konsistent, bei Implementierung absichern |
@@ -146,7 +146,7 @@ Erste implementierte Basis: automatischer Kampf, einfache exponentiell skalieren
 ### Vor Umsetzung gezielt klären
 1. **K03 erledigt:** Zonenboss ersetzt normalen Boss auf jeder 50. Welle (Schritt 1: A).
 2. **K07 erledigt:** 50 Inventarplätze in einem scrollbaren Raster; 9 Ausrüstungsplätze separat (Schritt 2: A).
-3. **K14:** Prozentverteidigung, Stat-Caps und Schadenformel im Balancing festlegen; dabei keine Designentscheidung überschreiben.
+3. **K14 teilweise erledigt:** Prozentverteidigung hat ein anfangs niedriges Cap, das über Prestige steigt und stets unter 100 % bleibt (Schritt 3). Genaue Zahlen und Schadensformel im Balancing festlegen.
 
 ### Verbindliche technische Prüfliste für kommende Versionen
 - [ ] Boss Welle 10 fair abstimmen; Welle 20/50 mitprüfen (K04).
@@ -159,6 +159,7 @@ Erste implementierte Basis: automatischer Kampf, einfache exponentiell skalieren
 - [ ] Run-Historie von tatsächlich nutzbarem Inventar trennen (K12).
 - [ ] Talent-Respec darf gekaufte Punkte nicht vernichten (K13).
 - [ ] Skalierung von Gegnern, Bossen, Gebieten und Belohnungen gemeinsam testen (K04, K14).
+- [ ] Prozentverteidigungs-Cap ab Spielstart und dessen Prestige-Erhöhungen implementieren; unter 100 % begrenzen und mit flacher Verteidigung testen (K14).
 - [ ] Beschlossene Zonenboss-Ersetzung auf Wellen 50/100 im Spiel umsetzen und testen (K03; Design geklärt).
 - [ ] Beschlossenes scrollbares 50er-Inventarraster und separate 9 Ausrüstungsplätze im Spiel umsetzen und auf iPhone testen (K07; Design geklärt).
 - [ ] Nach jeder Version diese Prüfliste und den Implementierungsstand aktualisieren.
@@ -175,3 +176,5 @@ Erste implementierte Basis: automatischer Kampf, einfache exponentiell skalieren
 - 18.10.2026: Schritt 1 (K03) durch Nutzer entschieden: Auf jeder 50. Welle ersetzt der Zonenboss den normalen Boss; keine zwei Bosse gleichzeitig oder nacheinander.
 
 - 18.10.2026: Schritt 2 (K07) durch Nutzer entschieden: 50 Inventarplätze als ein scrollbares Raster; neun Ausrüstungsplätze separat.
+
+- 18.10.2026: Schritt 3 (K14) durch Nutzer entschieden: hartes, anfangs niedriges Cap für Prozentverteidigung; dauerhaft per Prestige steigerbar, aber nie 100 %. Exakte Werte und Schadensformel bleiben Balancing-Aufgabe.
