@@ -435,3 +435,14 @@ Verglichen werden vier legale 51-Punkte-Verteilungen: **51/0/0** (reiner Blutber
 ## Talentvielfalt nach WoW-Classic-Vorbild (18.10.2026; Nutzerwunsch)
 
 **Wichtige Ergänzung zur Spezialisierungsidentität:** Nicht alle Talente eines Zweigs müssen auf seine Kernmechanik einzahlen. Jeder Spezialisierungsbaum soll eine durchdachte Mischung aus **allgemeinen passiven Kampfboni**, **spezialisierungstypischen Effekten** und **besonderen proccenden bzw. regelverändernden Talenten** bieten. Beispiele: kritische Trefferchance, Angriffstempo, Zweihandwaffenschaden, Rüstung, maximale Lebenspunkte, Abklingzeitverkürzung, Gegenangriffe, Chancen auf zusätzliche Angriffe oder vollständiges Abwehren. Dies ist ausdrücklich zusätzlich zum einfachen, neun Talente umfassenden allgemeinen Klassenkern erlaubt. Die drei Spezialisierungen behalten eine klare Identität (Blutungen / Schattenmale und Flüche / Kampfentschlossenheit), sollen aber nicht monothematisch werden. **Hybrid-Talente** sollen auch ohne fremde Endfähigkeit Nutzen haben. Das konkrete Verhältnis allgemeiner zu spezialisierter Talente wird nach Spielgefühl und Balance bestimmt, nicht als starre Quote.
+
+## WoW-Classic-Krieger als primäre Referenz für die nächste Talentbaum-Revision (18.10.2026)
+
+**Nutzerentscheidung:** Bei der Neugestaltung der drei Spezialisierungen ausdrücklich am **Krieger aus World of Warcraft Classic** orientieren, insbesondere an dessen Talentbäumen **Waffen (Arms), Furor (Fury) und Schutz (Protection)**. Nicht identisch kopieren, sondern die Struktur, Vielfalt, Hybrid-Anreize, frühen generischen Talente, verknüpften Talente und tiefen Spezialisierungsbelohnungen adaptieren. Die eigenständige Dark-Fantasy-Identität des Spiels bleibt bestehen.
+
+- **Blutrausch:** Inspiration aus Waffen/Furor: Zweihandwaffenschaden, Blutungen, kritische Treffer, Angriffstempo, aggressive Procs.
+- **Schattenmacht:** Inspiration aus offensiven Waffen-/Furor-Mechaniken, jedoch eigenständig mit Schattenmagie, Flüchen und Schattenmalen.
+- **Unbezwingbar:** Inspiration aus Schutz: Rüstung, Blocken/Abwehren, Gegenangriffe, Zähigkeit; zusätzlich Lebensraub als eigene Spielidentität.
+- Frühreihen enthalten sowohl eigenständig brauchbare allgemeine Boni als auch Spezialmechaniken; spätere Reihen bringen starke, verzweigte Synergien. 51/0/0, 0/51/0 und 0/0/51 sollen jeweils interessant sein, 31/20-Hybride ebenfalls.
+- Die zuvor dokumentierten 18-Knoten-Listen sind **Arbeitsentwürfe**, nicht final freigegeben. Bei der nächsten vollständigen Überarbeitung sollen auch Talentverbindungen und Zahlen auf mathematische Erreichbarkeit geprüft werden.
+- Weiterhin verbindlich: 7 Reihen, 51 Punkte über alle drei Zweige, Reihe-3- und Reihe-7-Aktivtalente, höchstens drei zusätzlich zur Startfähigkeit erlernbare aktive Fähigkeiten, Rüstungsbruch 5/5 in Reihe 2 aller drei Bäume.
