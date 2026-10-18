@@ -76,7 +76,7 @@ function audit(gameHtml,plannerHtml){
  a=>{a.state.run.hp=50;a.tick(1000);return a.state.run.hp},
  a=>a.stats().hp,
  a=>{a.state.run.hp=30;a.enemy.speed=1000;a.tick(1000);return a.state.run.hp},
- a=>{a.effects.resolve=[9000,9000,9000];a.enemy.speed=1000;const before=a.enemyHp;a.tick(1000);return before-a.enemyHp},
+ a=>{a.build[2][7]=5;a.effects.resolve=[9000,9000,9000];a.enemy.speed=1000;const before=a.enemyHp;a.tick(1000);return before-a.enemyHp},
  a=>{a.build[2][1]=1;a.state.run.hp=20;a.heroHit();return a.state.run.hp},
  a=>{a.effects.revenge=true;return a.heroHit()},
  a=>{a.effects.resolve=[9000,9000,9000,9000,9000];return a.stats().def},
@@ -119,6 +119,17 @@ function audit(gameHtml,plannerHtml){
  check('Verderbnis verstärkt Blutungsschaden',()=>{const a=spawn(0,0);a.effects.bleeds=[{end:9000,remaining:100,dps:.1}];const b=a.enemyHp;a.tick(1000);const plain=b-a.enemyHp;const x=spawn(0,0);x.effects.bleeds=[{end:9000,remaining:100,dps:.1}];x.addCorrupt(true);const z=x.enemyHp;x.tick(1000);return z-x.enemyHp>plain});
  check('Schattenrüstung verringert Schaden',()=>{const probe=a=>{a.addCorrupt(true);a.enemy.speed=1000;a.tick(1000);return a.state.run.hp};return probe(spawn(1,14,true))>probe(spawn(1,14,false))});
  check('Core-Meilenstein erst nach Sieg über Welle 10',()=>{const a=spawn(0,0);a.state.run.wave=9;a.win();const early=a.progress.milestones.includes(10);a.win();return !early&&a.progress.milestones.includes(10)});
+ check('Blutiger Ansturm verursacht garantierte Blutung und 12 s Cooldown',()=>{const a=spawn(0,6,true);const k=a.availableSkills().findIndex(x=>x.id==='rush');a.cast(k);return a.effects.bleeds.length===1&&a.effects.cooldowns[k]===12000});
+ check('Blutbad verbraucht Blutungsschaden korrekt',()=>{const a=spawn(0,17,true);a.effects.bleeds=[{end:10000,remaining:80,dps:.008}];const before=a.enemyHp;const k=a.availableSkills().findIndex(x=>x.id==='bloodbath');a.cast(k);return Math.abs((before-a.enemyHp)-80)<.001&&a.effects.bleeds.length===0&&a.effects.cooldowns[k]===30000});
+ check('Schattenfluch trägt drei Verderbnisstapel auf',()=>{const a=spawn(1,6,true);const k=a.availableSkills().findIndex(x=>x.id==='curse');a.cast(k);return a.effects.corrupt.length===3&&a.effects.cooldowns[k]===15000});
+ check('Finsternis gewährt +25 % und garantiert Verderbnis auf Treffer',()=>{const base=spawn(1,17,true);base.state.run.hp=100;const before=base.heroHit();const a=spawn(1,17,true);const k=a.availableSkills().findIndex(x=>x.id==='dark');a.cast(k);const boosted=a.heroHit();return Math.abs(boosted-before*1.25)<.001&&a.effects.corrupt.length>0&&a.effects.cooldowns[k]===35000});
+ check('Schildbrecher gewährt drei Entschlossenheitsstapel',()=>{const a=spawn(2,6,true);const k=a.availableSkills().findIndex(x=>x.id==='breaker');a.cast(k);return a.effects.resolve.length===3&&a.effects.cooldowns[k]===16000});
+ check('Letzte Bastion gewährt 8 s Schutz und 40 s Cooldown',()=>{const a=spawn(2,17,true);const k=a.availableSkills().findIndex(x=>x.id==='bastion');a.cast(k);return a.effects.bastionUntil===8000&&a.effects.cooldowns[k]===40000});
+ check('Dunkle Resonanz erhöht nicht die Krit-Chance',()=>{const a=spawn(1,7,true,.99);a.addCorrupt(true);const x=a.heroHit();const b=spawn(1,7,false,.99);b.addCorrupt(true);return Math.abs(x-b.heroHit())<.00001});
+ check('Schwarze Magie verbessert Schatten-, nicht Direktschaden',()=>{const a=spawn(1,11,true,.99),b=spawn(1,11,false,.99);return Math.abs(a.heroHit()-b.heroHit())<.00001});
+ check('Seelenfessel verändert nicht gegnerischen Angriffsschaden',()=>{const a=spawn(1,10,true),b=spawn(1,10,false);for(const x of [a,b]){x.addCorrupt(true);x.enemy.speed=1000;x.tick(3000)}return Math.abs(a.state.run.hp-b.state.run.hp)<.0001});
+ check('Kern-Henker erhöht auch Blutungsschaden unter 30 %',()=>{const base=spawn(0,0,false,.99,-1),withCore=spawn(0,0,true,.99,8);for(const a of [base,withCore]){a.enemyHp=20000;a.effects.bleeds=[{end:9000,remaining:100,dps:.1}]}const before=base.enemyHp,other=withCore.enemyHp;base.tick(1000);withCore.tick(1000);return (other-withCore.enemyHp)>(before-base.enemyHp)*1.09});
+ check('Speicherung bewahrt laufende Cooldowns',()=>{const a=spawn(0,0);a.cast(0);a.save();const saved=JSON.parse(a.storage.getItem('idle-rpg-core-v01'));return saved.run.effects.cooldowns[0]===10000});
  const failures=[...details.filter(x=>!x.pass),...extras.filter(x=>!x.pass)];
  return {total:details.length,passed:details.filter(x=>x.pass).length,coreAndIntegration:extras.length,extraPassed:extras.filter(x=>x.pass).length,failures,details,extras};
 }
