@@ -17,11 +17,13 @@ jobs:
         run: |
           node --check warrior-system.js
           node --check game.js
+          node --check equipment.js
           node --check tests/warrior.test.cjs
           node --check tests/talent-full-audit.cjs
+          node --check tests/equipment.test.cjs
       - name: Combat and progression regression tests
         run: |
-          node --test tests/warrior.test.cjs
+          node --test tests/warrior.test.cjs tests/equipment.test.cjs
           node tests/talent-full-audit.cjs
       - name: Browser smoke test (Chrome headless)
         run: |
