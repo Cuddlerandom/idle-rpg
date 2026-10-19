@@ -30,7 +30,7 @@ function renderPrestige(){
  const current=n.id==='speed'?1+rank:rank*n.step;
  const next=n.id==='speed'?current+1:current+n.step;
  const top=n.id==='speed'?5:n.max*n.step;
- return (i?'<div class="prestige-connector">│</div>':'')+'<div class="prestige-node '+(locked?'prestige-locked':'')+'"><div><b>'+n.icon+' '+n.name+'</b> <small>'+rank+'/'+n.max+'</small></div><p>'+n.desc+'</p><div class="prestige-stat">Aktuell <b>'+v(current)+'</b></div><div class="prestige-stat">Nächster Rang <b class="prestige-gain">'+(max?'MAX':v(next)+' (+'+v(n.step)+')')+'</b></div><div class="prestige-stat">Maximum <b>'+v(top)+'</b></div>'+(locked?'<small>🔒 Benötigt '+PRESTIGE.find(x=>x.id===n.req).name+' Rang 1</small>':'')+'<button '+(locked||max||state.run.preview||state.coins<prestigePrice(n)?'disabled':'')+' onclick="buyPrestige(\''+n.id+'\')">'+(max?'✓ Maximiert':'🪙 '+fmt(prestigePrice(n)))+'</button></div>';
+ return (i?'<div class="prestige-connector">│</div>':'')+'<div class="prestige-node '+(locked?'prestige-locked':'')+'"><div><b>'+n.icon+' '+n.name+'</b> <small>'+rank+'/'+n.max+'</small></div><p>'+n.desc+'</p><div class="prestige-stat">Aktuell <b>'+v(current)+'</b></div><div class="prestige-stat">Nächster Rang <b class="prestige-gain">'+(max?'MAX':v(next)+' (+'+v(n.step)+')')+'</b></div>'+(locked?'<small>🔒 Benötigt '+PRESTIGE.find(x=>x.id===n.req).name+' Rang 1</small>':'')+'<button '+(locked||max||state.run.preview||state.coins<prestigePrice(n)?'disabled':'')+' onclick="buyPrestige(\''+n.id+'\')">'+(max?'✓ Maximiert':'🪙 '+fmt(prestigePrice(n)))+'</button></div>';
  }).join('')+'</section>').join('')+'</div>';
  const cap=1+prestigeBonus('speed');
  state.gameSpeed=clamp(Number(state.gameSpeed)||1,1,cap);
