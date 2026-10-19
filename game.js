@@ -4,6 +4,39 @@
 const KEY='idle-rpg-core-v01',FIELDS=['atk','hp','def','regen','speed','crit'];
 const LABELS={atk:'⚔️ Angriff',hp:'❤️ Max. Leben',def:'🛡️ Verteidigung',regen:'💚 Regeneration',speed:'⚡ Angriffstempo',crit:'🎯 Krit-Chance'};
 const BASE_COST={atk:15,hp:15,def:22,regen:30,speed:40,crit:45};
+const PRESTIGE=[
+{id:'gold',name:'Goldrausch',icon:'💰',branch:'Reichtum',max:5,step:5,cost:55,desc:'Mehr Gold pro Gegner'},
+{id:'coins',name:'Münzprägung',icon:'🪙',branch:'Reichtum',max:5,step:3,cost:95,req:'gold',desc:'Mehr permanente Münzen'},
+{id:'discount',name:'Werkstattmeister',icon:'🔨',branch:'Reichtum',max:5,step:3,cost:135,req:'coins',desc:'Werkstattkosten sinken'},
+{id:'xp',name:'Wissensdurst',icon:'📖',branch:'Entwicklung',max:5,step:5,cost:55,desc:'Mehr Erfahrung'},
+{id:'loot',name:'Schatzinstinkt',icon:'🎁',branch:'Entwicklung',max:5,step:2,cost:95,req:'xp',desc:'Zusätzliche Beutechance'},
+{id:'tempo',name:'Kampfmeister',icon:'⚔️',branch:'Meisterschaft',max:5,step:2,cost:75,desc:'Mehr Angriffstempo'},
+{id:'guard',name:'Bollwerk',icon:'🛡️',branch:'Meisterschaft',max:5,step:2,cost:125,req:'tempo',desc:'Weniger erlittener Schaden'},
+{id:'speed',name:'Zeitfluss',icon:'⏩',branch:'Meisterschaft',max:4,step:1,cost:180,req:'guard',desc:'Spieltempo bis 5×'}
+];
+const prestigeRank=id=>Math.max(0,Math.floor(Number(state.prestige[id])||0));
+const prestigeBonus=id=>prestigeRank(id)*(PRESTIGE.find(n=>n.id===id)?.step||0);
+const prestigePrice=n=>Math.round(n.cost*Math.pow(1.5,prestigeRank(n.id)));
+function buyPrestige(id){
+ const n=PRESTIGE.find(x=>x.id===id);
+ if(!n||state.run.preview||prestigeRank(id)>=n.max||(n.req&&!prestigeRank(n.req))||state.coins<prestigePrice(n))return;
+ state.coins-=prestigePrice(n);state.prestige[id]=prestigeRank(id)+1;save();render();
+}
+function renderPrestige(){
+ const branches=['Reichtum','Entwicklung','Meisterschaft'];
+ $('prestigeTree').innerHTML='<p>🪙 '+fmt(state.coins)+' Münzen verfügbar</p><div class="prestige-grid">'+branches.map(branch=>'<section class="prestige-column"><h3>'+branch+'</h3>'+PRESTIGE.filter(n=>n.branch===branch).map((n,i)=>{
+ const rank=prestigeRank(n.id),locked=n.req&&!prestigeRank(n.req),max=rank>=n.max;
+ const v=x=>n.id==='speed'?x+'×':x+' %';
+ const current=n.id==='speed'?1+rank:rank*n.step;
+ const next=n.id==='speed'?current+1:current+n.step;
+ const top=n.id==='speed'?5:n.max*n.step;
+ return (i?'<div class="prestige-connector">│</div>':'')+'<div class="prestige-node '+(locked?'prestige-locked':'')+'"><div><b>'+n.icon+' '+n.name+'</b> <small>'+rank+'/'+n.max+'</small></div><p>'+n.desc+'</p><div class="prestige-stat">Aktuell <b>'+v(current)+'</b></div><div class="prestige-stat">Nächster Rang <b class="prestige-gain">'+(max?'MAX':v(next)+' (+'+v(n.step)+')')+'</b></div><div class="prestige-stat">Maximum <b>'+v(top)+'</b></div>'+(locked?'<small>🔒 Benötigt '+PRESTIGE.find(x=>x.id===n.req).name+' Rang 1</small>':'')+'<button '+(locked||max||state.run.preview||state.coins<prestigePrice(n)?'disabled':'')+' onclick="buyPrestige(\''+n.id+'\')">'+(max?'✓ Maximiert':'🪙 '+fmt(prestigePrice(n)))+'</button></div>';
+ }).join('')+'</section>').join('')+'</div>';
+ const cap=1+prestigeBonus('speed');
+ state.gameSpeed=clamp(Number(state.gameSpeed)||1,1,cap);
+ $('prestigeSpeed').innerHTML='<label>⏩ Spieltempo: '+state.gameSpeed+'× (Maximum '+cap+'×) <select onchange="setGameSpeed(this.value)">'+Array.from({length:cap},(_,i)=>i+1).map(v=>'<option value="'+v+'" '+(v===state.gameSpeed?'selected':'')+'>'+v+'×</option>').join('')+'</select></label>';
+}
+function setGameSpeed(v){state.gameSpeed=clamp(Number(v)||1,1,1+prestigeBonus('speed'));save();render()}
 const SKILLS=[
 {id:'base',name:'Vernichtender Hieb',cd:10000,tree:-1,idx:-1},
 {id:'rush',name:'Blutiger Ansturm',cd:12000,tree:0,idx:6},
@@ -22,7 +55,7 @@ const emptyLoot=()=>Loot.emptyRun();
 const blankFx=()=>({time:0,bleeds:[],corrupt:[],resolve:[],cd:{},armorUntil:0,darkUntil:0,bastionUntil:0,hungerUntil:0,soulUntil:0,revenge:false});
 const defaultRun=()=>({wave:1,highest:1,level:1,xp:0,gold:0,hp:100,kills:0,bosses:0,runUp:blankUp(),paused:false,active:true,elapsed:0,enemyHp:0,claimed:false,preview:false,build:null,fx:blankFx(),heroClock:0,enemyClock:0,loot:emptyLoot()});
 const defaults=()=>({coins:0,work:blankUp(),runs:0,best:1,settings:{auto:{}},run:defaultRun()});
-let state;try{state=Object.assign(defaults(),JSON.parse(localStorage.getItem(KEY)||'{}'));state.work=Object.assign(blankUp(),state.work||{});state.settings=Object.assign({auto:{}},state.settings||{});state.settings.auto=state.settings.auto||{};state.run=Object.assign(defaultRun(),state.run||{});state.run.runUp=Object.assign(blankUp(),state.run.runUp||{});state.run.loot=Loot.repair(state.run.loot)}catch{state=defaults()}
+let state;try{state=Object.assign(defaults(),JSON.parse(localStorage.getItem(KEY)||'{}'));state.work=Object.assign(blankUp(),state.work||{});state.prestige=Object.assign({},state.prestige||{});state.settings=Object.assign({auto:{}},state.settings||{});state.settings.auto=state.settings.auto||{};state.run=Object.assign(defaultRun(),state.run||{});state.run.runUp=Object.assign(blankUp(),state.run.runUp||{});state.run.loot=Loot.repair(state.run.loot)}catch{state=defaults()}
 if(!state.run.build){ // Übernahme früherer laufender Test-Runs, ohne gratis Talente permanent zu vergeben.
  const prior=(()=>{try{return JSON.parse(localStorage.getItem('idle-rpg-warrior-build-v1')||'null')}catch{return null}})();
  const s=Warrior.snapshot();
@@ -53,7 +86,7 @@ function stats(){
  hp:(rawHp+g.hp)*(1+.10*C(1)+.03*R(2,0)+.02*R(2,9)+g.hpPct),
  def:(rawDef+g.def)*(1+.05*C(2)+.03*R(2,2)+(.03*R(2,14)*(resolve()===5?1:0))),
  regen:(.5+.35*w.regen+.35*r.runUp.regen+g.regen)*(1+.10*C(4)+.04*R(2,8)),
- speed:Math.max(280,1100-24*(w.speed+r.runUp.speed))/(1+.05*C(3)+.02*R(0,2)+g.speed+(r.hp/Math.max(1,(rawHp+g.hp)*(1+.10*C(1)+.03*R(2,0)+.02*R(2,9)+g.hpPct))<.4&&R(0,12)? .15:0)+(expiring(fx.hungerUntil)?.02*R(0,16):0)),
+ speed:Math.max(280,1100-24*(w.speed+r.runUp.speed))/(1+prestigeBonus('tempo')/100)/(1+.05*C(3)+.02*R(0,2)+g.speed+(r.hp/Math.max(1,(rawHp+g.hp)*(1+.10*C(1)+.03*R(2,0)+.02*R(2,9)+g.hpPct))<.4&&R(0,12)? .15:0)+(expiring(fx.hungerUntil)?.02*R(0,16):0)),
  crit:clamp(5+w.crit+r.runUp.crit+5*C(5)+2*R(0,8)+g.crit*100,0,95),
  critMult:1.5+.10*C(6)+g.critDamage
  };
@@ -145,10 +178,10 @@ function win(killedByBleed=false){
  if(wasBleeding&&R(0,16))fx.hungerUntil=fx.time+6000;
  if(wasCorrupt&&R(1,13))fx.soulUntil=fx.time+5000;
  fx.bleeds=[];fx.corrupt=[];fx.armorUntil=0; // Eigene Buffs und Cooldowns laufen über die Wellen weiter.
- let gold=Math.round((8+w*2)*(boss?5:1)),coins=Math.max(1,Math.round((1+w*.1)*(boss?5:1)));
+ let gold=Math.round((8+w*2)*(boss?5:1)*(1+prestigeBonus('gold')/100)),coins=Math.max(1,Math.round((1+w*.1)*(boss?5:1)*(1+prestigeBonus('coins')/100)));
  r.gold+=gold;if(!r.preview)state.coins+=coins;
- r.xp+=10+Math.round(w*1.6)*(boss?3:1);r.kills++;if(boss)r.bosses++;
- gainLevel();const dropped=Loot.award(r.loot,w,r.level,boss);
+ r.xp+=Math.round((10+Math.round(w*1.6)*(boss?3:1))*(1+prestigeBonus('xp')/100));r.kills++;if(boss)r.bosses++;
+ gainLevel();let dropped=Loot.award(r.loot,w,r.level,boss);if(!dropped&&Math.random()<prestigeBonus('loot')/100){const extra=Loot.roll({wave:w,level:r.level,boss:true,seq:++r.loot.seq});if(extra){dropped=extra;if(r.loot.inventory.length<50)r.loot.inventory.push(extra);else r.loot.ground.push({item:extra,dropWave:w})}}
  if(dropped)recentLoot={id:dropped.id,name:dropped.name,rarity:dropped.rarity,slot:dropped.slot,ground:!r.loot.inventory.some(x=>x.id===dropped.id)};
  r.wave++;Loot.expireGround(r.loot,r.wave);r.highest=Math.max(r.highest,r.wave);
  if(!r.preview)state.best=Math.max(state.best,r.highest);
@@ -167,7 +200,7 @@ function finish(reason){
 function startRun(){
  recentLoot=null;
  Warrior.reload();
- try{const latest=JSON.parse(localStorage.getItem(KEY)||'null');if(latest){state.coins=nval(latest.coins,state.coins);state.work=Object.assign(blankUp(),latest.work||state.work)}}catch{}
+ try{const latest=JSON.parse(localStorage.getItem(KEY)||'null');if(latest){state.coins=nval(latest.coins,state.coins);state.work=Object.assign(blankUp(),latest.work||state.work);state.prestige=Object.assign({},latest.prestige||state.prestige);state.gameSpeed=latest.gameSpeed||state.gameSpeed}}catch{}
  state.run=defaultRun();state.run.build=Warrior.snapshot();state.run.preview=state.run.build.preview;
  // Der Snapshot wird zu Beginn fixiert und bleibt auch bei späteren Änderungen im Planer stabil.
  const b=state.run.build;
@@ -179,14 +212,14 @@ function startRun(){
 }
 function togglePause(){const r=state.run;if(!r.active)return;r.paused=!r.paused;message=r.paused?'⏸ Pausiert':'▶️ Kampf läuft';save();render()}
 function endRun(){if(state.run.active&&confirm('Run wirklich beenden? Gold und Level werden zurückgesetzt. Du erhältst Seelen für die höchste Welle.'))finish('Run freiwillig beendet')}
-function cost(k,permanent){let lvl=permanent?state.work[k]:state.run.runUp[k];return Math.round(BASE_COST[k]*(permanent?2:1)*Math.pow(permanent?1.22:1.5,lvl))}
+function cost(k,permanent){let lvl=permanent?state.work[k]:state.run.runUp[k];return Math.max(1,Math.round(BASE_COST[k]*(permanent?2:1)*Math.pow(permanent?1.22:1.5,lvl)*(permanent?1-prestigeBonus('discount')/100:1)))}
 function upgrade(k,permanent){
  const c=cost(k,permanent);if(permanent){if(state.run.preview||state.coins<c)return;state.coins-=c;state.work[k]++}else{if(!state.run.active||state.run.gold<c)return;state.run.gold-=c;state.run.runUp[k]++}
  if(k==='hp')heal(15);state.run.hp=Math.min(state.run.hp,stats().hp);save();render();
 }
 function tick(dt){
  const r=state.run;if(!r.active||r.paused||inventoryOpen||document.hidden)return;
- r.elapsed+=dt/1000;fx.time+=dt;const s=stats();
+ r.elapsed+=dt/1000;dt*=clamp(Number(state.gameSpeed)||1,1,1+prestigeBonus('speed'));fx.time+=dt;const s=stats();
  heal(s.regen*dt/1000);
  fx.resolve=fx.resolve.filter(x=>x>fx.time);fx.corrupt=fx.corrupt.filter(x=>x>fx.time);
  let bleedDamage=0;for(const b of fx.bleeds){const left=Math.max(0,b.end-(fx.time-dt));const step=Math.min(dt,left);const dealt=left>0?b.remaining*step/left:0;b.remaining=Math.max(0,b.remaining-dealt);bleedDamage+=dealt}
@@ -201,7 +234,7 @@ function tick(dt){
   incoming*=Math.max(.1,1-.02*resolve())*(1-.05*C(7))*(1-.02*R(2,4))*(corrupt()>0?1-.02*R(1,14):1);
   if(r.hp/stats().hp<.4)incoming*=1-.02*R(2,10);
   if(expiring(fx.bastionUntil))incoming*=.7;
-  incoming*=1-gear().reduction;
+  incoming*=1-gear().reduction;incoming*=1-prestigeBonus('guard')/100;
   r.hp-=Math.max(1,incoming);
   if(r.hp<=0){r.hp=0;finish('💀 Besiegt');return}
   fx.revenge=true;
@@ -323,11 +356,11 @@ function render(){
  $('log').textContent=message;$('pauseBtn').textContent=r.paused?'▶️ Fortsetzen':'⏸ Pausieren';$('pauseBtn').disabled=!r.active;
  $('effects').textContent=(r.preview?'🧪 TESTMODUS · ':'')+'🩸 '+bleeds()+' Blutungen · 🌑 '+corrupt()+' Verderbnis · 🛡️ '+resolve()+' Entschlossenheit';
  $('skills').innerHTML=f.map(sk=>{const remaining=Math.max(0,Math.ceil((nval(fx.cd[sk.id])-fx.time)/1000));return '<div class="skill"><button '+(!r.active||r.paused||remaining?'disabled':'')+' onclick="cast(\''+sk.id+'\')">'+sk.name+(remaining?' · '+remaining+'s':'')+'</button><label class="auto"><input type="checkbox" '+(state.settings.auto[sk.id]?'checked':'')+' onchange="toggleAuto(\''+sk.id+'\')"> Auto</label></div>'}).join('');
- $('runUpgrades').innerHTML=upgradeRows(false);$('workshop').innerHTML=upgradeRows(true);
+ $('runUpgrades').innerHTML=upgradeRows(false);$('workshop').innerHTML=upgradeRows(true);renderPrestige();
 }
 if(!state.run.active){$('runEnd').classList.remove('hidden');$('summary').textContent='Letzter Run beendet. Höchste Welle: '+fmt(state.run.highest)+'. Starte einen neuen Run.'}else state.run.hp=clamp(state.run.hp,0,stats().hp);
 window.inspectItem=inspectItem;window.itemAction=itemAction;window.viewRecentLoot=viewRecentLoot;window.dismissRecentLoot=dismissRecentLoot;
-window.startRun=startRun;window.endRun=endRun;window.togglePause=togglePause;window.upgrade=upgrade;window.cast=cast;window.toggleAuto=toggleAuto;window.tab=tab;
+window.buyPrestige=buyPrestige;window.setGameSpeed=setGameSpeed;window.startRun=startRun;window.endRun=endRun;window.togglePause=togglePause;window.upgrade=upgrade;window.cast=cast;window.toggleAuto=toggleAuto;window.tab=tab;
 render();document.addEventListener('visibilitychange',()=>{last=performance.now();save()});window.addEventListener('pagehide',save);window.addEventListener('pageshow',()=>{Warrior.reload();try{const latest=JSON.parse(localStorage.getItem(KEY)||'null');if(latest){state.coins=nval(latest.coins,state.coins);state.work=Object.assign(blankUp(),latest.work||state.work)}}catch{}render()});
 function frame(now){const dt=clamp(now-last,0,100);last=now;tick(dt);renderClock+=dt;saveClock+=dt;if(renderClock>200){renderClock=0;render()}if(saveClock>2000){saveClock=0;save()}requestAnimationFrame(frame)}
 requestAnimationFrame(frame);
