@@ -54,7 +54,7 @@ test('gameplay, skills, loot and class progression byte-for-byte unchanged on vi
  'loot-system.js':'2951a3f7165a5c2d9373fa6f7961ca0864d94d23'
  };
  for(const [path,expected]of Object.entries(baselines)){
-  const bytes=fs.readFileSync(path),prefix=Buffer.from('blob '+bytes.length+'\\0');
+  const bytes=fs.readFileSync(path),prefix=Buffer.from('blob '+bytes.length+'\0');
   const hash=crypto.createHash('sha1').update(prefix).update(bytes).digest('hex');
   assert.equal(hash,expected,path+' changed unexpectedly');
  }
