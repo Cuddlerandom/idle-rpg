@@ -60,7 +60,7 @@ d.earnedCore=asInt(v.earnedCore,0,9);
 d.core=CORE.map((_,i)=>asInt(v.core&&v.core[i],0,1));
 if(d.core.reduce((a,b)=>a+b,0)>d.earnedCore)d.core=Array(9).fill(0);
 d.souls=asInt(v.souls,0,1e12);d.purchased=asInt(v.purchased,0,51);
-const sp=safeSpecs(v.specs);d.specs=d.core.every(Boolean)&&validSpecs(sp,d.purchased)?sp:emptySpecs();
+const sp=safeSpecs(v.specs);d.specs=d.earnedCore>=1&&validSpecs(sp,d.purchased)?sp:emptySpecs();
 d.previewSpecs=safeSpecs(v.previewSpecs);
 if(!validSpecs(d.previewSpecs,51))d.previewSpecs=emptySpecs();
 d.previewMode=Boolean(v.previewMode);
@@ -79,11 +79,11 @@ function load(){
 }
 function save(){try{root.localStorage.setItem(KEY,JSON.stringify(state));return true}catch(e){return false}}
 function get(){syncSouls();return copy(load())}
-function soulCost(n){return Math.ceil(5*Math.pow(1.15,asInt(n,0,50)))}
+function soulCost(n){return 5+asInt(n,0,50)}
 function remainingCore(){const p=load();return p.earnedCore-p.core.reduce((a,b)=>a+b,0)}
-function unlockedSpecs(){return load().core.every(x=>x===1)}
+function unlockedSpecs(){return load().earnedCore>=1}
 function earnThrough(wave){const p=load(),old=p.earnedCore;while(p.earnedCore<9&&wave>=MILESTONES[p.earnedCore])p.earnedCore++;if(old!==p.earnedCore)save();return p.earnedCore-old}
-function soulReward(highest){return highest<5?0:Math.floor(Math.pow(highest/5,1.5))}
+function soulReward(highest){const w=Math.max(0,Math.floor(Number(highest)||0));if(w<11)return 0;const n=Math.floor((w-10)/5)+1;return n*(n+1)/2}
 function awardSouls(highest){
  const p=load(),earned=soulReward(highest),before=syncSouls();
  if(earned===0)return 0;
