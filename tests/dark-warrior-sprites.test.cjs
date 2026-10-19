@@ -26,7 +26,7 @@ test('six sequences contain exactly 40 source-derived frames with correct atlas 
  assert.deepEqual(Object.keys(atlas).sort(),['attack','death','hit','idle','special','walk'].sort());
  for(const [name,anim] of Object.entries(config.animations)){
    const d=dims(atlas[name]);
-   assert.deepEqual({width:d.width,height:d.height},{width:anim.frames*64,height:96},name);
+   assert.deepEqual({width:d.width,height:d.height},{width:anim.frames*128,height:192},name);
    assert.ok(d.bytes>10000,name+' must use real image data');
    sum+=anim.frames;
  }
@@ -36,7 +36,7 @@ test('six sequences contain exactly 40 source-derived frames with correct atlas 
 test('all poses honor expected looping and animation metadata',()=>{
  for(const pose of ['idle','walk'])assert.equal(config.animations[pose].loop,true);
  for(const pose of ['attack','hit','death','special'])assert.equal(config.animations[pose].loop,false);
- assert.deepEqual(config.runtime.footAnchor,{x:32,y:89});
+ assert.deepEqual(config.runtime.footAnchor,{x:64,y:179});
  assert.ok(driverCode.includes('imageSmoothingEnabled=false'));
  assert.ok(html.includes('image-rendering:pixelated'));
 });
