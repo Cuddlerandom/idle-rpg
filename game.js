@@ -108,7 +108,7 @@ function stats(){
 }
 function enemyFor(w){
  const boss=w%10===0,zone=w%50===0,scale=Math.pow(1.055,w-1);
- return {wave:w,name:zone?'Zonenfürst':boss?'Wellenboss':w%5===0?'Waldwolf':w%3===0?'Goblin-Krieger':'Waldgoblin',icon:zone?'🐉':boss?'👹':w%5===0?'🐺':'👺',maxHp:Math.round((45+2*w)*scale*(zone?8:boss?4:1)),atk:Math.round((4+w*.38)*Math.pow(1.045,w-1)*(zone?2.2:boss?1.6:1)),def:Math.floor(w/6),speed:zone?1650:boss?1700:1950};
+ return {wave:w,name:zone?'Zonenfürst':boss?'Wellenboss':w%5===0?'Waldwolf':w%3===0?'Goblin-Krieger':'Waldgoblin',icon:zone?'🐉':boss?'👹':w%5===0?'🐺':'👺',maxHp:Math.round((45+2*w)*scale*(zone?8:boss?4:1)),atk:Math.max(1,Math.round((4+w*.38)*Math.pow(1.045,w-1)*(zone?2.2:boss?1.6:1)*(boss?.65:1))),def:Math.floor(w/6),speed:zone?1650:boss?1700:1950};
 }
 let enemy=enemyFor(state.run.wave),enemyHp=state.run.enemyHp>0?Math.min(enemy.maxHp,state.run.enemyHp):enemy.maxHp;
 let heroClock=Math.max(0,nval(state.run.heroClock)),enemyClock=Math.max(0,nval(state.run.enemyClock));
