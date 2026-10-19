@@ -536,3 +536,11 @@ Verglichen werden vier legale 51-Punkte-Verteilungen: **51/0/0** (reiner Blutber
 - Visuelle Knoten mit Symbolen, Verbindungswegen, Fortschrittsbalken und Zuständen gesperrt/kaufbar/zu wenig Münzen/maximiert.
 - Auf Mobilgeräten einspaltige Darstellung, antippbare Knoten öffnen Detailansicht mit aktuellem Wert, nächstem Rang, konkret hinzugewonnenem Bonus, Münzkosten und Freischaltvoraussetzung. Kein Maximalbonuswert anzeigen (Nutzerentscheid).
 - Rein visuelle Änderung: Preise, Ranggrenzen, Spielstände, Talent- und Kampfbalance unverändert. Browser-Regressionsprüfung auf iPhone noch offen.
+
+
+## Testbalancing – Meilenstein-Seelen und Bossangriff (19.10.2026)
+- Nach besiegter Welle 10 werden Spezialisierungen freigeschaltet; die neun Hauptbaum-Talente werden weiterhin bei 10/15/20/25/30/35/40/45/50 einmalig vergeben und können unabhängig verteilt werden. Bestehende Spezialisierungs-Builds bleiben bei Laden erhalten, sofern Welle 10 nachweislich abgeschlossen wurde.
+- Seelen werden ausschliesslich bei Run-Ende anhand besiegter Wellen vergeben: Welle 10 +1, Welle 15 +2, Welle 20 +3 usw. Kumulierte Belohnung für n erreichte Meilensteine: n*(n+1)/2. Bei höchster erreichter Welle 10 ist Welle 10 noch nicht besiegt, daher 0 Seelen; erst ab höchster Welle 11 gibt es 1 Seele. Belohnungen bei jedem Run erneut, keine einmalige Auszahlung.
+- Spezialisierungspunkt Nr. n (1–51) kostet 4+n Seelen (5 bis 55), zusammen 1530 Seelen. Bereits gekaufte Punkte werden nicht zurückgesetzt und nicht rückvergütet.
+- Boss-Gegnerangriff (Welle durch 10 teilbar, inklusive Zonenfürst) wird testweise mit Faktor 0.65 multipliziert; Gegnerleben, Normalgegnerangriff und übrige Werte bleiben unverändert.
+- Vorläufige Testwerte, noch nicht als endgültig balanciert freigegeben; Langzeit-Kampfsimulation, Mobil-Browsertest und Regression bleiben ausstehend.
