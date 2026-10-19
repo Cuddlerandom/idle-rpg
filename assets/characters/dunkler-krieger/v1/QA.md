@@ -11,10 +11,10 @@
 - Individuelle Frames haben keine fehlenden Indizes und keine identischen Duplikatdateien.
 
 ## Branch-Laufzeitgrafik
-Die sechs WebP-Atlanten mit **allen 40 Frame-Motiven** sind als Base64 in `warrior-atlases.js` gebündelt. Für die mobile Renderer-Vorschau proportional auf **64×96 Pixel pro Frame** optimiert; der vollständige Originaldatensatz ist im angelieferten ZIP **unverändert**. Diese Atlanten sind *keine neuen Ersatzzeichnungen*, sondern verkleinerte Versionen der vom Designstudio gelieferten PNGs.
+Die sechs WebP-Atlanten mit **allen 40 Frame-Motiven** sind als Base64 in `warrior-atlases.js` gebündelt. Für die mobile Renderer-Vorschau proportional auf **128×192 Pixel pro Frame** optimiert; der vollständige Originaldatensatz ist im angelieferten ZIP **unverändert**. Diese Atlanten sind *keine neuen Ersatzzeichnungen*, sondern verkleinerte Versionen der vom Designstudio gelieferten PNGs.
 
 - Renderer nutzt nicht weichzeichnende Canvas-Koordinaten und 2:3-Seitenverhältnis.
-- Anker im Runtime-Atlas: (32, 89).
+- Anker im Runtime-Atlas: (64, 179).
 - Idle und Walk loopen; Attack, Hit, Special kehren zu Idle zurück; Death stoppt am letzten Frame bis zum neuen Run.
 - Animationssignale werden nur anhand bereits vorhandener Spiel-UI-Signale gelesen. **`game.js`, `warrior-system.js`, `loot-system.js` und alle Speicherstände bleiben unverändert.**
 - Falls Bilddaten nicht laden: ursprüngliches 🛡️ als Fallback, Spiel bleibt bedienbar.
