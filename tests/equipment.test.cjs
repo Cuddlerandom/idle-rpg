@@ -92,3 +92,16 @@ test('Auswahl und Schmieden gesperrt im Run; nach dem Run persistieren sie',()=>
  assert.equal(save.run.equipment.gear.weapon.template,'boss-shadow');assert.equal(save.run.equipment.gear.weapon.forge,1);
  ctx.chooseArsenal('boss-blood');assert.equal(s.dump('idle-rpg-core-v01').arsenal.selected,'boss-shadow');
 });
+
+test('besondere Waffen auf dem Boden schalten sich erst nach dem Einsammeln frei',()=>{
+ const eq=E.blank();for(let i=0;i<50;i++)eq.bag.push(E.makeItem('rustblade',0,1,eq.nextId++));
+ const run={active:true,preview:false,wave:10,highest:10,level:4,hp:120,enemyHp:1,equipment:eq};
+ const store=storage({'idle-rpg-core-v01':JSON.stringify({run})}),{ctx}=boot(store);
+ ctx.cast('base');let saved=store.dump('idle-rpg-core-v01');
+ assert.equal(saved.arsenal.unlocked.length,0);
+ assert.equal(saved.run.equipment.ground.length,1);
+ const groundUid=saved.run.equipment.ground[0].item.uid;
+ ctx.tab('inventory');ctx.sellItem(saved.run.equipment.bag[0].uid);ctx.collectItem(groundUid);
+ saved=store.dump('idle-rpg-core-v01');assert.equal(saved.arsenal.unlocked.length,1);
+ assert.equal(saved.run.equipment.ground.length,0);
+});
