@@ -1,10 +1,10 @@
 'use strict';
 /* Browser-independent functional tests for the real index.html combat script.
    node tests/talent-audit.cjs  — the same suite can also run in a JavaScript isolate. */
-function audit(warriorCode,gameCode){
+function audit(warriorCode,gameCode,equipmentCode){
  const trees=JSON.parse(warriorCode.slice(warriorCode.indexOf('const TREES=')+12,warriorCode.indexOf(';\nconst CORE=')));
  const transformed=gameCode.replace('(function(){','const game=(function(){').replace('requestAnimationFrame(frame);\n})();',"requestAnimationFrame(frame);\nreturn {stats,tick,attack,cast,applyBleed,applyCorrupt,applyResolve,win,available,save,get state(){return state},get fx(){return fx},get snapshot(){return snapshot},get enemy(){return enemy},set enemy(v){enemy=v},get enemyHp(){return enemyHp},set enemyHp(v){enemyHp=v}};\n})();");
- const boot=new Function('globalThis','localStorage','document','window','Math','performance','requestAnimationFrame','confirm',warriorCode+'\nconst Warrior=globalThis.Warrior;\n'+transformed+'\nreturn {Warrior,game};');
+ const boot=new Function('globalThis','localStorage','document','window','Math','performance','requestAnimationFrame','confirm',warriorCode+'\nconst Warrior=globalThis.Warrior;\n'+equipmentCode+'\nconst Equipment=globalThis.Equipment;\n'+transformed+'\nreturn {Warrior,game};');
  function spawn(t,j,enabled=false,rng=.99,coreIndex=-1){
   const db={},storage={getItem:k=>db[k]??null,setItem:(k,v)=>db[k]=String(v)};
   const root={addEventListener(){}},elems={};
@@ -127,7 +127,7 @@ if(typeof module!=='undefined'&&module.exports)module.exports=audit;
 if(typeof require==='function'&&typeof module!=='undefined'&&require.main===module){
  const fs=require('node:fs'),path=require('node:path');
  const root=path.resolve(__dirname,'..');
- const report=audit(fs.readFileSync(path.join(root,'warrior-system.js'),'utf8'),fs.readFileSync(path.join(root,'game.js'),'utf8'));
+ const report=audit(fs.readFileSync(path.join(root,'warrior-system.js'),'utf8'),fs.readFileSync(path.join(root,'game.js'),'utf8'),fs.readFileSync(path.join(root,'equipment.js'),'utf8'));
  console.log('Talent tests:',report.passed+'/'+report.total,'Core/integration:',report.extraPassed+'/'+report.coreAndIntegration);
  for(const f of report.failures)console.error('FAIL',f.tree||'',f.name||f.key,f.baseline,'->',f.actual,f.error||'');
  if(report.failures.length)process.exitCode=1;
