@@ -31,3 +31,11 @@ Die sechs WebP-Atlanten mit **allen 40 Frame-Motiven** sind als Base64 in `warri
 ## Freigabe-Kriterium
 Für die **technische Preview** reichen bestandene Build-Tests, sechs abspielbare Animationen und unveränderte Gameplay-Dateien.
 Für die **erste offizielle, endgültige Designreferenz** müssen das Grafikstudio die abgeschnittenen Bereiche korrigieren und die Ursprungsperspektive konsolidieren; anschliessend iPhone-Safari-Sichtprüfung.
+
+## Echter iPhone-Safari-Nutzertest – Bildschirmaufnahme vom 19.10.2026
+
+**Quelle:** Vom Nutzer direkt im Chat bereitgestellte Bildschirmaufnahme `ScreenRecording_10-19-2026 10-46-51_1(1).mp4`, 5,6 Sekunden, 512 × 1112 Pixel, 30 fps. Kein öffentliches Video im Repository hinterlegt.
+
+**Beobachtung:** Die Figur wird in der Arena sichtbar gerendert; während der Wellen 4–5 sind Idle-/Angriffsbewegungen sowie rote Schwerteffekte zu sehen. Keine offensichtlich vollständig fehlende Figur oder grossflächige Transparenz-Hintergründe. Die Figur wirkt im Verhältnis zur verfügbaren Arenahöhe klein und steht im linken unteren Bereich. Zwischen Held und Gegner bleibt auch bei Schlägen eine deutliche visuelle Distanz; der Schlag wirkt dadurch teilweise entkoppelt. Der freie Bereich oberhalb der Kämpfer ist vergleichsweise gross. Das sind visuelle Beobachtungen, keine gemessenen Renderer-Koordinaten.
+
+**Wichtig:** Die Nutzerbewertung **B** (Grösse/Position nicht passend) wird durch das Video konkretisiert; **keine finale Designfreigabe**. Empfohlene Korrektur ausschliesslich in CSS-/Canvas-Darstellung: Anzeigegrösse, Fussanker, Position und ggf. rein visuelle Attack-Verschiebung auf iPhone optimieren; alle Frames inklusive VFX auf Clipping prüfen. **Keine Änderungen an Hitbox, Kampfzeit, Schaden, Distanzlogik, Talenten oder anderen Spielmechaniken.** Zuerst eine Vorher-/Nachher-Ansicht bei gleicher iPhone-Breite testen und vom Nutzer bestätigen lassen. Nicht ohne ausdrückliche Freigabe nach `main` mergen.
