@@ -216,7 +216,7 @@ function win(killedByBleed=false){
 function finish(reason){
  const r=state.run;if(!r.active)return;
  r.active=false;r.paused=true;state.runs++;if(!r.preview)state.best=Math.max(state.best,r.highest);
- let souls=0;if(!r.claimed){r.claimed=true;if(!r.preview)souls=Warrior.awardSouls(r.highest)}
+ let souls=0;if(!r.claimed){r.claimed=true;if(!r.preview)souls=Warrior.awardSouls(r.highest,r.startBest)}
  $('summary').textContent=reason+' · Höchste Welle: '+fmt(r.highest)+' · Besiegte Gegner: '+fmt(r.kills)+' · Bosse: '+fmt(r.bosses)+' · Zeit: '+Math.floor(r.elapsed/60)+' Min. · '+(r.preview?'Testmodus – keine permanenten Belohnungen':'+'+souls+' Seelen · Gesamt: '+Warrior.load().souls);
  $('runEnd').classList.remove('hidden');message=reason;save();render();
 }
@@ -224,7 +224,7 @@ function startRun(){
  recentLoot=null;
  Warrior.reload();
  try{const latest=JSON.parse(localStorage.getItem(KEY)||'null');if(latest){state.coins=nval(latest.coins,state.coins);state.work=Object.assign(blankUp(),latest.work||state.work);state.prestige=Object.assign({},latest.prestige||state.prestige);state.gameSpeed=latest.gameSpeed||state.gameSpeed}}catch{}
- state.run=defaultRun();state.run.build=Warrior.snapshot();state.run.preview=state.run.build.preview;
+ state.run=defaultRun();state.run.startBest=state.best||1;state.run.build=Warrior.snapshot();state.run.preview=state.run.build.preview;
  // Der Snapshot wird zu Beginn fixiert und bleibt auch bei späteren Änderungen im Planer stabil.
  const b=state.run.build;
  snapshot.core=b.core;snapshot.specs=b.specs;
