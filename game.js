@@ -149,7 +149,7 @@ function win(killedByBleed=false){
  let gold=Math.round((8+w*2)*(boss?5:1)),coins=Math.max(1,Math.round((1+w*.1)*(boss?5:1)));
  r.gold+=gold;if(!r.preview)state.coins+=coins;
  const drop=Equipment.onWin(r.equipment,w,Math.random);
- const newlyUnlocked=drop&&drop.item.unique&&drop.item.slot==='weapon'&&!r.preview?Equipment.unlock(state.arsenal,drop.item.template):false;
+ const newlyUnlocked=drop&&drop.where==='bag'&&drop.item.unique&&drop.item.slot==='weapon'&&!r.preview?Equipment.unlock(state.arsenal,drop.item.template):false;
  r.xp+=10+Math.round(w*1.6)*(boss?3:1);r.kills++;if(boss)r.bosses++;
  gainLevel();r.wave++;r.highest=Math.max(r.highest,r.wave);
  if(!r.preview)state.best=Math.max(state.best,r.highest);
@@ -253,7 +253,7 @@ function collectItem(uid){
  if(!state.run.active||!inventoryOpen)return;
  const result=Equipment.collect(state.run.equipment,uid);
  if(!result.ok){$('itemDetail').textContent=result.reason;return}
- chosenItem={kind:'bag',key:uid};invDirty=true;message='🎒 '+result.item.name+' eingesammelt';save();render();
+ chosenItem={kind:'bag',key:uid};invDirty=true;const newlyUnlocked=result.item.unique&&result.item.slot==='weapon'&&!state.run.preview?Equipment.unlock(state.arsenal,result.item.template):false;message='🎒 '+result.item.name+' eingesammelt'+(newlyUnlocked?' · ⚒️ Bosswaffe dauerhaft freigeschaltet!':'');save();render();
 }
 function chooseArsenal(id){
  if(state.run.active||!Equipment.select(state.arsenal,id))return;
