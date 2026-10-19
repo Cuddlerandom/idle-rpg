@@ -220,6 +220,7 @@ function upgradeRows(permanent){return FIELDS.map(k=>{
 const safeHtml=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const itemOnclick=(fn,value)=>fn+'('+JSON.stringify(value)+')';
 function inspectItem(id){selectedItemId=String(id);renderInventory()}
+function dismissRecentLoot(){recentLoot=null;const notice=$('lootNotice');if(notice)notice.classList.add('hidden')}
 function viewRecentLoot(){if(!recentLoot)return;const id=recentLoot.id;tab('items');selectedItemId=String(id);renderInventory();$('itemDetail').scrollIntoView({behavior:'smooth',block:'center'})}
 function itemAction(action,id){
  const r=state.run,loot=r.loot,bag=loot.inventory,idText=String(id);
@@ -241,7 +242,7 @@ function itemAction(action,id){
   bag.push(loot.ground.splice(i,1)[0].item);message='🎒 Beute aufgehoben';
  }else return;
  r.hp=Math.min(r.hp,stats().hp);
- if(recentLoot&&recentLoot.id===idText&&(action==='equip'||action==='sell'))recentLoot=null;
+ if(action==='equip'||(recentLoot&&recentLoot.id===idText&&action==='sell'))dismissRecentLoot();
  selectedItemId=null;save();render();renderInventory();
 }
 function renderInventory(){
@@ -303,7 +304,7 @@ function render(){
  $('runUpgrades').innerHTML=upgradeRows(false);$('workshop').innerHTML=upgradeRows(true);
 }
 if(!state.run.active){$('runEnd').classList.remove('hidden');$('summary').textContent='Letzter Run beendet. Höchste Welle: '+fmt(state.run.highest)+'. Starte einen neuen Run.'}else state.run.hp=clamp(state.run.hp,0,stats().hp);
-window.inspectItem=inspectItem;window.itemAction=itemAction;window.viewRecentLoot=viewRecentLoot;
+window.inspectItem=inspectItem;window.itemAction=itemAction;window.viewRecentLoot=viewRecentLoot;window.dismissRecentLoot=dismissRecentLoot;
 window.startRun=startRun;window.endRun=endRun;window.togglePause=togglePause;window.upgrade=upgrade;window.cast=cast;window.toggleAuto=toggleAuto;window.tab=tab;
 render();document.addEventListener('visibilitychange',()=>{last=performance.now();save()});window.addEventListener('pagehide',save);window.addEventListener('pageshow',()=>{Warrior.reload();try{const latest=JSON.parse(localStorage.getItem(KEY)||'null');if(latest){state.coins=nval(latest.coins,state.coins);state.work=Object.assign(blankUp(),latest.work||state.work)}}catch{}render()});
 function frame(now){const dt=clamp(now-last,0,100);last=now;tick(dt);renderClock+=dt;saveClock+=dt;if(renderClock>200){renderClock=0;render()}if(saveClock>2000){saveClock=0;save()}requestAnimationFrame(frame)}
