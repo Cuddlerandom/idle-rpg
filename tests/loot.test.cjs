@@ -63,7 +63,7 @@ test('inventory freezes battle time while open and resumes after closing',()=>{
  root.tab('run');root.nextFrame(400);root.nextFrame(500);
  root.tab('items');
  const elapsed=store.dump('idle-rpg-core-v01').run.elapsed;
- assert.ok(elapsed>=.2&&elapsed<=.3,'elapsed after resume: '+elapsed);
+ assert.ok(Math.abs(elapsed-.3)<1e-9,'elapsed after resume: '+elapsed);
 });
 test('level requirements prevent equipping and new run discards equipment',()=>{
  const high=item('high');high.required=30;
