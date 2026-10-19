@@ -129,11 +129,11 @@ function roll(options){
  if(!boss&&random()>=dropChance)return null;
  const rarity=rarityFor(wave,boss,random),slot=one(SLOT,random).id;
  let chosenUnique=null;
- if(rarity==='legendary'&&random()<(boss?.7:.45)){const eligible=UNIQUE.filter(u=>boss||true);chosenUnique=one(eligible,random)}
+ if(rarity==='legendary'&&random()<(boss?.7:.45)){chosenUnique=one(UNIQUE,random)}
  // Named uniques may use any of their nine valid item slots.
  const actualSlot=chosenUnique?chosenUnique.slot:slot;
  const itemLevel=Math.max(1,Math.floor(wave/2)+1);
- const required=Math.min(level,Math.max(1,Math.floor(itemLevel/3)+1));
+ const required=Math.max(1,Math.floor(itemLevel/3)+1);
  const baseName=one(BASE[actualSlot],random),prefix=rarity==='epic'?'Erhabenes ':rarity==='rare'?'Seltenes ':rarity==='uncommon'?'Verstärktes ':'';
  return {id:'loot-'+Math.max(1,Math.floor(options.seq||1))+'-'+Math.floor(random()*1e9),
  slot:actualSlot,name:chosenUnique?chosenUnique.name:prefix+baseName,
