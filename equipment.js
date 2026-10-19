@@ -1,4 +1,4 @@
-/* Idle RPG V0.4 – temporäre Ausrüstung, Loot und Inventar. Keine Offline-Fortschritte. */
+/* Idle RPG V0.4 – Hybrid: Run-Loot + dauerhaft freigeschaltete besondere Waffen. */
 (function(root){
 'use strict';
 const SLOTS=[
@@ -39,10 +39,14 @@ const TEMPLATES=[
  {id:'bloodamulet',slot:'amulet',name:'Amulett der Jagd',icon:'🩸',stats:{bleedPower:.075,bleedChance:.02}},
  // Einzigartige Boss-Gegenstände. Effekt-Boni sind fest und keine zufälligen Affixe.
  {id:'boss-blood',slot:'weapon',name:'Herzspalter des Goblinfürsten',icon:'🩸',boss:true,stats:{atk:7,bleedPower:.16,bleedChance:.09}},
- {id:'boss-shadow',slot:'amulet',name:'Hexerauge der Finsternis',icon:'👁️',boss:true,stats:{shadowPower:.20,corruptChance:.09,critDamage:.06}},
- {id:'boss-guard',slot:'chest',name:'Schwurpanzer des Hauptmanns',icon:'🛡️',boss:true,stats:{hp:48,def:6,resolveGuard:.018}}
+ {id:'boss-shadow',slot:'weapon',name:'Schattenzahn des Hexers',icon:'🌑',boss:true,stats:{atk:6,shadowPower:.18,corruptChance:.08}},
+ {id:'boss-guard',slot:'weapon',name:'Schwurhammer des Hauptmanns',icon:'🔨',boss:true,stats:{atk:5,def:3,hp:22,resolveGuard:.012}},
+ {id:'boss-eye',slot:'amulet',name:'Hexerauge der Finsternis',icon:'👁️',boss:true,stats:{shadowPower:.20,corruptChance:.09,critDamage:.06}},
+ {id:'boss-plate',slot:'chest',name:'Schwurpanzer des Hauptmanns',icon:'🛡️',boss:true,stats:{hp:48,def:6,resolveGuard:.018}}
 ];
 const TEMPLATE_BY_ID=Object.fromEntries(TEMPLATES.map(x=>[x.id,x]));
+const BOSS_WEAPONS=TEMPLATES.filter(t=>t.boss&&t.slot==='weapon').map(t=>t.id);
+const AFFIXES=[{key:'atk',name:'des Schlächters',base:1.25},{key:'hp',name:'der Zähigkeit',base:9},{key:'def',name:'des Bollwerks',base:1.2},{key:'crit',name:'der Schärfe',base:1.2},{key:'regen',name:'der Erholung',base:.22},{key:'speedPct',name:'des Jägers',base:.025}];
 const STAT_ORDER=['atk','hp','def','regen','crit','critDamage','speedPct','bleedPower','shadowPower','bleedChance','corruptChance','resolveGuard','lifesteal'];
 const STAT_LABELS={atk:'Angriff',hp:'Leben',def:'Rüstung',regen:'Regeneration',crit:'Krit-Chance',critDamage:'Krit-Schaden',speedPct:'Angriffstempo',bleedPower:'Blutungsschaden',shadowPower:'Schattenschaden',bleedChance:'Blutungschance',corruptChance:'Verderbnis-Chance',resolveGuard:'Schutz pro Entschlossenheitsstapel',lifesteal:'Lebensraub'};
 const PERCENT=new Set(['critDamage','speedPct','bleedPower','shadowPower','bleedChance','corruptChance','resolveGuard','lifesteal']);
@@ -52,7 +56,9 @@ const safeInt=(x,def=0)=>Number.isFinite(Number(x))?Math.floor(Number(x)):def;
 function repairItem(raw){
  if(!raw||typeof raw!=='object'||!TEMPLATE_BY_ID[raw.template]||!Number.isSafeInteger(raw.uid)||raw.uid<1)return null;
  const t=TEMPLATE_BY_ID[raw.template],rarity=clamp(safeInt(raw.rarity),0,4),wave=clamp(safeInt(raw.wave,1),1,100000);
- const known=makeItem(t.id,rarity,wave,raw.uid);return known;
+ const affix=Number.isInteger(raw.affix)&&raw.affix>=0&&raw.affix<AFFIXES.length?raw.affix:-1;
+ const variant=clamp(safeInt(raw.variant,5),0,10),forge=clamp(safeInt(raw.forge),0,5);
+ return makeItem(t.id,rarity,wave,raw.uid,affix,variant,forge);
 }
 function repair(raw){
  const out=blank(),seen=new Set();if(!raw||typeof raw!=='object')return out;
@@ -64,16 +70,19 @@ function repair(raw){
  }).filter(Boolean);
  out.nextId=Math.max(safeInt(raw.nextId,1),1,...[...seen].map(x=>x+1));return out;
 }
-function makeItem(template,rarity,wave,uid){
+function makeItem(template,rarity,wave,uid,affix=-1,variant=5,forge=0){
  const t=TEMPLATE_BY_ID[template];if(!t)return null;
  const q=clamp(safeInt(rarity),0,4),w=clamp(safeInt(wave,1),1,100000);
- const level=Math.max(1,Math.ceil(w/6)),scaling=(1+Math.floor((w-1)/5)*.12)*RARITIES[q].factor;
+ const level=Math.max(1,Math.ceil(w/6)),unique=!!t.boss;
+ const scaling=(1+Math.floor((w-1)/5)*.12)*RARITIES[q].factor*(unique?1:1+(clamp(safeInt(variant,5),0,10)-5)*.025)*(unique?1+.12*clamp(safeInt(forge),0,5):1);
  const stats={};for(const [k,v] of Object.entries(t.stats)){
   const value=v*scaling;
   stats[k]=PERCENT.has(k)?Math.round(value*10000)/10000:Math.max(1,Math.round(value*10)/10);
  }
- return {uid,template,slot:t.slot,rarity:q,wave:w,level,icon:t.icon,
-   name:t.name,unique:!!t.boss,stats,value:Math.ceil((6+w*1.2)*RARITIES[q].factor*(t.boss?2:1))};
+ const attribute=!unique&&q>0&&Number.isInteger(affix)&&affix>=0&&affix<AFFIXES.length?affix:-1;
+ if(attribute>=0){const a=AFFIXES[attribute],val=a.base*Math.max(1,Math.sqrt(w/5))*RARITIES[q].factor;stats[a.key]=(stats[a.key]||0)+(PERCENT.has(a.key)?Math.round(val*10000)/10000:Math.round(val*10)/10)}
+ return {uid,template,slot:t.slot,rarity:q,wave:w,level,icon:t.icon,affix:attribute,variant:unique?5:clamp(safeInt(variant,5),0,10),forge:unique?clamp(safeInt(forge),0,5):0,
+   name:t.name+(attribute>=0?' '+AFFIXES[attribute].name:''),unique,stats,value:Math.ceil((6+w*1.2)*RARITIES[q].factor*(t.boss?2:1))};
 }
 function quality(wave,random=Math.random,boss=false){
  const w=Math.max(1,safeInt(wave,1)),bonus=clamp(Math.floor(w/25)*.018,0,.12);
@@ -82,11 +91,12 @@ function quality(wave,random=Math.random,boss=false){
 }
 function roll(wave,random=Math.random,group='any'){
  const w=Math.max(1,safeInt(wave,1));
- const pool=TEMPLATES.filter(t=>group==='boss'?t.boss:!t.boss&&(group==='weapon'?t.slot==='weapon':group==='armor'?['head','shoulders','chest','hands','legs','boots'].includes(t.slot):group==='accessory'?['ring','amulet'].includes(t.slot):true));
+ const pool=TEMPLATES.filter(t=>group==='boss'?t.boss:group==='boss-weapon'?t.boss&&t.slot==='weapon':!t.boss&&(group==='weapon'?t.slot==='weapon':group==='armor'?['head','shoulders','chest','hands','legs','boots'].includes(t.slot):group==='accessory'?['ring','amulet'].includes(t.slot):true));
  if(!pool.length)return null;
  const t=pool[Math.min(pool.length-1,Math.floor(random()*pool.length))];
- let rarity=quality(w,random,group==='boss');if(group==='boss')rarity=Math.max(3,rarity);
- return makeItem(t.id,rarity,w,0);
+ let rarity=quality(w,random,group==='boss'||group==='boss-weapon');if(group==='boss'||group==='boss-weapon')rarity=Math.max(3,rarity);
+ const affix=t.boss||rarity===0?-1:Math.min(AFFIXES.length-1,Math.floor(random()*AFFIXES.length));
+ return makeItem(t.id,rarity,w,0,affix,Math.min(10,Math.floor(random()*11)));
 }
 function addLoot(raw,item,defeatedWave){
  const e=raw,drop={...item,uid:e.nextId++};
@@ -97,7 +107,7 @@ function onWin(raw,wave,random=Math.random){
  const e=raw,w=Math.max(1,safeInt(wave,1)),boss=w%10===0;
  // Nach fünf weiteren Wellen verschwindet liegen gebliebene Beute.
  e.ground=e.ground.filter(x=>x.expiresAt>w);
- let group=null;if(boss)group='boss';
+ let group=null;if(boss)group=w===10?'boss-weapon':'boss';
  else if(w===1)group='weapon';else if(w===3)group='armor';else if(w===5)group='accessory';
  else if(random()<Math.min(.42,.20+w*.002))group='any';
  if(!group)return null;
@@ -127,6 +137,37 @@ function collect(raw,uid){
  if(raw.bag.length>=50)return {ok:false,reason:'Inventar voll (50/50)'};
  const [found]=raw.ground.splice(i,1);raw.bag.push(found.item);return {ok:true,item:found.item};
 }
+const blankArsenal=()=>({unlocked:[],levels:{},selected:null});
+function repairArsenal(raw){
+ const a=blankArsenal();if(!raw||typeof raw!=='object')return a;
+ a.unlocked=BOSS_WEAPONS.filter(id=>Array.isArray(raw.unlocked)&&raw.unlocked.includes(id));
+ for(const id of a.unlocked)a.levels[id]=clamp(safeInt(raw.levels&&raw.levels[id]),0,5);
+ a.selected=a.unlocked.includes(raw.selected)?raw.selected:(a.unlocked[0]||null);
+ return a;
+}
+function unlock(arsenal,id){
+ if(!BOSS_WEAPONS.includes(id))return false;
+ if(arsenal.unlocked.includes(id))return false;
+ arsenal.unlocked.push(id);arsenal.levels[id]=0;
+ if(!arsenal.selected)arsenal.selected=id;return true;
+}
+function forgeCost(arsenal,id){const n=arsenal.levels[id]||0;return n>=5?Infinity:Math.ceil(80*Math.pow(1.8,n))}
+function improve(arsenal,id,coins){
+ if(!arsenal.unlocked.includes(id))return {ok:false,reason:'Waffe noch nicht freigeschaltet'};
+ const price=forgeCost(arsenal,id);
+ if(!Number.isFinite(price))return {ok:false,reason:'Maximale Schmiedestufe erreicht'};
+ if(coins<price)return {ok:false,reason:'Benötigt '+price+' Münzen'};
+ arsenal.levels[id]=(arsenal.levels[id]||0)+1;
+ return {ok:true,cost:price,level:arsenal.levels[id]};
+}
+function select(arsenal,id){
+ if(!arsenal.unlocked.includes(id))return false;arsenal.selected=id;return true;
+}
+function starter(arsenal){
+ const id=arsenal.selected;if(!id||!arsenal.unlocked.includes(id))return null;
+ // Freigeschaltetes Waffenmodell startet auf Run-Level 1; die Schmiedestufe bleibt permanent.
+ return makeItem(id,0,1,1,-1,5,arsenal.levels[id]||0);
+}
 function describe(item){
  if(!item)return [];
  return STAT_ORDER.filter(k=>item.stats[k]).map(k=>{
@@ -134,7 +175,7 @@ function describe(item){
   return '+ '+n+' '+STAT_LABELS[k];
  });
 }
-const api={SLOTS,RARITIES,TEMPLATES,blank,repair,makeItem,roll,quality,onWin,bonuses,moveToGear,removeGear,sell,collect,describe,STAT_LABELS};
+const api={SLOTS,RARITIES,TEMPLATES,BOSS_WEAPONS,blank,repair,makeItem,roll,quality,onWin,bonuses,moveToGear,removeGear,sell,collect,describe,blankArsenal,repairArsenal,unlock,forgeCost,improve,select,starter,STAT_LABELS};
 root.Equipment=api;
 if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })(typeof globalThis!=='undefined'?globalThis:this);
