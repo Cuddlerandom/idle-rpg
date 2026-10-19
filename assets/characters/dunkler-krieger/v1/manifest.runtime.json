@@ -1,0 +1,70 @@
+{
+  "name": "Dunkler Krieger V1.0",
+  "character_id": "dark_warrior",
+  "status": "Integrationstest – noch keine endgültige Designfreigabe",
+  "source": {
+    "zip": "Dunkler_Krieger_V1_0_Testpaket(1).zip",
+    "frame": {
+      "width": 448,
+      "height": 672
+    },
+    "footAnchor": {
+      "x": 224,
+      "y": 626
+    },
+    "totalFrames": 40,
+    "sourcePreserved": "Die hochauflösenden Originale verbleiben unverändert im angelieferten Testpaket."
+  },
+  "runtime": {
+    "file": "warrior-atlases.js",
+    "format": "WebP via data URI (mobile-preview optimization)",
+    "frame": {
+      "width": 128,
+      "height": 192
+    },
+    "footAnchor": {
+      "x": 64,
+      "y": 179
+    },
+    "rendering": "canvas imageSmoothingEnabled=false; CSS image-rendering:pixelated; 2:3 aspect ratio"
+  },
+  "animations": {
+    "idle": {
+      "frames": 6,
+      "fps": 5,
+      "loop": true
+    },
+    "walk": {
+      "frames": 8,
+      "fps": 9,
+      "loop": true
+    },
+    "attack": {
+      "frames": 8,
+      "fps": 11,
+      "loop": false
+    },
+    "hit": {
+      "frames": 4,
+      "fps": 8,
+      "loop": false
+    },
+    "death": {
+      "frames": 6,
+      "fps": 7,
+      "loop": false
+    },
+    "special": {
+      "frames": 8,
+      "fps": 10,
+      "loop": false
+    }
+  },
+  "knownIssues": [
+    "Schwert-/Schatten-VFX in einzelnen attack_02–06 und special_01–06 Frames bereits an Quellgrenzen abgeschnitten; aus Originalframes nicht verlustfrei rekonstruierbar.",
+    "Silhouettengrösse und Perspektive variieren zwischen Quell-Animationsbögen; fixer Fussanker und Canvas-Grösse stabilisieren die Anzeige, aber vollständig neu gezeichnete Übergangsframes wären für endgültige Freigabe nötig.",
+    "Pixel-Art mit 3/4-Ausrichtung nach rechts statt strengem Seitenprofil.",
+    "Optimierte Runtime-Atlanten reduzieren Details; Originale sind im hochauflösenden ZIP enthalten."
+  ],
+  "architecture": "Animationsrenderer liest UI-Änderungen per MutationObserver; Spielwerte, Spawns, Schaden, Talente, Fähigkeiten, Savegame und Timing wurden nicht verändert."
+}
