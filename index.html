@@ -31,19 +31,57 @@ nav button.active{background:#58482e;border-color:#d3b47c;color:#fff4db;outline:
 .talent-link{border:1px solid #a78b5e;background:linear-gradient(120deg,#3e4238,#3a584d);margin:13px 0;font-size:13px}
 #run,#shop,#items,#info{scroll-margin-top:74px}
 @media(max-width:375px){#battle{padding:8px}nav button{font-size:11px}}
-</style></head><body><main><h1>⚔️ Idle RPG <span class="muted">Dunkler Krieger · HUD V1.0</span></h1>
-<div class="muted">Automatische Angriffe · kein Offline-Fortschritt · lokale Speicherung</div>
-<section class="panel" id="battle"><div class="row"><b id="wave"></b><b id="money"></b></div>
+
+/* HUD V2: structural redesign. No combat or sprite sizing changes. */
+main{max-width:680px;padding:12px 12px 110px}
+.game-header{display:flex;align-items:center;gap:12px;padding:9px 2px 15px}
+.game-mark{width:46px;height:46px;display:grid;place-items:center;border:1px solid #9d8255;border-radius:12px;background:linear-gradient(135deg,#4a3d30,#1a2a31);font-size:26px;flex-shrink:0}
+.game-kicker,.hud-label{display:block;font-size:10px;letter-spacing:.12em;color:#b4ab91;font-weight:750}
+.game-header h1{font-size:20px;margin:2px 0 0;color:#f1e6cc}
+.hud-version{font-size:10px;color:#e6c68a;border:1px solid #806e51;border-radius:5px;padding:3px 5px;vertical-align:middle}
+.header-talents{margin-left:auto;flex-shrink:0;font-size:12px;color:#f4dca8;text-decoration:none;border:1px solid #8d7451;border-radius:9px;padding:12px 8px;background:#28362f}
+#battle{padding:10px;border-radius:15px;background:#15242a;border:1px solid #75674e}
+.battle-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.45fr);gap:8px;margin-bottom:10px}
+.wave-card,.currency-card{background:#23363c;border:1px solid #51615b;border-radius:9px;padding:9px 10px;min-width:0}
+.wave-card b{display:block;font-size:18px;margin-top:5px;color:#f0d095}
+.currency-card b{display:block;font-size:12px;margin-top:7px;color:#e4e8da;line-height:1.6;overflow-wrap:anywhere}
+#battle>.scene{height:285px;border-radius:11px;border:1px solid #7b825d;background:linear-gradient(#182d3f 0 52%,#3b5946 52% 78%,#263a30 78%)}
+#battle>.scene:after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 28px #07101799}
+.combat-vitals{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.vital-card{background:#1f3036;border:1px solid #4e625d;border-radius:9px;padding:9px 8px;min-width:0}
+.vital-heading{display:flex;flex-direction:column;gap:4px;min-height:36px;font-size:11px}
+.vital-heading b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vital-heading span{font-size:11px;color:#c5d5ce}
+.enemy-vital{border-color:#73534f}
+.enemy-vital .vital-heading b{color:#f0a9a0}
+.vital-card .bar{margin:7px 0 0;height:9px}
+.battle-message{background:#202e34;border-left:3px solid #c9a56b;border-radius:6px;padding:8px 10px;margin:10px 0}
+#battle .battle-message .log{border:0;background:none;margin:4px 0 0;padding:0;min-height:0;font-size:12px}
+.hero-overview{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:12px;background:#223239;padding:9px;border-radius:8px;color:#d9e2d9}
+.battle-details{margin:10px 0;background:#1d2d34;border:1px solid #435751;border-radius:9px;padding:0 10px}
+.battle-details summary{cursor:pointer;padding:12px 0;font-size:12px;color:#e6d2aa;min-height:42px}
+.battle-details .run-controls{padding:0 0 10px;gap:8px}
+.battle-details .run-controls button{flex:1;min-height:44px}
+.ability-header{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-top:12px}
+#battle .ability-header h2{margin:0 0 9px}
+.ability-header .muted{font-size:10px}
+#battle .skill-list{margin:0}
+#battle .skill{border-radius:9px;background:#243940}
+.menu-heading{margin:18px 2px 8px}
+.menu-heading h2{margin:3px 0;font-size:19px;color:#ead2a1}
+nav{position:sticky;top:auto;bottom:0;z-index:9;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:#0e1a20f5;padding:9px 5px max(9px,env(safe-area-inset-bottom));border:1px solid #6c614d;border-radius:12px;box-shadow:0 -6px 28px #0009;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);margin-bottom:12px}
+nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:58px;font-size:11px;border-radius:9px}
+.nav-symbol{font-size:22px;line-height:1.1}
+#run,#shop,#items,#info{scroll-margin-top:12px}
+@media(max-width:390px){.game-header h1{font-size:17px}.header-talents{font-size:11px;padding:10px 6px}#battle>.scene{height:255px}.battle-top{grid-template-columns:1fr 1.25fr}.wave-card b{font-size:15px}.currency-card b{font-size:11px}.combat-vitals{gap:5px}.vital-card{padding:7px 6px}.vital-heading{font-size:10px}}
+</style></head><body><main><header class="game-header"><div class="game-mark">⚔️</div><div><div class="game-kicker">ECLIPSE · IDLE RPG</div><h1>Dunkler Krieger <span class="hud-version">HUD V2</span></h1></div><a class="header-talents" href="talentplaner.html" aria-label="Talentplaner öffnen">🌳 Talente ↗</a></header>
+<section class="panel" id="battle"><div class="battle-top"><div class="wave-card"><span class="hud-label">AKTUELLE WELLE</span><b id="wave"></b></div><div class="currency-card"><span class="hud-label">DEINE WÄHRUNGEN</span><b id="money"></b></div></div>
 <div class="scene"><div class="actors"><span id="heroActor" aria-label="Dunkler Krieger"><canvas id="heroSprite" width="128" height="192" style="display:none" aria-hidden="true"></canvas><span id="heroFallback">🛡️</span></span><span id="enemyIcon">👺</span></div></div>
-<div class="row"><b>Dunkler Krieger</b><b id="enemyName"></b></div>
-<div class="bar"><div id="hpBar"></div></div><div class="bar enemy"><div id="enemyBar"></div></div>
-<div class="row muted"><span id="hpText"></span><span id="enemyHpText"></span></div>
-<p class="log" id="log"></p><div class="row stat"><span id="level"></span><span id="combatStats"></span></div>
-<div class="effect-row" id="effects"></div><h2>✨ Aktive Fähigkeiten</h2><div class="skill-list" id="skills"></div>
-<div class="row"><button class="alt" id="pauseBtn" onclick="togglePause()">⏸ Pausieren</button><button class="alt" onclick="endRun()">🏁 Run beenden</button></div></section>
+<div class="combat-vitals"><div class="vital-card hero-vital"><div class="vital-heading"><b>🛡️ Dunkler Krieger</b><span id="hpText"></span></div><div class="bar"><div id="hpBar"></div></div></div><div class="vital-card enemy-vital"><div class="vital-heading"><b id="enemyName"></b><span id="enemyHpText"></span></div><div class="bar enemy"><div id="enemyBar"></div></div></div></div>
+<div class="battle-message"><span class="hud-label">KAMPFEREIGNIS</span><p class="log" id="log"></p></div><div class="hero-overview"><span id="level"></span><span id="combatStats"></span></div><details class="battle-details"><summary>☷ Kampfeffekte & Run-Steuerung</summary><div class="effect-row" id="effects"></div><div class="row run-controls"><button class="alt" id="pauseBtn" onclick="togglePause()">⏸ Pausieren</button><button class="alt" onclick="endRun()">🏁 Run beenden</button></div></details><div class="ability-header"><h2>✨ Fähigkeiten</h2><span class="muted">Tippen oder Auto aktivieren</span></div><div class="skill-list" id="skills"></div></section>
 <section class="panel hidden" id="runEnd"><h2>📜 Run-Zusammenfassung</h2><div id="summary" class="run-note"></div><p><button onclick="startRun()">▶️ Neuen Run starten</button></p></section>
-<a class="talent-link" href="talentplaner.html">🌳 Hauptbaum, Talentplaner und Seelen ↗</a>
-<nav aria-label="Spielnavigation"><button id="tabRun" onclick="tab('run')">⚔️ Upgrades</button><button id="tabShop" onclick="tab('shop')">🔨 Werkstatt</button><button id="tabItems" onclick="tab('items')">🎒 Beute</button><button id="tabInfo" onclick="tab('info')">📖 Info</button></nav>
+
+<div class="menu-heading"><span class="hud-label">VERWALTUNG</span><h2>Dein Abenteuer</h2></div><nav aria-label="Spielnavigation"><button id="tabRun" class="active" onclick="tab('run')"><span class="nav-symbol">⬆️</span>Upgrades</button><button id="tabShop" onclick="tab('shop')"><span class="nav-symbol">🔨</span>Werkstatt</button><button id="tabItems" onclick="tab('items')"><span class="nav-symbol">🎒</span>Beute</button><button id="tabInfo" onclick="tab('info')"><span class="nav-symbol">📖</span>Info</button></nav>
 <section class="panel" id="run"><h2>Gold-Upgrades</h2><div id="runUpgrades"></div></section>
 <section class="panel hidden" id="shop"><h2>🔨 Permanente Werkstatt</h2><p class="muted">Münzen bleiben nach jedem Run erhalten. Werkstatt-Upgrades gelten dauerhaft und für alle Klassen.</p><div id="workshop"></div></section>
 <section class="panel hidden" id="items"><h2>🎒 Ausrüstung und Inventar</h2><p class="muted">Das Öffnen des Inventars pausiert den Kampf. Ausrüstung und Beute gelten nur für diesen Run.</p><div class="run-note" id="lootInfo"></div><h2>🛡️ Ausrüstung · 9 Slots</h2><div class="loot-slot-grid" id="gearSlots"></div><p class="run-note" id="setBonuses"></p><h2>🎒 Inventar · 50 Plätze</h2><div class="loot-grid" id="inventoryGrid"></div><div class="loot-detail" id="itemDetail"></div><h2>🎁 Beute am Boden</h2><p class="muted">Bei vollem Inventar bleibt Beute 5 weitere Wellen liegen.</p><div id="groundLoot"></div></section>
