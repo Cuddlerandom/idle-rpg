@@ -168,7 +168,7 @@ function startRun(){
  // Der Snapshot wird zu Beginn fixiert und bleibt auch bei späteren Änderungen im Planer stabil.
  const b=state.run.build;
  snapshot.core=b.core;snapshot.specs=b.specs;
- fx=blankFx();inventoryOpen=false;selectedItemId=null;enemy=enemyFor(1);enemyHp=enemy.maxHp;heroClock=enemyClock=0;
+ fx=blankFx();inventoryOpen=false;selectedItemId=null;tab('run');enemy=enemyFor(1);enemyHp=enemy.maxHp;heroClock=enemyClock=0;
  state.run.hp=stats().hp;$('runEnd').classList.add('hidden');
  message=state.run.preview?'🧪 Test-Run – keine dauerhaften Belohnungen.':'Neuer Run gestartet!';
  save();render();
@@ -207,11 +207,69 @@ function tick(dt){
  }
  autoCast();
 }
-function tab(id){inventoryOpen=id==='items';for(const x of ['run','shop','items','info']){$(x).classList.toggle('hidden',x!==id);$('tab'+x[0].toUpperCase()+x.slice(1)).classList.toggle('active',x===id)}}
+function tab(id){inventoryOpen=id==='items';for(const x of ['run','shop','items','info']){$(x).classList.toggle('hidden',x!==id);$('tab'+x[0].toUpperCase()+x.slice(1)).classList.toggle('active',x===id)}if(inventoryOpen)renderInventory();save()}
 function upgradeRows(permanent){return FIELDS.map(k=>{
  const lvl=permanent?state.work[k]:state.run.runUp[k],c=cost(k,permanent),can=(permanent?state.coins:state.run.gold)>=c;
  return '<div class="row item"><span>'+LABELS[k]+' <span class="muted">Stufe '+lvl+'</span></span><button '+(!can||(permanent&&state.run.preview)||(!permanent&&!state.run.active)?'disabled':'')+' onclick="upgrade(\''+k+'\','+permanent+')">'+(permanent?'🪙':'💰')+' '+fmt(c)+'</button></div>'
  }).join('')}
+
+const safeHtml=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const itemOnclick=(fn,value)=>fn+'('+JSON.stringify(value)+')';
+function inspectItem(id){selectedItemId=String(id);renderInventory()}
+function itemAction(action,id){
+ const r=state.run,loot=r.loot,bag=loot.inventory,idText=String(id);
+ if(action==='equip'){
+  const i=bag.findIndex(x=>x.id===idText);if(i<0)return;
+  const item=bag[i];if(item.required>r.level){message='Erfordert Heldenlevel '+item.required;render();return}
+  bag.splice(i,1);const old=loot.equipment[item.slot];if(old)bag.push(old);
+  loot.equipment[item.slot]=item;message='🛡️ '+item.name+' ausgerüstet';
+ }else if(action==='unequip'){
+  if(bag.length>=50)return;
+  const item=loot.equipment[idText];if(!item)return;
+  bag.push(item);loot.equipment[idText]=null;message='Ausrüstung abgelegt';
+ }else if(action==='sell'){
+  const i=bag.findIndex(x=>x.id===idText);if(i<0)return;
+  const item=bag.splice(i,1)[0];r.gold+=item.sell;message='💰 '+fmt(item.sell)+' Gold durch Verkauf';
+ }else if(action==='pickup'){
+  if(bag.length>=50)return;
+  const i=loot.ground.findIndex(x=>x.item.id===idText);if(i<0)return;
+  bag.push(loot.ground.splice(i,1)[0].item);message='🎒 Beute aufgehoben';
+ }else return;
+ r.hp=Math.min(r.hp,stats().hp);
+ selectedItemId=null;save();render();renderInventory();
+}
+function renderInventory(){
+ const r=state.run,loot=r.loot,bag=loot.inventory,bonus=gear();
+ $('lootInfo').textContent='Inventar '+bag.length+'/50 · Am Boden '+loot.ground.length+(r.active?' · ⏸ Kampf pausiert':' · Run beendet');
+ const color=item=>Loot.rarity[item.rarity]?.color||'#b5c6c0';
+ $('gearSlots').innerHTML=Loot.slots.map(slot=>{
+  const item=loot.equipment[slot.id];
+  return '<button class="loot-slot" '+(item?'style="border-color:'+color(item)+'"':'')+" onclick='"+itemOnclick('inspectItem',item?item.id:slot.id)+"'>"+
+    '<span>'+slot.icon+' '+slot.name+'</span><small>'+(item?safeHtml(item.name):'Leer')+'</small></button>';
+ }).join('');
+ $('inventoryGrid').innerHTML=Array.from({length:50},(_,i)=>{
+  const item=bag[i];
+  return '<button class="loot-cell" '+(item?'style="border-color:'+color(item)+'" onclick=\''+itemOnclick('inspectItem',item.id)+'\'':'disabled')+'>'+
+    '<span>'+(item?Loot.slots.find(s=>s.id===item.slot)?.icon||'🎁':'·')+'</span><small>'+(item?safeHtml(item.name):'')+'</small></button>';
+ }).join('');
+ $('groundLoot').innerHTML=loot.ground.length?loot.ground.map(entry=>{
+  const item=entry.item;
+  return '<button class="loot-ground" style="border-color:'+color(item)+"' onclick='"+itemOnclick('inspectItem',item.id)+"'>"+
+   safeHtml(item.name)+' · verfällt nach Welle '+(entry.dropWave+5)+'</button>';
+ }).join(''):'<span class="muted">Keine Beute am Boden.</span>';
+ $('setBonuses').textContent=bonus.sets.length?bonus.sets.map(x=>x.description).join(' · '):'Setbonus: Ab zwei legendären Gegenständen desselben Sets.';
+ const item=bag.find(x=>x.id===selectedItemId)||Object.values(loot.equipment).find(x=>x&&x.id===selectedItemId)||loot.ground.find(x=>x.item.id===selectedItemId)?.item;
+ if(!item){$('itemDetail').innerHTML='<span class="muted">Tippe einen Gegenstand an, um Werte, Seltenheit und Effekte zu sehen.</span>';return}
+ const inBag=bag.some(x=>x.id===item.id),onGround=loot.ground.some(x=>x.item.id===item.id);
+ const unique=Loot.uniqueById[item.unique];
+ const desc='<b style="color:'+color(item)+'">'+safeHtml(item.name)+'</b>'+
+ '<div class="muted">'+Loot.rarity[item.rarity].name+' · Itemlevel '+item.level+' · Benötigt Level '+item.required+'</div>'+
+ '<div class="loot-attrs">'+item.affixes.map(a=>'<div>'+safeHtml(Loot.formatAffix(a))+'</div>').join('')+'</div>'+
+ (unique?'<p class="legend-effect">✦ '+safeHtml(unique.description)+' · '+safeHtml(unique.set)+'-Set</p>':'');
+ const act=(fn,id,label,disabled=false,alt=false)=>'<button '+(alt?'class="alt" ':'')+(disabled?'disabled ':'')+"onclick='"+itemOnclick('itemAction',fn).replace(')',','+JSON.stringify(id)+')')+"'>"+label+'</button>';
+ const actions=inBag?act('equip',item.id,'Ausrüsten',item.required>r.level)+' '+act('sell',item.id,'Verkaufen · '+fmt(item.sell)+' Gold',false,true):onGround?act('pickup',item.id,'Aufheben',bag.length>=50):act('unequip',item.slot,'Ablegen',bag.length>=50,true);
+ $('itemDetail').innerHTML=desc+'<div class="loot-actions">'+actions+'</div>';
+}
 function render(){
  const r=state.run,s=stats(),f=available();
  $('wave').textContent='Welle '+fmt(r.wave)+(r.wave%50===0?' 👑 Zonenboss':r.wave%10===0?' 👑 Boss':'');
@@ -227,6 +285,7 @@ function render(){
  $('runUpgrades').innerHTML=upgradeRows(false);$('workshop').innerHTML=upgradeRows(true);
 }
 if(!state.run.active){$('runEnd').classList.remove('hidden');$('summary').textContent='Letzter Run beendet. Höchste Welle: '+fmt(state.run.highest)+'. Starte einen neuen Run.'}else state.run.hp=clamp(state.run.hp,0,stats().hp);
+window.inspectItem=inspectItem;window.itemAction=itemAction;
 window.startRun=startRun;window.endRun=endRun;window.togglePause=togglePause;window.upgrade=upgrade;window.cast=cast;window.toggleAuto=toggleAuto;window.tab=tab;
 render();document.addEventListener('visibilitychange',()=>{last=performance.now();save()});window.addEventListener('pagehide',save);window.addEventListener('pageshow',()=>{Warrior.reload();try{const latest=JSON.parse(localStorage.getItem(KEY)||'null');if(latest){state.coins=nval(latest.coins,state.coins);state.work=Object.assign(blankUp(),latest.work||state.work)}}catch{}render()});
 function frame(now){const dt=clamp(now-last,0,100);last=now;tick(dt);renderClock+=dt;saveClock+=dt;if(renderClock>200){renderClock=0;render()}if(saveClock>2000){saveClock=0;save()}requestAnimationFrame(frame)}
