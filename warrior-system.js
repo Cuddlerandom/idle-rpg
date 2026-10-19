@@ -16,6 +16,30 @@ const CORE=[
 const MILESTONES=[10,15,20,25,30,35,40,45,50];
 const KEY='idle-rpg-warrior-progression-v03';
 const PREVIEW_KEY='idle-rpg-warrior-build-v1';
+// Accountweite Seelenwährung: alle Klassen nutzen denselben Vorrat.
+const SOULS_KEY='idle-rpg-souls-v1';
+function readSoulBank(fallback=0){
+ const old=asInt(fallback,0,1e12);
+ try{
+  const raw=root.localStorage.getItem(SOULS_KEY);
+  if(raw!==null){
+    const bank=JSON.parse(raw),balance=asInt(bank&&bank.balance,0,1e12);
+    if(bank&&bank.migratedWarrior===true)return balance;
+    // Bereits existierendes allgemeines Guthaben und alte Klassenseelen einmalig zusammenführen.
+    const merged=Math.min(1e12,balance+old);
+    root.localStorage.setItem(SOULS_KEY,JSON.stringify({version:1,balance:merged,migratedWarrior:true}));
+    return merged;
+  }
+ }catch(e){}
+ const balance=old;
+ try{root.localStorage.setItem(SOULS_KEY,JSON.stringify({version:1,balance,migratedWarrior:true}))}catch(e){}
+ return balance;
+}
+function writeSoulBank(balance){
+ try{root.localStorage.setItem(SOULS_KEY,JSON.stringify({version:1,balance:asInt(balance,0,1e12),migratedWarrior:true}));return true}catch(e){return false}
+}
+function syncSouls(){const p=load();p.souls=readSoulBank(p.souls);return p.souls}
+
 function emptySpecs(){return TREES.map(t=>t.nodes.map(()=>0))}
 function empty(){return {version:3,earnedCore:0,core:Array(9).fill(0),souls:0,purchased:0,specs:emptySpecs(),previewMode:false,previewSpecs:emptySpecs()}}
 function copy(x){return JSON.parse(JSON.stringify(x))}
@@ -43,17 +67,36 @@ d.previewMode=Boolean(v.previewMode);
 return d;
 }
 let state;
-function load(){if(state)return state;try{let raw=JSON.parse(root.localStorage.getItem(KEY)||'null');state=validated(raw);if(!raw){let legacy=JSON.parse(root.localStorage.getItem(PREVIEW_KEY)||'null');if(legacy&&validSpecs(safeSpecs(legacy),51))state.previewSpecs=safeSpecs(legacy);save()}}catch(e){state=empty()}return state}
+function load(){
+ if(state)return state;
+ try{
+  let raw=JSON.parse(root.localStorage.getItem(KEY)||'null');
+  state=validated(raw);
+  state.souls=readSoulBank(state.souls);
+  if(!raw){let legacy=JSON.parse(root.localStorage.getItem(PREVIEW_KEY)||'null');if(legacy&&validSpecs(safeSpecs(legacy),51))state.previewSpecs=safeSpecs(legacy);save()}
+ }catch(e){state=empty();state.souls=readSoulBank(0)}
+ return state;
+}
 function save(){try{root.localStorage.setItem(KEY,JSON.stringify(state));return true}catch(e){return false}}
-function get(){return copy(load())}
+function get(){syncSouls();return copy(load())}
 function soulCost(n){return Math.ceil(5*Math.pow(1.15,asInt(n,0,50)))}
 function remainingCore(){const p=load();return p.earnedCore-p.core.reduce((a,b)=>a+b,0)}
 function unlockedSpecs(){return load().core.every(x=>x===1)}
 function earnThrough(wave){const p=load(),old=p.earnedCore;while(p.earnedCore<9&&wave>=MILESTONES[p.earnedCore])p.earnedCore++;if(old!==p.earnedCore)save();return p.earnedCore-old}
 function soulReward(highest){return highest<5?0:Math.floor(Math.pow(highest/5,1.5))}
-function awardSouls(highest){const p=load(),earned=soulReward(highest);p.souls+=earned;save();return earned}
+function awardSouls(highest){
+ const p=load(),earned=soulReward(highest),before=syncSouls();
+ if(earned===0)return 0;
+ if(!writeSoulBank(before+earned))return 0;
+ p.souls=before+earned;save();return earned;
+}
 function learnCore(j){const p=load();if(j<0||j>=9||p.previewMode||p.core[j]||remainingCore()<=0)return false;p.core[j]=1;return save()}
-function buy(){const p=load(),cost=soulCost(p.purchased);if(p.previewMode||!unlockedSpecs()||p.purchased>=51||p.souls<cost)return false;p.souls-=cost;p.purchased++;return save()}
+function buy(){
+ const p=load(),cost=soulCost(p.purchased),available=syncSouls();
+ if(p.previewMode||!unlockedSpecs()||p.purchased>=51||available<cost)return false;
+ if(!writeSoulBank(available-cost))return false;
+ p.souls=available-cost;p.purchased++;return save();
+}
 function mutateSpec(i,j,delta){const p=load();if(!TREES[i]||!TREES[i].nodes[j]||![1,-1].includes(delta))return false;if(!p.previewMode&&!unlockedSpecs())return false;const key=p.previewMode?'previewSpecs':'specs',limit=p.previewMode?51:p.purchased;const next=copy(p[key]);next[i][j]+=delta;if(!validSpecs(next,limit))return false;p[key]=next;return save()}
 function resetPreview(){const p=load();if(!p.previewMode)return false;p.previewSpecs=emptySpecs();return save()}
 function setPreview(enabled){const p=load();p.previewMode=Boolean(enabled);return save()}
@@ -65,8 +108,8 @@ let next=copy(s);if(!TREES[i]||!TREES[i].nodes[j])return false;next[i][j]++;
 return (isPreview||unlockedSpecs())&&validSpecs(next,cap);
 }
 function reload(){state=null;return get()}
-function resetForTests(){state=empty();save()}
-const api={trees:TREES,core:CORE,milestones:MILESTONES,load:get,soulCost,remainingCore,unlockedSpecs,earnThrough,soulReward,awardSouls,learnCore,buy,mutateSpec,resetPreview,setPreview,respec,snapshot,checkNode,validSpecs,points,treePoints,activeCount,tier,reload,resetForTests};
+function resetForTests(){state=empty();writeSoulBank(0);save()}
+const api={trees:TREES,core:CORE,milestones:MILESTONES,load:get,souls:syncSouls,soulCost,remainingCore,unlockedSpecs,earnThrough,soulReward,awardSouls,learnCore,buy,mutateSpec,resetPreview,setPreview,respec,snapshot,checkNode,validSpecs,points,treePoints,activeCount,tier,reload,resetForTests};
 root.Warrior=api;
 if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

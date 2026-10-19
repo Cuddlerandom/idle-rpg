@@ -16,7 +16,7 @@
 <p class="muted">Die neun Punkte erhältst du beim erstmaligen Abschluss von Welle 10, 15, 20, 25, 30, 35, 40, 45 und 50. Nach Verteilung aller neun Punkte öffnet sich der Spezialisierungsbaum.</p>
 <div id="core" class="core-grid"></div></div>
 <div id="trees" class="trees"></div>
-<div class="foot">In der Entwicklungs-Testumgebung kannst du mit dem Testmodus weiterhin deine bisherige 51-Punkte-Verteilung ausprobieren. Test-Runs bringen keine dauerhaften Münzen, Klassenseelen oder Meilensteine. Jeder normale Build muss die Freischaltregeln erfüllen. Bei Rückkehr ins Spiel bleibt der Build eines laufenden Runs unverändert.</div>
+<div class="foot">In der Entwicklungs-Testumgebung kannst du mit dem Testmodus weiterhin deine bisherige 51-Punkte-Verteilung ausprobieren. Test-Runs bringen keine dauerhaften Münzen, Seelen oder Meilensteine. Jeder normale Build muss die Freischaltregeln erfüllen. Bei Rückkehr ins Spiel bleibt der Build eines laufenden Runs unverändert.</div>
 </main><script src="warrior-system.js"></script><script>
 'use strict';
 const el=id=>document.getElementById(id);
@@ -26,7 +26,12 @@ const activeRun=()=>Boolean(gameState()?.run?.active);
 const gameCoins=()=>Math.max(0,Math.floor(gameState()?.coins||0));
 function notice(msg){el('message').textContent=msg}
 function betweenRuns(){if(activeRun()){notice('Beende zuerst den laufenden Run im Spiel. Talentänderungen sind nur zwischen Runs erlaubt.');return false}return true}
-function purchase(){if(!betweenRuns())return;if(!Warrior.buy()){notice('Noch gesperrt oder zu wenig Klassenseelen. Erst alle 9 Grundtalente verteilen.');return}notice('Ein dauerhafter Spezialisierungspunkt gekauft.');render()}
+function purchase(){if(!betweenRuns())return;if(!Warrior.buy()){
+ const p=Warrior.load();
+ if(!Warrior.unlockedSpecs())return notice('Du brauchst zuerst alle 9 freigeschalteten und verteilten Grundtalente.');
+ if(p.previewMode)return notice('Im Vorschau-Modus können keine dauerhaften Talentpunkte gekauft werden.');
+ return notice('Nicht genug Seelen: nächster Punkt kostet '+Warrior.soulCost(p.purchased)+' Seelen.');
+ }notice('Ein dauerhafter Spezialisierungspunkt gekauft.');render()}
 function respec(){if(!betweenRuns())return;const p=Warrior.load();if(p.previewMode){if(confirm('Testverteilung zurücksetzen?'))Warrior.resetPreview()}else{if(!Warrior.points(p.specs))return notice('Noch keine Punkte verteilt.');if(!confirm('Spezialisierung für 500 permanente Münzen zurücksetzen? Gekaufte Punkte bleiben erhalten.'))return;const accepted=Warrior.respec(cost=>{let g=gameState();if(!g||g.coins<cost)return false;g.coins-=cost;localStorage.setItem('idle-rpg-core-v01',JSON.stringify(g));return true});if(!accepted)return notice('Du benötigst mindestens 500 Münzen.')}notice('Spezialisierungsverteilung zurückgesetzt.');render()}
 function togglePreview(){if(!betweenRuns())return;Warrior.setPreview(!Warrior.load().previewMode);notice(Warrior.load().previewMode?'Testmodus aktiv: Keine permanenten Belohnungen in Test-Runs.':'Normaler Fortschrittsmodus aktiv.');render()}
 function changeCore(i){if(!betweenRuns())return;if(!Warrior.learnCore(i))return notice('Dieser Hauptbaum-Punkt ist noch nicht verfügbar.');notice('Grundtalent freigeschaltet.');render()}
@@ -35,8 +40,8 @@ function copyBuild(){const p=Warrior.load(),s=p.previewMode?p.previewSpecs:p.spe
 function render(){
 const p=Warrior.load(),testing=p.previewMode,s=testing?p.previewSpecs:p.specs,spent=Warrior.points(s);
 const locked=activeRun();
-el('stateMessage').innerHTML=locked?'<div class="notice">🔒 Ein Run läuft. Du kannst die Talente ansehen, aber erst nach Run-Ende neu verteilen.</div>':testing?'<div class="notice">🧪 Testmodus: 51 Punkte frei zur Vorschau. Ein Test-Run verdient keine permanenten Belohnungen.</div>':'';
-el('stats').innerHTML='<div class="stat"><strong>'+p.core.filter(Boolean).length+'/'+p.earnedCore+'</strong>Hauptbaum verteilt</div><div class="stat"><strong>'+spent+'/'+(testing?51:p.purchased)+'</strong>Spezialpunkte verteilt</div><div class="stat"><strong>'+p.souls+'</strong>Klassenseelen</div><div class="stat"><strong>'+gameCoins()+'</strong>🪙 Münzen</div>';
+el('stateMessage').innerHTML=locked?'<div class="notice">🔒 Ein Run läuft. Du kannst die Talente ansehen, aber erst nach Run-Ende neu verteilen.</div>':testing?'<div class="notice">🧪 Testmodus: 51 Punkte frei zur Vorschau. Ein Test-Run verdient keine permanenten Belohnungen.</div>':!Warrior.unlockedSpecs()?'<div class="notice">🔒 Talentpunkte-Kauf noch gesperrt: Verteile zuerst alle neun Grundtalente (aktuell '+p.core.filter(Boolean).length+'/9). Deine '+p.souls+' Seelen bleiben erhalten.</div>':p.souls<Warrior.soulCost(p.purchased)?'<div class="notice">🔮 Nächster Talentpunkt kostet '+Warrior.soulCost(p.purchased)+' Seelen. Aktuell besitzt du '+p.souls+'.</div>':'';
+el('stats').innerHTML='<div class="stat"><strong>'+p.core.filter(Boolean).length+'/'+p.earnedCore+'</strong>Hauptbaum verteilt</div><div class="stat"><strong>'+spent+'/'+(testing?51:p.purchased)+'</strong>Spezialpunkte verteilt</div><div class="stat"><strong>'+p.souls+'</strong>Seelen</div><div class="stat"><strong>'+gameCoins()+'</strong>🪙 Münzen</div>';
 el('coreCounter').textContent=p.core.filter(Boolean).length+' / '+(testing?9:p.earnedCore)+' vergeben';
 el('buy').textContent='✦ Punkt kaufen · '+Warrior.soulCost(p.purchased)+' Seelen';
 el('buy').disabled=locked||testing||!Warrior.unlockedSpecs()||p.purchased>=51||p.souls<Warrior.soulCost(p.purchased);

@@ -103,11 +103,58 @@ test('auto skill automation is saved and independently toggleable',()=>{
  assert.ok(s.dump('idle-rpg-core-v01').run.fx.cd.base>=10000,'Base skill should cast automatically');
 });
 
-test('talent cache can reload purchases made on another page (Safari back navigation)',()=>{
+test('talent cache reload sees point purchases and global Seelen from another page',()=>{
  const s=storage();const {w}=environment(s);
- assert.equal(w.load().souls,0);
- const saved=w.load();saved.souls=123;
+ assert.equal(w.load().souls,0);assert.equal(w.load().purchased,0);
+ const saved=w.load();saved.purchased=1;
  s.setItem('idle-rpg-warrior-progression-v03',JSON.stringify(saved));
- assert.equal(w.load().souls,0,'old in-memory cache still present');
- assert.equal(w.reload().souls,123,'reload picks up permanent progress from another page');
+ const bank=s.dump('idle-rpg-souls-v1');bank.balance=123;
+ s.setItem('idle-rpg-souls-v1',JSON.stringify(bank));
+ assert.equal(w.load().purchased,0,'Krieger-Talentpunkte müssen bis Reload gecacht bleiben');
+ assert.equal(w.load().souls,123,'Seelenkonto zeigt frische Balance anderer Klassen');
+ assert.equal(w.reload().purchased,1);
+ assert.equal(w.load().souls,123);
+});
+
+
+test('class souls migrate to accountwide Seelen exactly once',()=>{
+ const raw={version:3,earnedCore:9,core:Array(9).fill(1),souls:31,purchased:0,specs:Array.from({length:3},()=>Array(18).fill(0)),previewMode:false,previewSpecs:Array.from({length:3},()=>Array(18).fill(0))};
+ const s=storage({'idle-rpg-warrior-progression-v03':JSON.stringify(raw)});
+ let e=environment(s);
+ assert.equal(e.w.load().souls,31);
+ assert.equal(s.dump('idle-rpg-souls-v1').balance,31);
+ assert.equal(s.dump('idle-rpg-souls-v1').migratedWarrior,true);
+ e.w.reload();assert.equal(e.w.load().souls,31);
+ e=environment(s);assert.equal(e.w.load().souls,31);
+ assert.equal(e.w.buy(),true);
+ assert.equal(e.w.load().souls,26);
+ assert.equal(s.dump('idle-rpg-souls-v1').balance,26);
+ assert.equal(s.dump('idle-rpg-warrior-progression-v03').purchased,1);
+});
+test('existing shared soul bank adds legacy warrior currency once',()=>{
+ const raw={souls:12,purchased:0,earnedCore:9,core:Array(9).fill(1)};
+ const s=storage({'idle-rpg-warrior-progression-v03':JSON.stringify(raw),
+  'idle-rpg-souls-v1':JSON.stringify({version:1,balance:40})});
+ const e=environment(s);
+ assert.equal(e.w.load().souls,52);
+ assert.equal(e.w.reload().souls,52);
+ assert.equal(s.dump('idle-rpg-souls-v1').balance,52);
+});
+test('talent purchase reads shared souls granted by another class',()=>{
+ const s=storage();const e=environment(s);
+ e.w.earnThrough(50);for(let i=0;i<9;i++)assert.equal(e.w.learnCore(i),true);
+ assert.equal(e.w.buy(),false);
+ const bank=s.dump('idle-rpg-souls-v1');
+ s.setItem('idle-rpg-souls-v1',JSON.stringify({...bank,balance:25}));
+ assert.equal(e.w.buy(),true);
+ assert.equal(e.w.load().souls,20);
+ assert.equal(s.dump('idle-rpg-souls-v1').balance,20);
+});
+test('run end rewards normal shared souls and never duplicates on second finish',()=>{
+ const saved={coins:0,best:5,run:{wave:5,highest:5,level:1,xp:0,gold:0,hp:100,active:true,preview:false,enemyHp:50,build:{core:Array(9).fill(0),specs:Array.from({length:3},()=>Array(18).fill(0)),preview:false},fx:{time:0,cd:{},bleeds:[],corrupt:[],resolve:[]}}};
+ const s=storage({'idle-rpg-core-v01':JSON.stringify(saved)});
+ const e=environment(s,true);e.game.endRun();e.game.endRun();
+ assert.equal(s.dump('idle-rpg-souls-v1').balance,1);
+ assert.match(e.elems.get('summary').textContent,/Seelen/);
+ assert.doesNotMatch(e.elems.get('summary').textContent,/Klassenseelen/);
 });
