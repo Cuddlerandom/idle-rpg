@@ -241,7 +241,7 @@ function itemAction(action,id){
   bag.push(loot.ground.splice(i,1)[0].item);message='🎒 Beute aufgehoben';
  }else return;
  r.hp=Math.min(r.hp,stats().hp);
- if(recentLoot&&recentLoot.id===idText&&action==='sell')recentLoot=null;
+ if(recentLoot&&recentLoot.id===idText&&(action==='equip'||action==='sell'))recentLoot=null;
  selectedItemId=null;save();render();renderInventory();
 }
 function renderInventory(){
@@ -280,8 +280,8 @@ function render(){
  const r=state.run,s=stats(),f=available();
  const notice=$('lootNotice');
  if(recentLoot){
-  const inBag=r.loot.inventory.some(x=>x.id===recentLoot.id),onGround=r.loot.ground.some(x=>x.item.id===recentLoot.id),equipped=Object.values(r.loot.equipment).some(x=>x&&x.id===recentLoot.id);
-  if(!inBag&&!onGround&&!equipped)recentLoot=null;
+  const inBag=r.loot.inventory.some(x=>x.id===recentLoot.id),onGround=r.loot.ground.some(x=>x.item.id===recentLoot.id);
+  if(!inBag&&!onGround)recentLoot=null;
  }
  if(recentLoot){
   const rarity=Loot.rarity[recentLoot.rarity];
