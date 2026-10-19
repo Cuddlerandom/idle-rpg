@@ -524,3 +524,10 @@ Verglichen werden vier legale 51-Punkte-Verteilungen: **51/0/0** (reiner Blutber
 - Bei neu gedroppten Items erscheint im Kampf ein Beutehinweis mit Name, Seltenheit, Slot und Status (Inventar/Boden). «Ansehen» öffnet die Inventarseite und fokussiert die Gegenstandsdetails. Kein Auto-Ausrüsten, kein Auto-Verkauf und keine Änderung der Droprate.
 - Permanente Werkstattkosten werden testweise von `round(BASE_COST × 10 × 1.32^Stufe)` auf `round(BASE_COST × 2 × 1.22^Stufe)` gesenkt. Run-Gold-Kosten, Stat-Boni und Gegnerwerte bleiben unverändert. Bereits gekaufte Stufen und Münzen bleiben bestehen; keine rückwirkende Rückerstattung.
 - Welle-10-Boss bleibt bis zum nächsten Praxistest unverändert. iPhone-Regressionsprüfung steht aus.
+
+## Prestige-Werkstatt V1 – 19.10.2026
+- Normale Werkstatt bleibt getrennt vom accountweiten Münz-Prestige-Baum. Drei Zweige: Reichtum, Entwicklung, Meisterschaft.
+- Jeder Prestige-Knoten zeigt aktuellen Wert, nächste Stufe, konkreten Zuwachs, Maximalbonus, Kosten und Voraussetzungen. Kauf und Rang werden im bestehenden lokalen Spielstand gespeichert.
+- V1-Knoten: Gold, Münzen, Werkstattrabatt, XP, zusätzliche Lootchance, Angriffstempo, Schadensreduktion und Spielgeschwindigkeit (bis 5×). Zahlen sind vorläufige Balancing-Werte.
+- Klassen-Seelenbonus und Erhöhung des Prozentverteidigungs-Caps folgen in einem weiteren Schritt nach Integration in die jeweiligen Systeme; nicht als funktionierend ausgeben.
+- Bereits gekaufte Werkstatt-Upgrades, Bosswerte und Klassentalente bleiben erhalten. iPhone-Browsertest noch ausstehend.
