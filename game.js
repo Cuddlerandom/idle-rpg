@@ -245,6 +245,28 @@ function itemAction(action,id){
  if(action==='equip'||(recentLoot&&recentLoot.id===idText&&action==='sell'))dismissRecentLoot();
  selectedItemId=null;save();render();renderInventory();
 }
+function compareEquipment(item,equipment){
+ const current=equipment[item.slot];
+ if(current&&current.id===item.id)return '<div class="compare-title">✓ Bereits ausgerüstet</div>';
+ const before=Loot.bonuses(equipment);
+ const after=Loot.bonuses({...equipment,[item.slot]:item});
+ const stats=Object.keys(Loot.stat);
+ const rows=stats.map(k=>{
+  const delta=(after[k]||0)-(before[k]||0);
+  if(Math.abs(delta)<0.000001)return '';
+  const spec=Loot.stat[k];
+  const percent=spec.unit!=='flat'&&spec.unit!=='decimal';
+  const formatted=percent?(Math.abs(delta)*100).toFixed(1).replace(/\\.0$/,'')+' %':spec.unit==='decimal'?Math.abs(delta).toFixed(2):Math.abs(delta).toFixed(1).replace(/\\.0$/,'');
+  return '<div class="compare-row '+(delta>0?'compare-gain':'compare-loss')+'"><span>'+safeHtml(spec.name)+'</span><b>'+(delta>0?'▲ +':'▼ −')+formatted+'</b></div>';
+ }).filter(Boolean).join('');
+ const special=Object.keys(after).filter(k=>!stats.includes(k)&&k!=='sets'&&typeof after[k]==='number'&&Math.abs(after[k]-(before[k]||0))>0.000001).map(k=>{
+  const d=after[k]-(before[k]||0);
+  return '<div class="compare-row '+(d>0?'compare-gain':'compare-loss')+'"><span>'+safeHtml(k)+'</span><b>'+(d>0?'▲ +':'▼ −')+Math.abs(d*100).toFixed(1)+' %</b></div>';
+ }).join('');
+ const oldSets=new Set(before.sets.map(s=>s.name)),newSets=new Set(after.sets.map(s=>s.name));
+ const setRows=[...after.sets.filter(s=>!oldSets.has(s.name)).map(s=>'<div class="compare-gain">▲ Setbonus: '+safeHtml(s.description)+'</div>'),...before.sets.filter(s=>!newSets.has(s.name)).map(s=>'<div class="compare-loss">▼ Setbonus verloren: '+safeHtml(s.description)+'</div>')].join('');
+ return '<div class="item-compare"><div class="compare-title">⚖️ Vergleich mit '+(current?safeHtml(current.name):'leerem '+safeHtml(Loot.slots.find(s=>s.id===item.slot)?.name||'Slot'))+'</div>'+(rows+special+setRows||'<span class="muted">Keine Veränderung der Kampfwerte.</span>')+'</div>';
+}
 function renderInventory(){
  const r=state.run,loot=r.loot,bag=loot.inventory,bonus=gear();
  $('lootInfo').textContent='Inventar '+bag.length+'/50 · Am Boden '+loot.ground.length+(r.active?' · ⏸ Kampf pausiert':' · Run beendet');
@@ -272,7 +294,7 @@ function renderInventory(){
  const desc='<b style="color:'+color(item)+'">'+safeHtml(item.name)+'</b>'+
  '<div class="muted">'+Loot.rarity[item.rarity].name+' · Itemlevel '+item.level+' · Benötigt Level '+item.required+'</div>'+
  '<div class="loot-attrs">'+item.affixes.map(a=>'<div>'+safeHtml(Loot.formatAffix(a))+'</div>').join('')+'</div>'+
- (unique?'<p class="legend-effect">✦ '+safeHtml(unique.description)+' · '+safeHtml(unique.set)+'-Set</p>':'');
+ (unique?'<p class="legend-effect">✦ '+safeHtml(unique.description)+' · '+safeHtml(unique.set)+'-Set</p>':'')+compareEquipment(item,loot.equipment);
  const act=(fn,id,label,disabled=false,alt=false)=>'<button '+(alt?'class="alt" ':'')+(disabled?'disabled ':'')+"onclick='"+itemOnclick('itemAction',fn).replace(')',','+JSON.stringify(id)+')')+"'>"+label+'</button>';
  const actions=inBag?act('equip',item.id,'Ausrüsten',item.required>r.level)+' '+act('sell',item.id,'Verkaufen · '+fmt(item.sell)+' Gold',false,true):onGround?act('pickup',item.id,'Aufheben',bag.length>=50):act('unequip',item.slot,'Ablegen',bag.length>=50,true);
  $('itemDetail').innerHTML=desc+'<div class="loot-actions">'+actions+'</div>';
