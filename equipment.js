@@ -78,7 +78,7 @@ function makeItem(template,rarity,wave,uid){
 function quality(wave,random=Math.random,boss=false){
  const w=Math.max(1,safeInt(wave,1)),bonus=clamp(Math.floor(w/25)*.018,0,.12);
  let probs=[.63-bonus*2.6,.255+bonus,.09+bonus,.022+bonus*.4,.003+bonus*.2];
- const u=random();for(let i=0;i<probs.length;i++){if(u<probs[i])return boss?Math.max(2,i):i;u-=probs[i]}return boss?2:0;
+ let u=random();for(let i=0;i<probs.length;i++){if(u<probs[i])return boss?Math.max(2,i):i;u-=probs[i]}return boss?2:0;
 }
 function roll(wave,random=Math.random,group='any'){
  const w=Math.max(1,safeInt(wave,1));
