@@ -166,7 +166,7 @@ function select(arsenal,id){
 function starter(arsenal){
  const id=arsenal.selected;if(!id||!arsenal.unlocked.includes(id))return null;
  // Freigeschaltetes Waffenmodell startet auf Run-Level 1; die Schmiedestufe bleibt permanent.
- return makeItem(id,0,1,1,-1,5,arsenal.levels[id]||0);
+ return makeItem(id,3,1,1,-1,5,arsenal.levels[id]||0);
 }
 function describe(item){
  if(!item)return [];
