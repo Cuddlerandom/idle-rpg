@@ -83,6 +83,17 @@ Diese Datei ist die zentrale Quelle für die gemeinsam beschlossenen Spielregeln
 - Begleiterhaltungen einstellbar: Aggressiv, Defensiv, Unterstützung (Frage 78).
 
 ## Beute, Ausrüstung und Inventar
+### Gewähltes Lootmodell C und V0.4-Umsetzung (19.10.2026)
+Der Nutzer hat ausdrücklich **Variante C (Diablo-Loot)** bestätigt: Gegenstände mit zufälligen Affixen, fünf Qualitätsstufen, besonderen legendären Effekten und sehr seltenen einzigartigen Gegenständen. Die zuvor festgelegten **9 Ausrüstungsplätze**, **50 Inventarplätze**, rungebundene Gegenstände und 5-Wellen-Bodenbeute bleiben verbindlich.
+
+**Technische V0.4-Stufe:**
+- `loot-system.js` enthält zufällige Gegenstandsgenerierung mit wellenabhängiger Seltenheit und Itemlevel, 9 Slots, 50er-Beutel, 12 benannte legendäre Uniques und frühe 2er-Setboni für Blutjäger, Abgrund und Bollwerk.
+- `game.js` übernimmt Bonuswerte aus Ausrüstung in den Kampfschaden, Rüstung, Leben, Angriffstempo, Blutung, Verderbnis, Gegenangriffe und Lebensraub; Beute erscheint nach besiegten Gegnern, bei vollem Beutel am Boden.
+- `index.html` besitzt eine eigene Inventarseite: scrollbares 50er-Raster, 9 Slots, Aufheben, Ausrüsten, Ablegen, Verkauf gegen Gold; der Kampf pausiert, solange das Inventar geöffnet ist.
+- Ausstattung und Bodenbeute sind nur im aktuellen Run gespeichert und werden beim Start eines neuen Runs gelöscht; permanente Münzen, Talentpunkte und **gemeinsame Seelen** bleiben davon unberührt.
+- **Die Werte und Dropraten sind vorläufige Testwerte, kein freigegebenes Balancing.** Künstlerisch endgültige Item-Sprites, erweiterte Setboni und weitere legendäre Effekte folgen separat.
+
+
 - Sämtliche Ausrüstung und Verbrauchsgüter sind **nur für den laufenden Run** und verschwinden danach, auch legendäre Gegenstände und Sets.
 - Fünf Seltenheiten: Gewöhnlich (Grau), Ungewöhnlich (Grün), Selten (Blau), Episch (Violett), Legendär (Orange).
 - Beute erhält zufällige Werte und Eigenschaften; besondere Boss-Gegenstände haben einzigartige festgelegte Effekte (Frage 59).

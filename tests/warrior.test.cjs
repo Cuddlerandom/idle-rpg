@@ -2,6 +2,7 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const warriorCode=fs.readFileSync('warrior-system.js','utf8');
 const gameCode=fs.readFileSync('game.js','utf8');
+const lootCode=fs.readFileSync('loot-system.js','utf8');
 function storage(initial={}){
  const db=new Map(Object.entries(initial));return {getItem:k=>db.has(k)?db.get(k):null,setItem:(k,v)=>db.set(k,String(v)),removeItem:k=>db.delete(k),dump:k=>JSON.parse(db.get(k)||'null')};
 }
@@ -11,7 +12,7 @@ function environment(s=storage(),withGame=false){
  const sandbox={localStorage:s,window:null,document:dom,performance:{now:()=>0},requestAnimationFrame(fn){sandbox.nextFrame=fn},confirm:()=>true,Math,console};
  sandbox.window=sandbox;sandbox.addEventListener=()=>{};sandbox.globalThis=sandbox;
  vm.runInNewContext(warriorCode,sandbox,{filename:'warrior-system.js'});
- if(withGame)vm.runInNewContext(gameCode,sandbox,{filename:'game.js'});
+ if(withGame){vm.runInNewContext(lootCode,sandbox,{filename:'loot-system.js'});vm.runInNewContext(gameCode,sandbox,{filename:'game.js'});}
  return {s,w:sandbox.Warrior,game:sandbox,elems};
 }
 test('core is nine rank-one talents with permanent unique milestone awards',()=>{
