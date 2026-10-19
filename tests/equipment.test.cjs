@@ -23,7 +23,7 @@ test('garantierte Starter-Beute und erste Bosswaffe',()=>{
  const boss=E.onWin(e,10,()=>.5).item;assert.equal(boss.unique,true);assert.equal(boss.slot,'weapon');assert.ok(boss.rarity>=3);
 });
 test('zufällige Affixe bleiben beim Neuladen erhalten',()=>{
- const item=E.roll(20,()=>.5,'any'),e=E.blank();const assigned=E.addLoot?E.addLoot(e,item,20):E.onWin(e,1,()=>.5);
+ const item=E.roll(20,()=>.95,'any'),e=E.blank();e.bag.push({...item,uid:e.nextId++});assert.ok(item.affix>=0,'Rare item should roll an affix');
  // Die serialisierte Beute muss dieselben Attribute rekonstruieren.
  const p=E.repair(JSON.parse(JSON.stringify(e)));
  assert.deepEqual(p.bag.map(x=>x.stats),e.bag.map(x=>x.stats));
@@ -61,9 +61,11 @@ test('Starter-Arsenal gibt keine permanenten Run-Gegenstände mit',()=>{
  assert.deepEqual(r1.gear.weapon.stats,r2.gear.weapon.stats);assert.equal(r1.bag.length,0);assert.equal(r2.bag.length,0);
 });
 test('Inventar öffnet und pausiert Kampf ohne Run dauerhaft zu pausieren',()=>{
- const {ctx,store}=boot();let f=ctx.nextFrame;f(100);const before=store.dump('idle-rpg-core-v01')?.run?.fx?.time||0;
- ctx.tab('inventory');f(200);f(300);ctx.tab('run');f(400);
- const after=store.dump('idle-rpg-core-v01')?.run?.fx?.time||0;assert.ok(after>=before);
+ const {ctx,store}=boot();const f=ctx.nextFrame;
+ ctx.tab('inventory');for(let i=1;i<=25;i++)f(i*100);
+ const paused=store.dump('idle-rpg-core-v01').run.fx.time;assert.equal(paused,0);
+ ctx.tab('run');for(let i=26;i<=55;i++)f(i*100);
+ const after=store.dump('idle-rpg-core-v01').run.fx.time;assert.ok(after>0);
 });
 test('Ausrüsten verändert wirkliche Kampfwerte und Item bleibt gespeichert',()=>{
  const e=E.blank();const item=E.makeItem('rustblade',0,1,e.nextId++);e.bag.push(item);
@@ -78,7 +80,7 @@ test('Bosswaffen werden normal dauerhaft freigeschaltet, nicht im Testmodus',()=
  const {ctx}=boot(store);ctx.cast('base');
  const arsenal=store.dump('idle-rpg-core-v01').arsenal;
  assert.equal(arsenal.unlocked.length,1);assert.equal(arsenal.selected,arsenal.unlocked[0]);
- const testStore=storage({'idle-rpg-core-v01':JSON.stringify({run:{active:true,preview:true,wave:10,highest:10,level:4,hp:120,enemyHp:1,equipment:E.blank()}})});
+ const testStore=storage({'idle-rpg-core-v01':JSON.stringify({run:{active:true,preview:true,wave:10,highest:10,level:4,hp:120,enemyHp:1,build:{core:Array(9).fill(1),specs:Array.from({length:3},()=>Array(18).fill(0)),preview:true},equipment:E.blank()}})});
  const {ctx:testCtx}=boot(testStore);testCtx.cast('base');assert.equal(testStore.dump('idle-rpg-core-v01').arsenal.unlocked.length,0);
 });
 test('Auswahl und Schmieden gesperrt im Run; nach dem Run persistieren sie',()=>{
