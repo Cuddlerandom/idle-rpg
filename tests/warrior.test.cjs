@@ -103,13 +103,17 @@ test('auto skill automation is saved and independently toggleable',()=>{
  assert.ok(s.dump('idle-rpg-core-v01').run.fx.cd.base>=10000,'Base skill should cast automatically');
 });
 
-test('talent cache can reload purchases made on another page (Safari back navigation)',()=>{
+test('talent cache reload sees point purchases and global Seelen from another page',()=>{
  const s=storage();const {w}=environment(s);
- assert.equal(w.load().souls,0);
- const saved=w.load();saved.souls=123;
+ assert.equal(w.load().souls,0);assert.equal(w.load().purchased,0);
+ const saved=w.load();saved.purchased=1;
  s.setItem('idle-rpg-warrior-progression-v03',JSON.stringify(saved));
- assert.equal(w.load().souls,0,'old in-memory cache still present');
- assert.equal(w.reload().souls,123,'reload picks up permanent progress from another page');
+ const bank=s.dump('idle-rpg-souls-v1');bank.balance=123;
+ s.setItem('idle-rpg-souls-v1',JSON.stringify(bank));
+ assert.equal(w.load().purchased,0,'Krieger-Talentpunkte müssen bis Reload gecacht bleiben');
+ assert.equal(w.load().souls,123,'Seelenkonto zeigt frische Balance anderer Klassen');
+ assert.equal(w.reload().purchased,1);
+ assert.equal(w.load().souls,123);
 });
 
 
