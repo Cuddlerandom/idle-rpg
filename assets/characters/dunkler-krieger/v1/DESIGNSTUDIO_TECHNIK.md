@@ -3,7 +3,7 @@
 **Stand:** 19.10.2026 · **Status:** Technische Arbeitsreferenz, **nicht** endgültige Designfreigabe  
 **Repository:** `Cuddlerandom/idle-rpg`  
 **Arbeitsbranch:** `feature/dunkler-krieger-v1-animation-preview` · [Pull Request #10](https://github.com/Cuddlerandom/idle-rpg/pull/10)  
-**Verbindliche Projektregeln:** [GAME_DESIGN.md](../../../GAME_DESIGN.md) (von diesem Ordner aus führt der relative Pfad nicht zur Repo-Wurzel; siehe stattdessen [GAME_DESIGN.md auf GitHub](https://github.com/Cuddlerandom/idle-rpg/blob/main/GAME_DESIGN.md)). **`main` bleibt ohne Freigabe des Nutzers unverändert.**
+**Verbindliche Projektregeln:** [GAME_DESIGN.md](../../../../GAME_DESIGN.md). **`main` bleibt ohne Freigabe des Nutzers unverändert.**
 
 > **Wozu dieses Dokument dient:** Gemeinsame technische Grundlage für Design-Chat und Code-Chat. Es trennt **verifizierten Ist-Stand**, **Recherche aus Primärquellen**, **erkannte Fehler** und **Empfehlungen für die nächste Grafiklieferung**. Eine technische Empfehlung ist keine automatische Designfreigabe.
 
