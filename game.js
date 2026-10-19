@@ -162,7 +162,7 @@ function finish(reason){
  const r=state.run;if(!r.active)return;
  r.active=false;r.paused=true;r.equipment=Equipment.blank();refreshItems();chosenItem=null;state.runs++;if(!r.preview)state.best=Math.max(state.best,r.highest);
  let souls=0;if(!r.claimed){r.claimed=true;if(!r.preview)souls=Warrior.awardSouls(r.highest)}
- $('summary').textContent=reason+' · Höchste Welle: '+fmt(r.highest)+' · Besiegte Gegner: '+fmt(r.kills)+' · Bosse: '+fmt(r.bosses)+' · Zeit: '+Math.floor(r.elapsed/60)+' Min. · '+(r.preview?'Testmodus – keine permanenten Belohnungen':'+'+souls+' Klassenseelen · Gesamt: '+Warrior.load().souls);
+ $('summary').textContent=reason+' · Höchste Welle: '+fmt(r.highest)+' · Besiegte Gegner: '+fmt(r.kills)+' · Bosse: '+fmt(r.bosses)+' · Zeit: '+Math.floor(r.elapsed/60)+' Min. · '+(r.preview?'Testmodus – keine permanenten Belohnungen':'+'+souls+' Seelen · Gesamt: '+Warrior.load().souls);
  $('runEnd').classList.remove('hidden');message=reason;save();render();
 }
 function startRun(){
@@ -178,7 +178,7 @@ function startRun(){
  save();render();
 }
 function togglePause(){const r=state.run;if(!r.active)return;r.paused=!r.paused;message=r.paused?'⏸ Pausiert':'▶️ Kampf läuft';save();render()}
-function endRun(){if(state.run.active&&confirm('Run wirklich beenden? Gold und Level werden zurückgesetzt. Du erhältst Klassenseelen für die höchste Welle.'))finish('Run freiwillig beendet')}
+function endRun(){if(state.run.active&&confirm('Run wirklich beenden? Gold und Level werden zurückgesetzt. Du erhältst Seelen für die höchste Welle.'))finish('Run freiwillig beendet')}
 function cost(k,permanent){let lvl=permanent?state.work[k]:state.run.runUp[k];return Math.round(BASE_COST[k]*(permanent?10:1)*Math.pow(permanent?1.32:1.5,lvl))}
 function upgrade(k,permanent){
  const c=cost(k,permanent);if(permanent){if(state.run.preview||state.coins<c)return;state.coins-=c;state.work[k]++}else{if(!state.run.active||state.run.gold<c)return;state.run.gold-=c;state.run.runUp[k]++}
