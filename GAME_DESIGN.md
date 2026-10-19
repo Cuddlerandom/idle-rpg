@@ -518,3 +518,9 @@ Verglichen werden vier legale 51-Punkte-Verteilungen: **51/0/0** (reiner Blutber
 - Zusätzlich wird **`index.html` und `talentplaner.html` in Headless Chrome** geöffnet; dynamische Kampfanzeige, Fähigkeiten und Grundtalente müssen erscheinen. Automatisierte Checks sind ein technischer Smoke-Test, **keine umfassende iPhone-Freigabe**.
 - **Noch offen:** Ausrüstung, Tränke, Grafiken, umfangreiche Wirtschaft/Prestige-Systeme sowie quantitative Simulationen für alle Talentkombinationen. Insbesondere der Welle-10-Boss muss nach abgeschlossener Integration noch gezielt auf Fairness geprüft werden.
 - Die neuen Zahlen und die genaue prozentuale Schadensreihenfolge gelten als technische Balance-Startwerte, nicht als finale Nutzerfreigabe. Keine weiteren manuell verlangten Build-Tests, bevor die grundlegende Regressionprüfung erfolgreich ist.
+
+
+## HUD-Beutehinweis und Werkstatt-Balancing – Teständerung 19.10.2026
+- Bei neu gedroppten Items erscheint im Kampf ein Beutehinweis mit Name, Seltenheit, Slot und Status (Inventar/Boden). «Ansehen» öffnet die Inventarseite und fokussiert die Gegenstandsdetails. Kein Auto-Ausrüsten, kein Auto-Verkauf und keine Änderung der Droprate.
+- Permanente Werkstattkosten werden testweise von `round(BASE_COST × 10 × 1.32^Stufe)` auf `round(BASE_COST × 2 × 1.22^Stufe)` gesenkt. Run-Gold-Kosten, Stat-Boni und Gegnerwerte bleiben unverändert. Bereits gekaufte Stufen und Münzen bleiben bestehen; keine rückwirkende Rückerstattung.
+- Welle-10-Boss bleibt bis zum nächsten Praxistest unverändert. iPhone-Regressionsprüfung steht aus.
