@@ -19,15 +19,20 @@ const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const nval=(x,def=0)=>Number.isFinite(Number(x))?Number(x):def;
 const blankUp=()=>Object.fromEntries(FIELDS.map(k=>[k,0]));
 const blankFx=()=>({time:0,bleeds:[],corrupt:[],resolve:[],cd:{},armorUntil:0,darkUntil:0,bastionUntil:0,hungerUntil:0,soulUntil:0,revenge:false});
-const defaultRun=()=>({wave:1,highest:1,level:1,xp:0,gold:0,hp:100,kills:0,bosses:0,runUp:blankUp(),paused:false,active:true,elapsed:0,enemyHp:0,claimed:false,preview:false,build:null,fx:blankFx(),heroClock:0,enemyClock:0});
-const defaults=()=>({coins:0,work:blankUp(),runs:0,best:1,settings:{auto:{}},run:defaultRun()});
+const defaultRun=()=>({equipment:Equipment.blank(),wave:1,highest:1,level:1,xp:0,gold:0,hp:100,kills:0,bosses:0,runUp:blankUp(),paused:false,active:true,elapsed:0,enemyHp:0,claimed:false,preview:false,build:null,fx:blankFx(),heroClock:0,enemyClock:0});
+const defaults=()=>({arsenal:Equipment.blankArsenal(),coins:0,work:blankUp(),runs:0,best:1,settings:{auto:{}},run:defaultRun()});
 let state;try{state=Object.assign(defaults(),JSON.parse(localStorage.getItem(KEY)||'{}'));state.work=Object.assign(blankUp(),state.work||{});state.settings=Object.assign({auto:{}},state.settings||{});state.settings.auto=state.settings.auto||{};state.run=Object.assign(defaultRun(),state.run||{});state.run.runUp=Object.assign(blankUp(),state.run.runUp||{})}catch{state=defaults()}
+state.arsenal=Equipment.repairArsenal(state.arsenal);
+state.run.equipment=Equipment.repair(state.run.equipment);
 if(!state.run.build){ // Übernahme früherer laufender Test-Runs, ohne gratis Talente permanent zu vergeben.
  const prior=(()=>{try{return JSON.parse(localStorage.getItem('idle-rpg-warrior-build-v1')||'null')}catch{return null}})();
  const s=Warrior.snapshot();
  if(state.run.active&&Array.isArray(prior)&&prior.length===3){s.specs=prior;s.core=Array(9).fill(1);s.preview=true}
  state.run.build=s;state.run.preview=s.preview;
 }
+let inventoryOpen=false,chosenItem=null,invDirty=true;
+let itemMods=Equipment.bonuses(state.run.equipment);
+function refreshItems(){itemMods=Equipment.bonuses(state.run.equipment);invDirty=true}
 const savedFx=state.run.fx;
 function repairFx(raw){const f=blankFx();if(!raw||typeof raw!=='object')return f;f.time=clamp(nval(raw.time),0,1e12);for(const k of ['armorUntil','darkUntil','bastionUntil','hungerUntil','soulUntil'])f[k]=clamp(nval(raw[k]),0,1e12);f.revenge=Boolean(raw.revenge);f.cd={};for(const sk of SKILLS)f.cd[sk.id]=clamp(nval(raw.cd&&raw.cd[sk.id]),0,1e12);f.corrupt=(Array.isArray(raw.corrupt)?raw.corrupt:[]).slice(0,3).filter(x=>Number.isFinite(x)&&x>f.time);f.resolve=(Array.isArray(raw.resolve)?raw.resolve:[]).slice(0,5).filter(x=>Number.isFinite(x)&&x>f.time);f.bleeds=(Array.isArray(raw.bleeds)?raw.bleeds:[]).slice(0,8).filter(x=>x&&x.end>f.time&&x.remaining>0&&Number.isFinite(x.remaining)).map(x=>({end:nval(x.end),remaining:nval(x.remaining)}));return f}
 let fx=repairFx(savedFx);const snapshot=state.run.build;const R=(t,j)=>Math.floor(nval(snapshot.specs?.[t]?.[j]||0));const C=j=>Number(snapshot.core?.[j]||0);
@@ -41,17 +46,17 @@ const damageMult=()=> (1+corrupt()*.03*(1+.02*R(1,12)))*(expiring(fx.darkUntil)?
 const executeMult=()=> (enemyHp/enemy.maxHp<.35?1+.04*R(0,11):1)*(enemyHp/enemy.maxHp<.30&&C(8)?1.1:1);
 function stats(){
  const r=state.run,w=state.work;
- const rawAtk=10+2*w.atk+2*r.runUp.atk+2*(r.level-1);
- const rawHp=100+15*w.hp+15*r.runUp.hp+10*(r.level-1);
- const rawDef=2+w.def+r.runUp.def+Math.floor((r.level-1)/4);
+ const rawAtk=10+2*w.atk+2*r.runUp.atk+2*(r.level-1)+(itemMods.atk||0);
+ const rawHp=100+15*w.hp+15*r.runUp.hp+10*(r.level-1)+(itemMods.hp||0);
+ const rawDef=2+w.def+r.runUp.def+Math.floor((r.level-1)/4)+(itemMods.def||0);
  return {
  atk:rawAtk*(1+.05*C(0)),
  hp:rawHp*(1+.10*C(1)+.03*R(2,0)+.02*R(2,9)),
  def:rawDef*(1+.05*C(2)+.03*R(2,2)+(.03*R(2,14)*(resolve()===5?1:0))),
- regen:(.5+.35*w.regen+.35*r.runUp.regen)*(1+.10*C(4)+.04*R(2,8)),
- speed:Math.max(280,1100-24*(w.speed+r.runUp.speed))/(1+.05*C(3)+.02*R(0,2)+(r.hp/Math.max(1,rawHp*(1+.10*C(1)+.03*R(2,0)+.02*R(2,9)))<.4&&R(0,12)? .15:0)+(expiring(fx.hungerUntil)?.02*R(0,16):0)),
- crit:clamp(5+w.crit+r.runUp.crit+5*C(5)+2*R(0,8),0,95),
- critMult:1.5+.10*C(6)
+ regen:(.5+.35*w.regen+.35*r.runUp.regen+(itemMods.regen||0))*(1+.10*C(4)+.04*R(2,8)),
+ speed:Math.max(280,Math.max(280,1100-24*(w.speed+r.runUp.speed))/(1+(itemMods.speedPct||0)+.05*C(3)+.02*R(0,2)+(r.hp/Math.max(1,rawHp*(1+.10*C(1)+.03*R(2,0)+.02*R(2,9)))<.4&&R(0,12)? .15:0)+(expiring(fx.hungerUntil)?.02*R(0,16):0))),
+ crit:clamp(5+w.crit+r.runUp.crit+5*C(5)+2*R(0,8)+(itemMods.crit||0),0,95),
+ critMult:1.5+.10*C(6)+(itemMods.critDamage||0)
  };
 }
 function enemyFor(w){
@@ -66,23 +71,23 @@ function save(){state.run.fx=fx;state.run.heroClock=heroClock;state.run.enemyClo
 function heal(raw){const h=Math.max(0,raw*healingMult());state.run.hp=Math.min(stats().hp,state.run.hp+h)}
 function debuffDuration(ms){return ms*(1+.03*R(1,2))}
 function applyBleed(forced=false,normal=false){
- if(!forced&&(!normal||Math.random()>=.05*R(0,0)))return false;
+ if(!forced&&(!normal||Math.random()>=.05*R(0,0)+(itemMods.bleedChance||0)))return false;
  const duration=debuffDuration(6000+1000*R(0,4));
- const total=stats().atk*.30*(1+.10*R(0,5));
+ const total=stats().atk*.30*(1+.10*R(0,5))*(1+(itemMods.bleedPower||0));
  fx.bleeds=fx.bleeds.filter(b=>b.end>fx.time&&b.remaining>0);
  if(fx.bleeds.length>=5+R(0,7))fx.bleeds.shift();
  fx.bleeds.push({end:fx.time+duration,remaining:total});return true;
 }
 function applyCorrupt(forced=false,normal=false){
- if(!forced&&(!normal||Math.random()>=.04*R(1,0)))return false;
+ if(!forced&&(!normal||Math.random()>=.04*R(1,0)+(itemMods.corruptChance||0)))return false;
  if(corrupt()>=3)fx.corrupt.shift();
  fx.corrupt.push(fx.time+debuffDuration(8000+600*R(1,15)));
  let damage=stats().atk*(.1+.02*R(1,9))*(1+.03*R(1,11))*(1+.04*R(1,5)); // Schattenimpuls beim Auftragen.
- damage*=damageMult()*executeMult();
+ damage*=damageMult()*executeMult()*(1+(itemMods.shadowPower||0));
  enemyHp-=damage;return true;
 }
 function applyResolve(forced=false){
- if(specTotal(2)===0)return false;
+ if(specTotal(2)===0&&!(itemMods.resolveGuard>0))return false;
  if(!forced&&Math.random()>=.05*R(2,5))return false;
  if(resolve()>=5)fx.resolve.shift();
  fx.resolve.push(fx.time+8000);return true;
@@ -98,7 +103,7 @@ function attack(power=1,kind='normal'){
  }
  dmg*=damageMult()*executeMult()*(wasBleeding?1+.03*R(0,13):1)*(base&&wasCorrupt?1+.05*R(1,8):1);
  if(fx.revenge){dmg*=1+.06*R(0,14)+.04*R(2,13);fx.revenge=false}
- enemyHp-=dmg;heal(dmg*.01*R(2,1));
+ enemyHp-=dmg;heal(dmg*(.01*R(2,1)+(itemMods.lifesteal||0)));
  if(base)fx.armorUntil=fx.time+debuffDuration(5000);
  if(isNormal)applyBleed(false,true);
  if(isNormal||expiring(fx.darkUntil))applyCorrupt(expiring(fx.darkUntil),isNormal);
@@ -110,7 +115,7 @@ function counter(){
 }
 function cast(id){
  const skill=available().find(x=>x.id===id);
- if(!skill||!state.run.active||state.run.paused||nval(fx.cd[id])>fx.time)return false;
+ if(!skill||!state.run.active||state.run.paused||inventoryOpen||nval(fx.cd[id])>fx.time)return false;
  if(id==='base')attack(1.5,'base');
  if(id==='rush'){attack(1.8,'rush');applyBleed(true)}
  if(id==='bloodbath'){const remain=fx.bleeds.reduce((s,b)=>s+b.remaining,0);const bossMod=enemy.wave%10===0?1+.04*R(0,15):1;enemyHp-=remain*damageMult()*executeMult()*bossMod;fx.bleeds=[]}
@@ -143,17 +148,19 @@ function win(killedByBleed=false){
  fx.bleeds=[];fx.corrupt=[];fx.armorUntil=0; // Eigene Buffs und Cooldowns laufen über die Wellen weiter.
  let gold=Math.round((8+w*2)*(boss?5:1)),coins=Math.max(1,Math.round((1+w*.1)*(boss?5:1)));
  r.gold+=gold;if(!r.preview)state.coins+=coins;
+ const drop=Equipment.onWin(r.equipment,w,Math.random);
+ const newlyUnlocked=drop&&drop.item.unique&&drop.item.slot==='weapon'&&!r.preview?Equipment.unlock(state.arsenal,drop.item.template):false;
  r.xp+=10+Math.round(w*1.6)*(boss?3:1);r.kills++;if(boss)r.bosses++;
  gainLevel();r.wave++;r.highest=Math.max(r.highest,r.wave);
  if(!r.preview)state.best=Math.max(state.best,r.highest);
  const milestone=r.preview?0:Warrior.earnThrough(w);
  enemy=enemyFor(r.wave);enemyHp=enemy.maxHp;heroClock=enemyClock=0;
- message=(boss?'👑 Boss besiegt! ':'')+'+'+fmt(gold)+' Gold'+(r.preview?' (Testmodus)':' · +'+fmt(coins)+' Münzen')+(milestone?' · ⭐ Hauptbaum-Punkt!':'');
- save();
+ message=(boss?'👑 Boss besiegt! ':'')+'+'+fmt(gold)+' Gold'+(r.preview?' (Testmodus)':' · +'+fmt(coins)+' Münzen')+(milestone?' · ⭐ Hauptbaum-Punkt!':'')+(drop?' · 🎒 '+drop.item.name+(drop.where==='ground'?' (Boden)':''):'')+(newlyUnlocked?' · ⚒️ Bosswaffe dauerhaft freigeschaltet!':'');
+ invDirty=true;save();
 }
 function finish(reason){
  const r=state.run;if(!r.active)return;
- r.active=false;r.paused=true;state.runs++;if(!r.preview)state.best=Math.max(state.best,r.highest);
+ r.active=false;r.paused=true;r.equipment=Equipment.blank();refreshItems();chosenItem=null;state.runs++;if(!r.preview)state.best=Math.max(state.best,r.highest);
  let souls=0;if(!r.claimed){r.claimed=true;if(!r.preview)souls=Warrior.awardSouls(r.highest)}
  $('summary').textContent=reason+' · Höchste Welle: '+fmt(r.highest)+' · Besiegte Gegner: '+fmt(r.kills)+' · Bosse: '+fmt(r.bosses)+' · Zeit: '+Math.floor(r.elapsed/60)+' Min. · '+(r.preview?'Testmodus – keine permanenten Belohnungen':'+'+souls+' Klassenseelen · Gesamt: '+Warrior.load().souls);
  $('runEnd').classList.remove('hidden');message=reason;save();render();
@@ -161,13 +168,13 @@ function finish(reason){
 function startRun(){
  Warrior.reload();
  try{const latest=JSON.parse(localStorage.getItem(KEY)||'null');if(latest){state.coins=nval(latest.coins,state.coins);state.work=Object.assign(blankUp(),latest.work||state.work)}}catch{}
- state.run=defaultRun();state.run.build=Warrior.snapshot();state.run.preview=state.run.build.preview;
+ state.run=defaultRun();const startWeapon=Equipment.starter(state.arsenal);if(startWeapon){state.run.equipment.gear.weapon=startWeapon;state.run.equipment.nextId=2}refreshItems();inventoryOpen=false;chosenItem=null;state.run.build=Warrior.snapshot();state.run.preview=state.run.build.preview;
  // Der Snapshot wird zu Beginn fixiert und bleibt auch bei späteren Änderungen im Planer stabil.
  const b=state.run.build;
  snapshot.core=b.core;snapshot.specs=b.specs;
  fx=blankFx();enemy=enemyFor(1);enemyHp=enemy.maxHp;heroClock=enemyClock=0;
  state.run.hp=stats().hp;$('runEnd').classList.add('hidden');
- message=state.run.preview?'🧪 Test-Run – keine dauerhaften Belohnungen.':'Neuer Run gestartet!';
+ message=state.run.preview?'🧪 Test-Run – keine dauerhaften Belohnungen.':'Neuer Run gestartet!';tab('run');
  save();render();
 }
 function togglePause(){const r=state.run;if(!r.active)return;r.paused=!r.paused;message=r.paused?'⏸ Pausiert':'▶️ Kampf läuft';save();render()}
@@ -178,7 +185,7 @@ function upgrade(k,permanent){
  if(k==='hp')heal(15);state.run.hp=Math.min(state.run.hp,stats().hp);save();render();
 }
 function tick(dt){
- const r=state.run;if(!r.active||r.paused||document.hidden)return;
+ const r=state.run;if(!r.active||r.paused||inventoryOpen||document.hidden)return;
  r.elapsed+=dt/1000;fx.time+=dt;const s=stats();
  heal(s.regen*dt/1000);
  fx.resolve=fx.resolve.filter(x=>x>fx.time);fx.corrupt=fx.corrupt.filter(x=>x>fx.time);
@@ -191,19 +198,19 @@ function tick(dt){
  if(enemyClock>=enemy.speed*(corrupt()>0?1+.02*R(1,10):1)){
   enemyClock-=enemy.speed*(corrupt()>0?1+.02*R(1,10):1);
   let incoming=Math.max(1,enemy.atk*(corrupt()>0?1-.02*R(1,4):1)-stats().def);
-  incoming*=Math.max(.1,1-.02*resolve())*(1-.05*C(7))*(1-.02*R(2,4))*(corrupt()>0?1-.02*R(1,14):1);
+  incoming*=Math.max(.1,1-(.02+(itemMods.resolveGuard||0))*resolve())*(1-.05*C(7))*(1-.02*R(2,4))*(corrupt()>0?1-.02*R(1,14):1);
   if(r.hp/stats().hp<.4)incoming*=1-.02*R(2,10);
   if(expiring(fx.bastionUntil))incoming*=.7;
   r.hp-=Math.max(1,incoming);
   if(r.hp<=0){r.hp=0;finish('💀 Besiegt');return}
   fx.revenge=true;
-  if(specTotal(2)>0)applyResolve(true);
+  if(specTotal(2)>0||itemMods.resolveGuard>0)applyResolve(true);
   if(Math.random()<.04*R(2,7))counter();
   if(enemyHp<=0){win();return}
  }
  autoCast();
 }
-function tab(id){for(const x of ['run','shop','info']){$(x).classList.toggle('hidden',x!==id);$('tab'+x[0].toUpperCase()+x.slice(1)).classList.toggle('active',x===id)}}
+function tab(id){inventoryOpen=id==='inventory';invDirty=inventoryOpen;for(const x of ['run','inventory','shop','info']){$(x).classList.toggle('hidden',x!==id);$('tab'+x[0].toUpperCase()+x.slice(1)).classList.toggle('active',x===id)}render()}
 function upgradeRows(permanent){return FIELDS.map(k=>{
  const lvl=permanent?state.work[k]:state.run.runUp[k],c=cost(k,permanent),can=(permanent?state.coins:state.run.gold)>=c;
  return '<div class="row item"><span>'+LABELS[k]+' <span class="muted">Stufe '+lvl+'</span></span><button '+(!can||(permanent&&state.run.preview)||(!permanent&&!state.run.active)?'disabled':'')+' onclick="upgrade(\''+k+'\','+permanent+')">'+(permanent?'🪙':'💰')+' '+fmt(c)+'</button></div>'
@@ -217,10 +224,10 @@ function render(){
  $('hpText').textContent=fmt(r.hp)+' / '+fmt(s.hp)+' HP';$('enemyHpText').textContent=fmt(Math.max(0,enemyHp))+' / '+fmt(enemy.maxHp)+' HP';
  $('level').textContent='Level '+r.level+' · XP '+fmt(r.xp)+'/'+fmt(r.level*40);
  $('combatStats').textContent='⚔️ '+fmt(s.atk)+' · 🛡️ '+fmt(s.def);
- $('log').textContent=message;$('pauseBtn').textContent=r.paused?'▶️ Fortsetzen':'⏸ Pausieren';$('pauseBtn').disabled=!r.active;
+ $('log').textContent=message;$('pauseBtn').textContent=inventoryOpen?'🎒 Inventar pausiert':r.paused?'▶️ Fortsetzen':'⏸ Pausieren';$('pauseBtn').disabled=!r.active||inventoryOpen;
  $('effects').textContent=(r.preview?'🧪 TESTMODUS · ':'')+'🩸 '+bleeds()+' Blutungen · 🌑 '+corrupt()+' Verderbnis · 🛡️ '+resolve()+' Entschlossenheit';
  $('skills').innerHTML=f.map(sk=>{const remaining=Math.max(0,Math.ceil((nval(fx.cd[sk.id])-fx.time)/1000));return '<div class="skill"><button '+(!r.active||r.paused||remaining?'disabled':'')+' onclick="cast(\''+sk.id+'\')">'+sk.name+(remaining?' · '+remaining+'s':'')+'</button><label class="auto"><input type="checkbox" '+(state.settings.auto[sk.id]?'checked':'')+' onchange="toggleAuto(\''+sk.id+'\')"> Auto</label></div>'}).join('');
- $('runUpgrades').innerHTML=upgradeRows(false);$('workshop').innerHTML=upgradeRows(true);
+ $('runUpgrades').innerHTML=upgradeRows(false);$('workshop').innerHTML=upgradeRows(true);if(inventoryOpen&&invDirty)renderInventory();
 }
 if(!state.run.active){$('runEnd').classList.remove('hidden');$('summary').textContent='Letzter Run beendet. Höchste Welle: '+fmt(state.run.highest)+'. Starte einen neuen Run.'}else state.run.hp=clamp(state.run.hp,0,stats().hp);
 window.startRun=startRun;window.endRun=endRun;window.togglePause=togglePause;window.upgrade=upgrade;window.cast=cast;window.toggleAuto=toggleAuto;window.tab=tab;
