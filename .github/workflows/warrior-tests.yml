@@ -34,6 +34,8 @@ jobs:
           "$CHROME" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=1200 --dump-dom http://127.0.0.1:8765/ > /tmp/idle-game-dom.html 2>/tmp/idle-game-errors.log
           grep -q "Welle 1" /tmp/idle-game-dom.html
           grep -q "Vernichtender Hieb" /tmp/idle-game-dom.html
+          grep -q "Inventar · 50 Plätze" /tmp/idle-game-dom.html
+          grep -q "Ewiges Waffenarsenal" /tmp/idle-game-dom.html
           "$CHROME" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=1200 --dump-dom http://127.0.0.1:8765/talentplaner.html > /tmp/idle-talents-dom.html 2>/tmp/idle-planner-errors.log
           grep -q "Brutale Stärke" /tmp/idle-talents-dom.html
           grep -q "Blutrausch" /tmp/idle-talents-dom.html
