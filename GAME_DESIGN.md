@@ -531,3 +531,8 @@ Verglichen werden vier legale 51-Punkte-Verteilungen: **51/0/0** (reiner Blutber
 - V1-Knoten: Gold, Münzen, Werkstattrabatt, XP, zusätzliche Lootchance, Angriffstempo, Schadensreduktion und Spielgeschwindigkeit (bis 5×). Zahlen sind vorläufige Balancing-Werte.
 - Klassen-Seelenbonus und Erhöhung des Prozentverteidigungs-Caps folgen in einem weiteren Schritt nach Integration in die jeweiligen Systeme; nicht als funktionierend ausgeben.
 - Bereits gekaufte Werkstatt-Upgrades, Bosswerte und Klassentalente bleiben erhalten. iPhone-Browsertest noch ausstehend.
+
+## Prestige-Baum UI V2 – 19.10.2026
+- Visuelle Knoten mit Symbolen, Verbindungswegen, Fortschrittsbalken und Zuständen gesperrt/kaufbar/zu wenig Münzen/maximiert.
+- Auf Mobilgeräten einspaltige Darstellung, antippbare Knoten öffnen Detailansicht mit aktuellem Wert, nächstem Rang, konkret hinzugewonnenem Bonus, Münzkosten und Freischaltvoraussetzung. Kein Maximalbonuswert anzeigen (Nutzerentscheid).
+- Rein visuelle Änderung: Preise, Ranggrenzen, Spielstände, Talent- und Kampfbalance unverändert. Browser-Regressionsprüfung auf iPhone noch offen.

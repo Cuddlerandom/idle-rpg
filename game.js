@@ -23,19 +23,34 @@ function buyPrestige(id){
  state.coins-=prestigePrice(n);state.prestige[id]=prestigeRank(id)+1;save();render();
 }
 function renderPrestige(){
- const branches=['Reichtum','Entwicklung','Meisterschaft'];
- $('prestigeTree').innerHTML='<p>🪙 '+fmt(state.coins)+' Münzen verfügbar</p><div class="prestige-grid">'+branches.map(branch=>'<section class="prestige-column"><h3>'+branch+'</h3>'+PRESTIGE.filter(n=>n.branch===branch).map((n,i)=>{
- const rank=prestigeRank(n.id),locked=n.req&&!prestigeRank(n.req),max=rank>=n.max;
+ const branches=[['Reichtum','💰'],['Entwicklung','🔮'],['Meisterschaft','⚡']];
+ $('prestigeTree').innerHTML='<div class="prestige-wallet"><span>🪙 '+fmt(state.coins)+' Münzen</span><small>Wähle einen Knoten für den nächsten Bonus</small></div><div class="prestige-grid">'+branches.map(([branch,icon])=>'<section class="prestige-column"><h3>'+icon+' '+branch+'</h3>'+PRESTIGE.filter(n=>n.branch===branch).map((n,i)=>{
+ const rank=prestigeRank(n.id),locked=!!(n.req&&!prestigeRank(n.req)),max=rank>=n.max,price=prestigePrice(n);
+ const affordable=state.coins>=price,canBuy=!locked&&!max&&affordable&&!state.run.preview;
  const v=x=>n.id==='speed'?x+'×':x+' %';
- const current=n.id==='speed'?1+rank:rank*n.step;
- const next=n.id==='speed'?current+1:current+n.step;
- const top=n.id==='speed'?5:n.max*n.step;
- return (i?'<div class="prestige-connector">│</div>':'')+'<div class="prestige-node '+(locked?'prestige-locked':'')+'"><div><b>'+n.icon+' '+n.name+'</b> <small>'+rank+'/'+n.max+'</small></div><p>'+n.desc+'</p><div class="prestige-stat">Aktuell <b>'+v(current)+'</b></div><div class="prestige-stat">Nächster Rang <b class="prestige-gain">'+(max?'MAX':v(next)+' (+'+v(n.step)+')')+'</b></div>'+(locked?'<small>🔒 Benötigt '+PRESTIGE.find(x=>x.id===n.req).name+' Rang 1</small>':'')+'<button '+(locked||max||state.run.preview||state.coins<prestigePrice(n)?'disabled':'')+' onclick="buyPrestige(\''+n.id+'\')">'+(max?'✓ Maximiert':'🪙 '+fmt(prestigePrice(n)))+'</button></div>';
+ const current=n.id==='speed'?1+rank:rank*n.step,next=current+n.step;
+ const status=max?'maxed':locked?'locked':canBuy?'ready':'waiting';
+ const detailId='prestige-detail-'+n.id;
+ const label=max?'Maximiert':locked?'Gesperrt':canBuy?'Kaufbereit':'Münzen fehlen';
+ return (i?'<div class="prestige-path '+(locked?'prestige-path-locked':'')+'" aria-hidden="true"><span></span></div>':'')+
+ '<article class="prestige-node prestige-'+status+'"><button type="button" class="prestige-node-top" aria-expanded="false" aria-controls="'+detailId+'" onclick="togglePrestige(\''+n.id+'\')"><span class="prestige-emblem">'+n.icon+'</span><span class="prestige-node-title"><strong>'+n.name+'</strong><small>Rang '+rank+'/'+n.max+'</small></span><span class="prestige-node-state">'+(max?'✓':locked?'🔒':canBuy?'✦':'◌')+'</span><span class="prestige-chevron">⌄</span></button>'+
+ '<div class="prestige-progress" aria-label="Rang '+rank+' von '+n.max+'"><span style="width:'+(rank/n.max*100)+'%"></span></div>'+
+ '<div class="prestige-summary"><span class="prestige-pill">'+label+'</span><span>'+ (max?'Vollständig': 'Nächster Rang: <b class="prestige-gain">+'+v(n.step)+'</b>')+'</span></div>'+
+ '<div class="prestige-detail" id="'+detailId+'" hidden><p>'+n.desc+'</p><div class="prestige-stat">Aktuell <b>'+v(current)+'</b></div><div class="prestige-stat">Nächste Stufe <b class="prestige-gain">'+(max?'MAX':v(next)+' (+'+v(n.step)+')')+'</b></div>'+
+ (locked?'<div class="prestige-requirement">🔒 Benötigt: '+PRESTIGE.find(x=>x.id===n.req).name+' Rang 1</div>':'')+
+ '<button class="prestige-buy" '+(canBuy?'':'disabled')+' onclick="buyPrestige(\''+n.id+'\')">'+(max?'✓ Maximiert':state.run.preview?'Im Testmodus gesperrt':'🪙 '+fmt(price)+' Münzen · Kaufen')+'</button></div></article>';
  }).join('')+'</section>').join('')+'</div>';
  const cap=1+prestigeBonus('speed');
  state.gameSpeed=clamp(Number(state.gameSpeed)||1,1,cap);
- $('prestigeSpeed').innerHTML='<label>⏩ Spieltempo: '+state.gameSpeed+'× (Maximum '+cap+'×) <select onchange="setGameSpeed(this.value)">'+Array.from({length:cap},(_,i)=>i+1).map(v=>'<option value="'+v+'" '+(v===state.gameSpeed?'selected':'')+'>'+v+'×</option>').join('')+'</select></label>';
+ $('prestigeSpeed').innerHTML='<label>⏩ Spieltempo: '+state.gameSpeed+'× (freigeschaltet bis '+cap+'×) <select onchange="setGameSpeed(this.value)">'+Array.from({length:cap},(_,i)=>i+1).map(v=>'<option value="'+v+'" '+(v===state.gameSpeed?'selected':'')+'>'+v+'×</option>').join('')+'</select></label>';
+ if(prestigeExpanded&&$('prestige-detail-'+prestigeExpanded)){
+  const detail=$('prestige-detail-'+prestigeExpanded);detail.hidden=false;
+  detail.closest('.prestige-node').classList.add('prestige-expanded');
+  detail.closest('.prestige-node').querySelector('.prestige-node-top').setAttribute('aria-expanded','true');
+ }
 }
+let prestigeExpanded=null;
+function togglePrestige(id){prestigeExpanded=prestigeExpanded===id?null:id;renderPrestige()}
 function setGameSpeed(v){state.gameSpeed=clamp(Number(v)||1,1,1+prestigeBonus('speed'));save();render()}
 const SKILLS=[
 {id:'base',name:'Vernichtender Hieb',cd:10000,tree:-1,idx:-1},
@@ -360,7 +375,7 @@ function render(){
 }
 if(!state.run.active){$('runEnd').classList.remove('hidden');$('summary').textContent='Letzter Run beendet. Höchste Welle: '+fmt(state.run.highest)+'. Starte einen neuen Run.'}else state.run.hp=clamp(state.run.hp,0,stats().hp);
 window.inspectItem=inspectItem;window.itemAction=itemAction;window.viewRecentLoot=viewRecentLoot;window.dismissRecentLoot=dismissRecentLoot;
-window.buyPrestige=buyPrestige;window.setGameSpeed=setGameSpeed;window.startRun=startRun;window.endRun=endRun;window.togglePause=togglePause;window.upgrade=upgrade;window.cast=cast;window.toggleAuto=toggleAuto;window.tab=tab;
+window.buyPrestige=buyPrestige;window.togglePrestige=togglePrestige;window.setGameSpeed=setGameSpeed;window.startRun=startRun;window.endRun=endRun;window.togglePause=togglePause;window.upgrade=upgrade;window.cast=cast;window.toggleAuto=toggleAuto;window.tab=tab;
 render();document.addEventListener('visibilitychange',()=>{last=performance.now();save()});window.addEventListener('pagehide',save);window.addEventListener('pageshow',()=>{Warrior.reload();try{const latest=JSON.parse(localStorage.getItem(KEY)||'null');if(latest){state.coins=nval(latest.coins,state.coins);state.work=Object.assign(blankUp(),latest.work||state.work)}}catch{}render()});
 function frame(now){const dt=clamp(now-last,0,100);last=now;tick(dt);renderClock+=dt;saveClock+=dt;if(renderClock>200){renderClock=0;render()}if(saveClock>2000){saveClock=0;save()}requestAnimationFrame(frame)}
 requestAnimationFrame(frame);
