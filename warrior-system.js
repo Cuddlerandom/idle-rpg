@@ -19,13 +19,24 @@ const PREVIEW_KEY='idle-rpg-warrior-build-v1';
 // Accountweite Seelenwährung: alle Klassen nutzen denselben Vorrat.
 const SOULS_KEY='idle-rpg-souls-v1';
 function readSoulBank(fallback=0){
- try{const raw=root.localStorage.getItem(SOULS_KEY);if(raw!==null){const data=JSON.parse(raw);return asInt(data&&data.balance,0,1e12)} }catch(e){}
- // Einmalige Übernahme bisher verdienter Krieger-Seelen, niemals doppelt gutschreiben.
- const balance=asInt(fallback,0,1e12);try{root.localStorage.setItem(SOULS_KEY,JSON.stringify({version:1,balance}))}catch(e){}
+ const old=asInt(fallback,0,1e12);
+ try{
+  const raw=root.localStorage.getItem(SOULS_KEY);
+  if(raw!==null){
+    const bank=JSON.parse(raw),balance=asInt(bank&&bank.balance,0,1e12);
+    if(bank&&bank.migratedWarrior===true)return balance;
+    // Bereits existierendes allgemeines Guthaben und alte Klassenseelen einmalig zusammenführen.
+    const merged=Math.min(1e12,balance+old);
+    root.localStorage.setItem(SOULS_KEY,JSON.stringify({version:1,balance:merged,migratedWarrior:true}));
+    return merged;
+  }
+ }catch(e){}
+ const balance=old;
+ try{root.localStorage.setItem(SOULS_KEY,JSON.stringify({version:1,balance,migratedWarrior:true}))}catch(e){}
  return balance;
 }
 function writeSoulBank(balance){
- try{root.localStorage.setItem(SOULS_KEY,JSON.stringify({version:1,balance:asInt(balance,0,1e12)}));return true}catch(e){return false}
+ try{root.localStorage.setItem(SOULS_KEY,JSON.stringify({version:1,balance:asInt(balance,0,1e12),migratedWarrior:true}));return true}catch(e){return false}
 }
 function syncSouls(){const p=load();p.souls=readSoulBank(p.souls);return p.souls}
 
