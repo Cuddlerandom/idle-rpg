@@ -544,3 +544,6 @@ Verglichen werden vier legale 51-Punkte-Verteilungen: **51/0/0** (reiner Blutber
 - Spezialisierungspunkt Nr. n (1–51) kostet 4+n Seelen (5 bis 55), zusammen 1530 Seelen. Bereits gekaufte Punkte werden nicht zurückgesetzt und nicht rückvergütet.
 - Boss-Gegnerangriff (Welle durch 10 teilbar, inklusive Zonenfürst) wird testweise mit Faktor 0.65 multipliziert; Gegnerleben, Normalgegnerangriff und übrige Werte bleiben unverändert.
 - Vorläufige Testwerte, noch nicht als endgültig balanciert freigegeben; Langzeit-Kampfsimulation, Mobil-Browsertest und Regression bleiben ausstehend.
+
+## Run-Segen V1 (19.10.2026)
+Nach jedem Sieg über Welle 5, 10, 15 usw. wird der Kampf angehalten, bis einer von drei zufällig verschiedenen Run-Segen gewählt wird. Pool: Blutdurst (+15 % Angriffsschaden), Vampirismus (+3 % Lebensraub), Sturmklinge (10 % Chance auf 40 % Bonus-Blitzschaden), Eile (+10 % Angriffstempo), Eiserne Haut (-10 % eingehender Schaden), Lebenskraft (+20 % maximale HP). Wiederholungen stapeln sich. Segen werden im Run-Save gespeichert und beim neuen Run zurückgesetzt; keine dauerhafte Belohnung. Seelen-Meilensteine bleiben unverändert. Balance vorläufig; echter Langzeit-Browser-Test noch ausstehend.
