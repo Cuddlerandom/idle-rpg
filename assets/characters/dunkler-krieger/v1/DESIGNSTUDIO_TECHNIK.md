@@ -132,6 +132,20 @@ Aktuelles CSS in `index.html`:
 
 `warrior-sprite.js` beobachtet bestehende DOM-Texte per `MutationObserver` und leitet Attack/Hit/Walk/Death/Special aus HP-, Wellen- und Log-Änderungen ab. Dadurch bleibt das Gameplay unangetastet, aber ein HP-Wechsel beweist **nicht** eindeutig, welches Kampfereignis stattgefunden hat. Langfristig besser: **direkte Kampfereignisse** (`attack`, `hit`, `death`, `special`) an die reine Präsentationsschicht übergeben, mit Priorität **death > hit > special > attack > walk > idle**. **Noch kein Auftrag zur Änderung von `game.js`**; nur Architekturhinweis.
 
+### 🔴 Nutzerkorrektur nach iPhone-Video: **Grösse stimmt; seitliches Abschneiden/Versetzen stört**
+
+**19.10.2026 – verbindliches Nutzerfeedback:** Die aktuell sichtbare **Figurengrösse ist richtig und soll nicht verändert werden**. Das eigentliche Problem: Bei Animationen wird die Figur bzw. der Effekt **am Rand abgeschnitten und scheint auf die andere Seite versetzt**. Die bisherige Vermutung „Figur zu klein“ ist **verworfen**.
+
+**Videobefund:** In den aufgezeichneten Kampfszenen bleibt der Held als Ganzes links in der Kampffläche; die auffälligen Sprünge betreffen die **Bildinhalte zwischen Animationsframes** und teilweise ausladende rote Schwert-/Schatteneffekte. Eine echte Teleportation der Spielposition ist **nicht nachgewiesen**. Der Renderer zeichnet für alle Posen ein fixes 128×192-Quellfenster; die Quellen enthalten bereits teilweise abgeschnittene VFX und unterschiedliche Silhouetten. Deshalb **nicht** auf Verdacht Kampfposition, Bewegung, Heldengrösse oder Game-Mechanik verändern.
+
+**Auftrag an Designstudio/Code-Chat:**
+1. **Frame-für-Frame** speziell `attack`, `special`, `walk` auf linkes/rechtes Abschneiden und scheinbaren Seitenwechsel prüfen (Quell-PNG → Sheet → WebP-Atlas → Spiel).
+2. Gleichen Fussanker, Körpermittelpunkt und identische Canvasgrenzen für alle Posen prüfen. Wenn ein Schwertschwung mehr Platz benötigt, muss das **Designstudio** die Canvas der **gesamten Sequenz konsistent erweitern** und korrekt exportieren, nicht einzelne Frames verschieben oder umklappen.
+3. Den bereits bestätigten `preview.html`-Quell-Crop-Bug separat korrigieren; dieser betrifft die isolierte Vorschau und darf nicht mit dem iPhone-Spielbefund verwechselt werden.
+4. Danach dieselbe Szene auf echtem iPhone erneut vergleichen. **Figurengrösse unverändert lassen** und erst nach sichtbarem Beleg einen Renderereingriff vornehmen.
+
+**Status:** Video als Sichtbeleg im Chat, nicht als Binärdatei im Repository hinterlegt. Ursache des scheinbaren Seitenwechsels noch nicht abschliessend bewiesen; keine Freigabe.
+
 ## 4. Einheitlicher Handoff an den Code-Chat für die nächste korrigierte Lieferung
 
 Dem neuen ZIP bitte Folgendes beilegen:
