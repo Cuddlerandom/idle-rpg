@@ -9,7 +9,7 @@ if(!canvas||!fallback||!atlases)return;
 const ctx=canvas.getContext('2d',{alpha:true});
 if(!ctx)return;
 ctx.imageSmoothingEnabled=false;
-const FRAME_W=64,FRAME_H=96;
+const FRAME_W=128,FRAME_H=192;
 const ANIMS={
  idle:{frames:6,fps:5,loop:true},
  walk:{frames:8,fps:9,loop:true},
@@ -111,7 +111,7 @@ if(battle)observer.observe(battle,{childList:true,subtree:true,characterData:tru
 if(runEndNode)observer.observe(runEndNode,{attributes:true,attributeFilter:['class']});
 window.DarkWarriorSprite={
  play, inspect:()=>({animation,ready,errors:errorCount,frame:lastFrame,dead}),
- manifest:{character:'dark_warrior',version:'1.0-preview',frameWidth:FRAME_W,frameHeight:FRAME_H,footAnchor:{x:32,y:89},animations:ANIMS}
+ manifest:{character:'dark_warrior',version:'1.0-preview',frameWidth:FRAME_W,frameHeight:FRAME_H,footAnchor:{x:64,y:179},animations:ANIMS}
 };
 requestAnimationFrame(frame);
 })();
