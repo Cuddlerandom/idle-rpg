@@ -84,8 +84,13 @@ function remainingCore(){const p=load();return p.earnedCore-p.core.reduce((a,b)=
 function unlockedSpecs(){return load().earnedCore>=1}
 function earnThrough(wave){const p=load(),old=p.earnedCore;while(p.earnedCore<9&&wave>=MILESTONES[p.earnedCore])p.earnedCore++;if(old!==p.earnedCore)save();return p.earnedCore-old}
 function soulReward(highest){const w=Math.max(0,Math.floor(Number(highest)||0));if(w<11)return 0;const n=Math.floor((w-10)/5)+1;return n*(n+1)/2}
-function awardSouls(highest){
- const p=load(),earned=soulReward(highest),before=syncSouls();
+function awardSouls(highest,previousBest){
+ const p=load(),base=soulReward(highest),before=syncSouls();
+ // One-time breakthrough reward: half of the newly unlocked milestone value.
+ // previousBest is the highest *reached* wave at the beginning of this run.
+ const previous=Number.isFinite(Number(previousBest))?Math.max(1,Math.floor(Number(previousBest))):highest;
+ const bonus=Math.max(0,Math.round((base-soulReward(previous))*.5));
+ const earned=base+bonus;
  if(earned===0)return 0;
  if(!writeSoulBank(before+earned))return 0;
  p.souls=before+earned;save();return earned;
