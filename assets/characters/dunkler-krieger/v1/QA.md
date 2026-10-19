@@ -1,5 +1,8 @@
 # ⚔️ Dunkler Krieger V1.0 – Sprite QA & Integration (Branch-Test)
 
+> **Für Design-Chat und Entwickler:** [Technische Übergabe mit recherchierten Browser-/Aseprite-Regeln, konkreten Grössen, Cropping-Bug und iPhone-Kriterien](DESIGNSTUDIO_TECHNIK.md). Diese Datei ist der gemeinsame aktuelle Technik-Handoff auf diesem Branch.
+
+
 **Status:** technischer Integrationskandidat; **keine endgültige Designfreigabe**.
 
 ## Lieferpaket überprüft
