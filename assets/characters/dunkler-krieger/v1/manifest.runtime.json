@@ -19,12 +19,12 @@
     "file": "warrior-atlases.js",
     "format": "WebP via data URI (mobile-preview optimization)",
     "frame": {
-      "width": 64,
-      "height": 96
+      "width": 128,
+      "height": 192
     },
     "footAnchor": {
-      "x": 32,
-      "y": 89
+      "x": 64,
+      "y": 179
     },
     "rendering": "canvas imageSmoothingEnabled=false; CSS image-rendering:pixelated; 2:3 aspect ratio"
   },
