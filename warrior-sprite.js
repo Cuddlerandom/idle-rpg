@@ -28,7 +28,7 @@ function play(name){
  if(dead&&name!=='idle'&&name!=='death')return false;
  const now=performance.now();
  const levels={idle:0,walk:1,attack:2,special:3,hit:4,death:5};
- if(name!=='death'&&now<lockUntil&&levels[name]<priority)return false;
+ if(name!=='death'&&!(dead&&name==='idle')&&now<lockUntil&&levels[name]<priority)return false;
  if(name==='death')dead=true;
  if(name==='idle'&&dead)dead=false;
  animation=name;priority=levels[name];started=now;
