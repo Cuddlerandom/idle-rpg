@@ -1,6 +1,18 @@
 # IDLE RPG – Verbindliches Spielkonzept und Entwicklungsstand
 
-Stand: 18. Oktober 2026 · Repository: `Cuddlerandom/idle-rpg`
+Stand: 19. Oktober 2026 · Repository: `Cuddlerandom/idle-rpg`
+
+## Aktuell gültige Seelenregel (19.10.2026 – ersetzt ältere Klassenseelen-Regeln)
+
+**Neue ausdrückliche Nutzerentscheidung:** Die Spielwährung zum Kauf der 51 Spezialisierungspunkte heisst **Seelen** und ist **klassenübergreifend**. Normale Runs verleihen allgemeine Seelen, keine separate, nicht zum Talentkauf verwendbare Klassenseelenwährung. Alle zukünftigen Klassen geben und verwenden dieselbe Konto-Währung. Die bisherigen Aussagen in diesem Dokument zu getrennten Klassenseelenvorräten und nur klasseneigenen Seelen sind für den aktuellen Talentpunkte-Kauf **überholt**.
+
+- Guthaben wird unabhängig vom Krieger-Progressionsspeicher unter `idle-rpg-souls-v1` dauerhaft gespeichert.
+- Beim ersten Laden werden früher verdiente, im Krieger gespeicherte Seelen **einmalig** übertragen, ohne Verlust oder erneute Gutschrift bei späterem Laden. Bei einem bereits existierenden gemeinsamen Seelenguthaben werden die alten Klassenseelen einmalig hinzugezählt.
+- Seelenformel und Punktekosten bleiben vorläufig unverändert: `w<5 ? 0 : floor((w/5)^1.5)` bei Run-Ende; Preis Punkt n: `ceil(5×1.15^(n−1))`.
+- Die bestehende Sperre durch neun freigeschaltete und verteilte Grundtalente bleibt **vorerst** bestehen; sie ist unabhängig vom Seelenguthaben. Der Talentplaner zeigt einen klaren Sperrgrund.
+- Vorschau-Runs erzeugen keine echten Seelen. Talentpunkte bleiben auf 51 je Klasse begrenzt; bereits gekaufte Krieger-Punkte bleiben erhalten.
+
+---
 
 ## Zweck und Arbeitsregeln
 Diese Datei ist die zentrale Quelle für die gemeinsam beschlossenen Spielregeln. Bei jeder Änderung zuerst diese Datei lesen. Entscheidungen nicht stillschweigend ersetzen. Geplante Features sind **nicht** automatisch bereits implementiert. Entwicklung in kleinen spielbaren Schritten, nach jedem Schritt testen, Bugs beheben und den Stand dokumentieren. Der Nutzer entscheidet über Gameplay und Design; technische Vereinfachungen müssen als solche erkennbar sein.
