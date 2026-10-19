@@ -82,6 +82,8 @@ let recentLoot=null;
 const gear=()=>Loot.bonuses(state.run.loot.equipment);
 const BLESSINGS=[{id:'blood',name:'Blutdurst',icon:'⚔️',desc:'+15 % Angriffsschaden'},{id:'vamp',name:'Vampirismus',icon:'🩸',desc:'3 % Lebensraub'},{id:'storm',name:'Sturmklinge',icon:'⚡',desc:'10 % Chance auf 40 % Bonus-Blitzschaden'},{id:'swift',name:'Eile',icon:'💨',desc:'+10 % Angriffstempo'},{id:'guard',name:'Eiserne Haut',icon:'🛡️',desc:'10 % weniger erlittener Schaden'},{id:'vigor',name:'Lebenskraft',icon:'💚',desc:'+20 % maximales Leben und Heilung'}];
 const blessingCount=id=>(state.run.blessings||[]).filter(x=>x===id).length;
+// Diminishing returns for repeated identical blessings: 100%, 67%, then 40% per extra stack.
+const blessingPower=id=>{const n=blessingCount(id);return n<=1?n:n===2?1.67:1.67+(n-2)*.40;};
 function offerBlessings(){const pool=BLESSINGS.slice();const picks=[];while(picks.length<3){const i=Math.floor(Math.random()*pool.length);picks.push(pool.splice(i,1)[0].id)}state.run.blessingChoices=picks;state.run.blessingPending=true;message='✨ Wähle einen Run-Segen!';}
 function chooseBlessing(id){const r=state.run;if(!r.active||!r.blessingPending||!r.blessingChoices.includes(id))return;const oldMax=stats().hp;r.blessings.push(id);r.blessingChoices=[];r.blessingPending=false;if(id==='vigor')r.hp=Math.min(stats().hp,r.hp+stats().hp-oldMax);message='✨ '+BLESSINGS.find(x=>x.id===id).name+' erhalten!';save();render()}
 
@@ -103,17 +105,17 @@ function stats(){
  const rawDef=2+w.def+r.runUp.def+Math.floor((r.level-1)/4);
  return {
  atk:(rawAtk+g.atk)*(1+.05*C(0)),
- hp:(rawHp+g.hp)*(1+.10*C(1)+.03*R(2,0)+.02*R(2,9)+g.hpPct)*(1+.20*blessingCount('vigor')),
+ hp:(rawHp+g.hp)*(1+.10*C(1)+.03*R(2,0)+.02*R(2,9)+g.hpPct)*(1+.20*blessingPower('vigor')),
  def:(rawDef+g.def)*(1+.05*C(2)+.03*R(2,2)+(.03*R(2,14)*(resolve()===5?1:0))),
  regen:(.5+.35*w.regen+.35*r.runUp.regen+g.regen)*(1+.10*C(4)+.04*R(2,8)),
- speed:Math.max(280,1100-24*(w.speed+r.runUp.speed))/(1+.10*blessingCount('swift'))/(1+prestigeBonus('tempo')/100)/(1+.05*C(3)+.02*R(0,2)+g.speed+(r.hp/Math.max(1,(rawHp+g.hp)*(1+.10*C(1)+.03*R(2,0)+.02*R(2,9)+g.hpPct))<.4&&R(0,12)? .15:0)+(expiring(fx.hungerUntil)?.02*R(0,16):0)),
+ speed:Math.max(280,1100-24*(w.speed+r.runUp.speed))/(1+.10*blessingPower('swift'))/(1+prestigeBonus('tempo')/100)/(1+.05*C(3)+.02*R(0,2)+g.speed+(r.hp/Math.max(1,(rawHp+g.hp)*(1+.10*C(1)+.03*R(2,0)+.02*R(2,9)+g.hpPct))<.4&&R(0,12)? .15:0)+(expiring(fx.hungerUntil)?.02*R(0,16):0)),
  crit:clamp(5+w.crit+r.runUp.crit+5*C(5)+2*R(0,8)+g.crit*100,0,95),
  critMult:1.5+.10*C(6)+g.critDamage
  };
 }
 function enemyFor(w){
  const boss=w%10===0,zone=w%50===0,scale=Math.pow(1.055,w-1);
- return {wave:w,name:zone?'Zonenfürst':boss?'Wellenboss':w%5===0?'Waldwolf':w%3===0?'Goblin-Krieger':'Waldgoblin',icon:zone?'🐉':boss?'👹':w%5===0?'🐺':'👺',maxHp:Math.round((45+2*w)*scale*(zone?8:boss?4:1)),atk:Math.max(1,Math.round((4+w*.38)*Math.pow(1.045,w-1)*(zone?2.2:boss?1.6:1)*(boss?.65:1))),def:Math.floor(w/6),speed:zone?1650:boss?1700:1950};
+ return {wave:w,name:zone?'Zonenfürst':boss?'Wellenboss':w%5===0?'Waldwolf':w%3===0?'Goblin-Krieger':'Waldgoblin',icon:zone?'🐉':boss?'👹':w%5===0?'🐺':'👺',maxHp:Math.round((45+2*w)*scale*(zone?4.5:boss?3.5:1)),atk:Math.max(1,Math.round((4+w*.38)*Math.pow(1.045,w-1)*(zone?1.8:boss?1.6:1)*(boss?.65:1))),def:Math.floor(w/6),speed:zone?1650:boss?1700:1950};
 }
 let enemy=enemyFor(state.run.wave),enemyHp=state.run.enemyHp>0?Math.min(enemy.maxHp,state.run.enemyHp):enemy.maxHp;
 let heroClock=Math.max(0,nval(state.run.heroClock)),enemyClock=Math.max(0,nval(state.run.enemyClock));
@@ -153,9 +155,9 @@ function attack(power=1,kind='normal'){
   dmg*=s.critMult+((wasCorrupt||wasBleeding||expiring(fx.armorUntil))?.02*R(1,7):0);
   if(R(0,10)){for(const b of fx.bleeds)b.end+=400*R(0,10)} // Nur Laufzeit, keine zusätzliche Gesamtschadensmenge.
  }
- dmg*= (1+.15*blessingCount('blood'))*(Math.random()<.10*blessingCount('storm')?.4+1:1)*damageMult()*executeMult()*(wasBleeding?1+.03*R(0,13):1)*(base&&wasCorrupt?1+.05*R(1,8):1);
+ dmg*= (1+.15*blessingPower('blood'))*(Math.random()<.10*blessingPower('storm')?.4+1:1)*damageMult()*executeMult()*(wasBleeding?1+.03*R(0,13):1)*(base&&wasCorrupt?1+.05*R(1,8):1);
  if(fx.revenge){dmg*=1+.06*R(0,14)+.04*R(2,13);fx.revenge=false}
- enemyHp-=dmg;heal(dmg*(.01*R(2,1)+gear().lifeSteal+.03*blessingCount('vamp')));
+ enemyHp-=dmg;heal(dmg*(.01*R(2,1)+gear().lifeSteal+.03*blessingPower('vamp')));
  if(base)fx.armorUntil=fx.time+debuffDuration(5000);
  if(isNormal)applyBleed(false,true);
  if(isNormal||expiring(fx.darkUntil))applyCorrupt(expiring(fx.darkUntil),isNormal);
@@ -233,7 +235,7 @@ function startRun(){
 }
 function togglePause(){const r=state.run;if(!r.active)return;r.paused=!r.paused;message=r.paused?'⏸ Pausiert':'▶️ Kampf läuft';save();render()}
 function endRun(){if(state.run.active&&confirm('Run wirklich beenden? Gold und Level werden zurückgesetzt. Du erhältst Seelen für die höchste Welle.'))finish('Run freiwillig beendet')}
-function cost(k,permanent){let lvl=permanent?state.work[k]:state.run.runUp[k];return Math.max(1,Math.round(BASE_COST[k]*(permanent?2:1)*Math.pow(permanent?1.22:1.5,lvl)*(permanent?1-prestigeBonus('discount')/100:1)))}
+function cost(k,permanent){let lvl=permanent?state.work[k]:state.run.runUp[k];return Math.max(1,Math.round(BASE_COST[k]*(permanent?2:1)*Math.pow(permanent?1.25:1.5,lvl)*(permanent?1-prestigeBonus('discount')/100:1)))}
 function upgrade(k,permanent){
  const c=cost(k,permanent);if(permanent){if(state.run.preview||state.coins<c)return;state.coins-=c;state.work[k]++}else{if(!state.run.active||state.run.gold<c)return;state.run.gold-=c;state.run.runUp[k]++}
  if(k==='hp')heal(15);state.run.hp=Math.min(state.run.hp,stats().hp);save();render();
@@ -255,7 +257,7 @@ function tick(dt){
   incoming*=Math.max(.1,1-.02*resolve())*(1-.05*C(7))*(1-.02*R(2,4))*(corrupt()>0?1-.02*R(1,14):1);
   if(r.hp/stats().hp<.4)incoming*=1-.02*R(2,10);
   if(expiring(fx.bastionUntil))incoming*=.7;
-  incoming*=Math.pow(.90,blessingCount('guard'));incoming*=1-gear().reduction;incoming*=1-prestigeBonus('guard')/100;
+  incoming*=Math.pow(.90,blessingPower('guard'));incoming*=1-gear().reduction;incoming*=1-prestigeBonus('guard')/100;
   r.hp-=Math.max(1,incoming);
   if(r.hp<=0){r.hp=0;finish('💀 Besiegt');return}
   fx.revenge=true;
