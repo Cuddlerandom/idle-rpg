@@ -192,6 +192,23 @@ body.rpg-running nav[aria-label="Spielnavigation"] button{background:linear-grad
 /* Lightweight diagnostic: screen refresh FPS, not animation pose FPS. */
 #fpsCounter{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);right:8px;z-index:99999;background:#111b1fe8;color:#e7e2d0;border:1px solid #a88b55;border-radius:8px;padding:6px 9px;font:700 12px/1.3 ui-monospace,SFMono-Regular,monospace;pointer-events:none;min-width:86px;text-align:center;font-variant-numeric:tabular-nums;box-shadow:0 2px 10px #0008}
 #fpsCounter[data-status="good"]{color:#94e2a1}#fpsCounter[data-status="medium"]{color:#f5d47d}#fpsCounter[data-status="low"]{color:#ff8989}
+
+/* HUD V2.1 — Forged combat vitals. Visual-only; existing HP widths untouched. */
+#battle .combat-vitals{gap:9px;margin:12px 0 11px}
+#battle .vital-card{position:relative;isolation:isolate;overflow:hidden;padding:11px 10px 12px;border:1px solid #8b704a;border-radius:10px;background:linear-gradient(145deg,#30343a 0%,#19232a 48%,#101c23 100%);box-shadow:inset 0 1px 0 #e8c99538,inset 0 -2px 0 #070e13,0 3px 9px #0006}
+#battle .vital-card::before{content:"";position:absolute;inset:3px;border:1px solid #ad90652b;border-radius:7px;pointer-events:none}
+#battle .vital-card::after{content:"◆";position:absolute;top:3px;right:7px;font-size:8px;color:#a88b57;opacity:.85;pointer-events:none}
+#battle .vital-heading{position:relative;z-index:1;gap:5px;min-height:38px}
+#battle .vital-heading b{color:#e9d3a6;font-size:12px;letter-spacing:.01em}
+#battle .enemy-vital{border-color:#876054;background:linear-gradient(145deg,#3c3032 0%,#252025 48%,#171c22 100%)}
+#battle .enemy-vital .vital-heading b{color:#f0b2a3}
+#battle .vital-heading span{color:#c7c9bf;font-size:11px;font-variant-numeric:tabular-nums}
+#battle .vital-card .bar{position:relative;height:16px;margin:10px 0 0;border:2px solid #947750;border-radius:4px;background:linear-gradient(#120f13,#322a2c);box-shadow:0 0 0 1px #090f14,inset 0 2px 4px #000b,0 1px 0 #d2b37a35;overflow:hidden}
+#battle .vital-card .bar>div{position:relative;height:100%;border-radius:1px;background:linear-gradient(180deg,#8fe4a3 0%,#4cbb79 36%,#287d50 72%,#18583c 100%);box-shadow:inset 0 1px 0 #d6ffdc85,inset 0 -1px 0 #102b21;transition:width .16s linear}
+#battle .enemy-vital .bar>div{background:linear-gradient(180deg,#ffb29d 0%,#df655c 38%,#a63c3e 73%,#682b35 100%);box-shadow:inset 0 1px 0 #ffd3c19c,inset 0 -1px 0 #36181c}
+#battle .vital-card .bar::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(25% - 1px),#070e1680 calc(25% - 1px),#070e1680 25%);opacity:.65}
+@media(max-width:390px){#battle .combat-vitals{gap:6px}#battle .vital-card{padding:9px 7px 10px}#battle .vital-heading b{font-size:11px}#battle .vital-heading span{font-size:10px}#battle .vital-card .bar{height:15px}}
+@media(prefers-reduced-motion:reduce){#battle .vital-card .bar>div{transition:none}}
 </style></head><body><main><header class="game-header"><div class="game-mark"><span data-rpg-icon="swords"></span></div><div><div class="game-kicker">ECLIPSE · IDLE RPG</div><h1>Dunkler Krieger <span class="hud-version">HUD V2</span></h1></div><a class="header-talents" href="talentplaner.html" aria-label="Talentplaner öffnen"><span data-rpg-icon="tree"></span> Talente ↗</a></header>
 <section class="panel" id="battle"><div class="battle-top"><div class="wave-card"><span class="hud-label">AKTUELLE WELLE</span><b id="wave"></b></div><div class="currency-card"><span class="hud-label">DEINE WÄHRUNGEN</span><b id="money"></b></div></div>
 <div class="scene"><div class="actors"><span id="heroActor" aria-label="Dunkler Krieger"><canvas id="heroSprite" width="128" height="192" style="display:none" aria-hidden="true"></canvas><span id="heroFallback">🛡️</span></span><span id="enemyIcon">👺</span></div></div>
