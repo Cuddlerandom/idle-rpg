@@ -209,7 +209,20 @@ body.rpg-running nav[aria-label="Spielnavigation"] button{background:linear-grad
 #battle .vital-card .bar::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(25% - 1px),#070e1680 calc(25% - 1px),#070e1680 25%);opacity:.65}
 @media(max-width:390px){#battle .combat-vitals{gap:6px}#battle .vital-card{padding:9px 7px 10px}#battle .vital-heading b{font-size:11px}#battle .vital-heading span{font-size:10px}#battle .vital-card .bar{height:15px}}
 @media(prefers-reduced-motion:reduce){#battle .vital-card .bar>div{transition:none}}
-</style></head><body><main><header class="game-header"><div class="game-mark"><span data-rpg-icon="swords"></span></div><div><div class="game-kicker">ECLIPSE · IDLE RPG</div><h1>Dunkler Krieger <span class="hud-version">HUD V2</span></h1></div><a class="header-talents" href="talentplaner.html" aria-label="Talentplaner öffnen"><span data-rpg-icon="tree"></span> Talente ↗</a></header>
+</style>
+<style id="hud-v3-hero-health">
+/* HUD V3: visual-only hero frame; original hpBar/hpText remain game-driven. */
+#battle .combat-vitals{display:flex;flex-direction:column;gap:7px}
+#battle .hero-vital{position:relative;width:100%;height:clamp(105px,31vw,160px);box-sizing:border-box;padding:0;border:0;border-radius:0;background:transparent url('assets/ui/HUD_V3_Helden_Lebensbalken_Rahmen.png?v=1') center/100% 100% no-repeat;box-shadow:none;overflow:visible}
+#battle .hero-vital .vital-heading{position:absolute;left:36%;top:27%;width:37%;min-height:0;gap:0;align-items:center;justify-content:center;z-index:2}
+#battle .hero-vital .vital-heading b{display:block;max-width:100%;color:#f2d5a4;font-family:Georgia,serif;font-size:clamp(10px,3vw,16px);text-shadow:0 2px 3px #000;white-space:nowrap}
+#battle .hero-vital .vital-heading b [data-rpg-icon]{display:none}
+#battle .hero-vital #hpText{position:absolute;top:clamp(35px,11vw,65px);left:4%;width:145%;font-size:clamp(11px,3vw,17px);font-weight:bold;color:#f4dfc3;text-shadow:0 2px 3px #000;text-align:center;white-space:nowrap;pointer-events:none}
+#battle .hero-vital .bar{position:absolute;left:28.5%;top:45.8%;width:53%;height:12%;margin:0;background:transparent;border:0;border-radius:6px;overflow:hidden;box-shadow:none}
+#battle .hero-vital #hpBar{height:100%;background:linear-gradient(#ff6663,#d11b27 40%,#850c18);border-radius:5px;box-shadow:inset 0 1px 2px #ffc6a0}
+#battle .enemy-vital{width:100%;box-sizing:border-box}
+</style>
+</head><body><main><header class="game-header"><div class="game-mark"><span data-rpg-icon="swords"></span></div><div><div class="game-kicker">ECLIPSE · IDLE RPG</div><h1>Dunkler Krieger <span class="hud-version">HUD V2</span></h1></div><a class="header-talents" href="talentplaner.html" aria-label="Talentplaner öffnen"><span data-rpg-icon="tree"></span> Talente ↗</a></header>
 <section class="panel" id="battle"><div class="battle-top"><div class="wave-card"><span class="hud-label">AKTUELLE WELLE</span><b id="wave"></b></div><div class="currency-card"><span class="hud-label">DEINE WÄHRUNGEN</span><b id="money"></b></div></div>
 <div class="scene"><div class="actors"><span id="heroActor" aria-label="Dunkler Krieger"><canvas id="heroSprite" width="665" height="591" style="display:none" aria-hidden="true"></canvas><span id="heroFallback">🛡️</span></span><span id="enemyIcon">👺</span></div></div>
 <div class="combat-vitals"><div class="vital-card hero-vital"><div class="vital-heading"><b><span data-rpg-icon="shield"></span> Dunkler Krieger</b><span id="hpText"></span></div><div class="bar"><div id="hpBar"></div></div></div><div class="vital-card enemy-vital"><div class="vital-heading"><b id="enemyName"></b><span id="enemyHpText"></span></div><div class="bar enemy"><div id="enemyBar"></div></div></div></div>
