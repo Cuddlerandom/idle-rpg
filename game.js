@@ -214,7 +214,7 @@ function win(killedByBleed=false){
 function finish(reason){
  const r=state.run;if(!r.active)return;
  r.active=false;r.paused=true;state.runs++;if(!r.preview)state.best=Math.max(state.best,r.highest);
- let souls=0;if(!r.claimed){r.claimed=true;if(!r.preview)souls=Warrior.awardSouls(r.highest)}
+ let souls=0;if(!r.claimed){r.claimed=true;if(!r.preview)souls=Warrior.awardSouls(Math.max(0,r.highest-1))}
  $('summary').textContent=reason+' · Höchste Welle: '+fmt(r.highest)+' · Besiegte Gegner: '+fmt(r.kills)+' · Bosse: '+fmt(r.bosses)+' · Zeit: '+Math.floor(r.elapsed/60)+' Min. · '+(r.preview?'Testmodus – keine permanenten Belohnungen':'+'+souls+' Seelen · Gesamt: '+Warrior.load().souls);
  $('runEnd').classList.remove('hidden');message=reason;save();render();
 }
