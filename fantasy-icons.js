@@ -28,7 +28,7 @@ function swapHome(){
  const home=document.getElementById('rpgHome');if(!home)return;
  const emblem=home.querySelector('.rpg-home-symbol');if(emblem&&!emblem.dataset.iconReady){emblem.innerHTML=svg('swords');emblem.dataset.iconReady='1'}
  const actions=home.querySelectorAll('.rpg-home-actions > *');
- for(const [i,name] of ['play','hammer','tree','book'].entries()){const el=actions[i];if(!el||el.dataset.iconReady)continue;el.innerHTML=svg(name)+' '+el.textContent.replace(/^[^\\p{L}\\p{N}]+/u,'');el.dataset.iconReady='1'}
+ for(const [i,name] of ['play','hammer','tree','book'].entries()){const el=actions[i];if(!el||el.dataset.iconReady)continue;el.innerHTML=svg(name)+' '+el.textContent.replace(/^[^A-Za-zÄÖÜäöü]+/,'');el.dataset.iconReady='1'}
 }
 decorate(document);swapHome();
 })();
