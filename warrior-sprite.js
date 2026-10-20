@@ -5,7 +5,7 @@ const canvas=document.getElementById('heroSprite'),fallback=document.getElementB
 if(!canvas||!fallback)return;
 const ctx=canvas.getContext('2d',{alpha:true});if(!ctx)return;
 const BASE='assets/characters/dunkler-krieger/v1/';
-const frames=Array.from({length:32},(_,i)=>{const im=new Image();im.src=BASE+'frame_'+String(i).padStart(3,'0')+'.png';return im;});
+const frames=Array.from({length:32},(_,i)=>{const im=new Image();im.src=BASE+'frame_'+String(i).padStart(3,'0')+'.png?v=v6-transparent-2';return im;});
 const fps=25;let loaded=0,errors=0,last=-1;
 ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
 for(const im of frames){
