@@ -1,21 +1,23 @@
 {
-  "name": "Dunkler Krieger – finale Idle-Animation",
+  "name": "Dunkler Krieger – V6 transparent Idle",
   "character_id": "dark_warrior",
-  "status": "32 finale Idle-Frames integriert",
+  "status": "32 bereinigte PNG-Frames integriert; visueller Spieltest ausstehend",
   "runtime": {
     "renderer": "warrior-sprite.js",
-    "format": "32 individual PNG frames",
+    "format": "32 transparent PNG frames",
+    "dimensions": "665 x 591",
     "path": "assets/characters/dunkler-krieger/v1/frame_000.png … frame_031.png"
   },
   "animations": {
     "idle": {
       "frames": 32,
       "fps": 25,
+      "frame_duration_ms": 40,
       "loop": true
     }
   },
   "notes": [
-    "Previous six Idle_ PNGs retained as fallback assets",
+    "Previous six Idle_ PNGs retained as backup",
     "Gameplay and balance unchanged"
   ]
 }
