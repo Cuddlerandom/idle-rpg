@@ -14,7 +14,7 @@ const sections=['run','shop','items','info'];
 const originals={};
 for(const id of sections){const el=$(id);originals[id]=el;content.appendChild(el);}
 const heading=document.querySelector('.menu-heading');if(heading)heading.remove();
-const labels={run:'⬆️ Gold-Upgrades',shop:'🔨 Werkstatt & Prestige',items:'🎒 Inventar',info:'📖 Spielregeln'};
+const labels={run:'Gold-Upgrades',shop:'Werkstatt & Prestige',items:'Inventar',info:'Spielregeln'};
 let open=null,previousActive=null;
 const read=()=>{try{return JSON.parse(localStorage.getItem('idle-rpg-core-v01')||'{}')}catch{return {}}};
 function close(){open=null;drawer.classList.remove('open');document.body.classList.remove('rpg-drawer-open');}
