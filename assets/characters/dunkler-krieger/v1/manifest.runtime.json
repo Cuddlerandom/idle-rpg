@@ -1,22 +1,21 @@
 {
-  "name": "Dunkler Krieger – Idle V2",
+  "name": "Dunkler Krieger – finale Idle-Animation",
   "character_id": "dark_warrior",
-  "status": "Neue Idle-Frames integriert",
+  "status": "32 finale Idle-Frames integriert",
   "runtime": {
     "renderer": "warrior-sprite.js",
-    "format": "6 individual PNG frames",
-    "path": "assets/characters/dunkler-krieger/v1/Idle_01.png … Idle_06.png"
+    "format": "32 individual PNG frames",
+    "path": "assets/characters/dunkler-krieger/v1/frame_000.png … frame_031.png"
   },
   "animations": {
     "idle": {
-      "frames": 6,
-      "fps": 5,
+      "frames": 32,
+      "fps": 25,
       "loop": true
     }
   },
   "notes": [
-    "Old atlases removed",
-    "Non-idle animations await new approved assets",
+    "Previous six Idle_ PNGs retained as fallback assets",
     "Gameplay and balance unchanged"
   ]
 }
