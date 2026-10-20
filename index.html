@@ -215,8 +215,10 @@ body.rpg-running nav[aria-label="Spielnavigation"] button{background:linear-grad
 #battle .scene{position:relative;overflow:hidden}
 #battle .combat-vitals{display:contents}
 #battle .hero-vital{position:absolute;top:7px;left:7px;z-index:5;width:clamp(165px,52%,275px);height:auto;aspect-ratio:3.05/1;box-sizing:border-box;padding:0;border:0;border-radius:0;background:transparent url('assets/ui/HUD_V3_Helden_Lebensbalken_Rahmen.png?v=1') center/100% 100% no-repeat;box-shadow:none;overflow:visible;pointer-events:none}
+#battle .hero-vital::before,#battle .hero-vital::after{content:none!important;display:none!important}
+#battle .hero-vital{outline:none!important;filter:none!important}
 #battle .hero-vital .vital-heading{position:absolute;left:33%;top:24%;width:52%;height:60%;min-height:0;display:block;z-index:2}
-#battle .hero-vital .vital-heading b{display:block;width:100%;color:#f2d5a4;font-family:Palatino Linotype,Book Antiqua,Palatino,Georgia,serif;font-variant:small-caps;font-weight:800;letter-spacing:.025em;font-size:clamp(9px,2.2vw,14px);text-align:center;text-shadow:0 1px 0 #3b2114,0 2px 3px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#battle .hero-vital .vital-heading b{display:block;width:100%;color:#f2d5a4;font-family:Palatino Linotype,Book Antiqua,Palatino,Georgia,serif;font-variant:normal;font-weight:700;letter-spacing:0;font-size:clamp(9px,1.95vw,13px);text-align:center;text-shadow:0 1px 0 #3b2114,0 2px 3px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #battle .hero-vital .vital-heading b [data-rpg-icon]{display:none}
 #battle .hero-vital #hpText{position:absolute;top:45%;left:-7.7%;width:105.8%;height:23%;display:flex;align-items:center;justify-content:center;font-size:clamp(10px,2.3vw,15px);font-weight:bold;color:#fff0dc;text-shadow:0 1px 3px #000,0 0 2px #000;text-align:center;white-space:nowrap;pointer-events:none}
 #battle .hero-vital .bar{position:absolute;left:29%;top:51%;width:55%;height:14%;margin:0;background:transparent;border:0;border-radius:4px;overflow:hidden;box-shadow:none}
