@@ -151,6 +151,40 @@ body.rpg-running #blessingPanel:not(.hidden){position:fixed;z-index:110;top:15dv
 nav[aria-label="Spielnavigation"] button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
 .rpg-inventory-title .rpg-art-icon{width:29px;height:29px}
 @media(max-width:420px){.nav-symbol .rpg-art-icon{width:28px;height:28px}nav[aria-label="Spielnavigation"] button{font-size:12px;padding:6px 2px}}
+
+/* FANTASY HUD V1.1 — visual-only theme; no gameplay values or layout mechanics. */
+:root{color-scheme:dark;--rpg-ink:#100f0d;--rpg-iron:#242522;--rpg-bronze:#aa8651;--rpg-gold:#e4c992;--rpg-parchment:#e8dcc4;--rpg-line:#665338}
+body{background:radial-gradient(ellipse at 50% -10%,#343126 0%,#171916 46%,#0c1010 100%) fixed;color:var(--rpg-parchment);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.01em}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.23;background:repeating-linear-gradient(108deg,transparent 0 13px,#c9a77208 14px 15px,transparent 16px 33px)}
+h1,h2,.game-kicker,.hud-label,.rpg-drawer-top strong,.menu-heading,.rpg-home h2{font-family:Georgia,"Times New Roman",serif;letter-spacing:.055em;text-shadow:0 2px 3px #000b}
+h1{color:#f4dfad}h2{color:#e6c68d}.hud-label,.game-kicker{color:#c5a572!important;letter-spacing:.13em;font-weight:700}
+.muted,.stat,.run-note{color:#c3b9a6}
+.panel,.vital-card,.wave-card,.currency-card,.battle-message,.loot-detail,.loot-slot,.loot-cell,.skill,.item{border-color:var(--rpg-line)}
+.panel{background:linear-gradient(145deg,#292923 0%,#1c2220 54%,#171b19 100%);border:1px solid #766044;border-radius:10px;box-shadow:inset 0 1px 0 #d8bd7630,inset 0 0 26px #0005,0 6px 22px #0005}
+#battle{border-color:#947349;box-shadow:inset 0 1px 0 #e7c88e4a,inset 0 0 35px #0008,0 8px 26px #0008}
+.game-header{border-bottom:1px solid #8b714b55;padding-bottom:8px}
+.game-mark{background:radial-gradient(circle,#5e4930,#201e1a);border:1px solid #927247;border-radius:9px;box-shadow:inset 0 1px 2px #f6d9a13b,0 3px 10px #0007}
+.hud-version{color:#d7b47b}
+button,.rpg-home-actions button,.rpg-home-link{background:linear-gradient(180deg,#d9bc81,#9e793f);color:#211b13;border:1px solid #e3c78d88;border-radius:7px;box-shadow:inset 0 1px 0 #fff4,inset 0 -2px 0 #503a2590,0 3px 8px #0005;text-shadow:0 1px #f4dca150}
+button.alt,.rpg-home-actions button:not(#rpgStart),.rpg-home-link{background:linear-gradient(180deg,#44453d,#292d29);color:#e7d6b7;border:1px solid #806744;box-shadow:inset 0 1px 0 #f6dc9e1a,0 3px 8px #0006;text-shadow:0 1px 2px #000}
+button.active,nav button.active{outline:1px solid #e9c990;border-color:#e9c990!important;background:linear-gradient(180deg,#645136,#332d24)!important;color:#fff0c8!important;box-shadow:inset 0 0 13px #caa26730,0 0 10px #cba46a35}
+button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid #ffe0a0;outline-offset:2px}
+body.rpg-running nav[aria-label="Spielnavigation"]{background:linear-gradient(180deg,#34342b,#1b211e 72%);border-top:2px solid #947348;box-shadow:inset 0 1px 0 #e3c78b30,0 -5px 20px #000a}
+body.rpg-running nav[aria-label="Spielnavigation"] button{background:linear-gradient(180deg,#3b3a32,#242823);color:#e2d4b8;border:1px solid #735d40;text-shadow:0 1px 2px #000}
+#rpgDrawer{background:linear-gradient(160deg,#2d2d26,#1b211e 65%,#131816);border:2px solid #9a7747;box-shadow:inset 0 0 25px #0007,0 -15px 55px #000e}
+.rpg-drawer-top{background:linear-gradient(180deg,#494033,#292a25);border-bottom:2px solid #917147;color:#efd6a5}
+#rpgDrawerBody>.panel{background:transparent;box-shadow:none}
+#rpgHome{background:radial-gradient(ellipse at 50% 25%,#413728,#1d211e 65%);border:1px solid #97764b}
+#rpgHome h2{color:#f3dbad}
+.wave-card,.currency-card,.vital-card,.battle-message{background:linear-gradient(160deg,#343229,#202521);border:1px solid #6f5a3d;border-radius:8px;box-shadow:inset 0 1px 0 #e0bf7e1a}
+.bar{background:#1a1515;border:1px solid #62503c;box-shadow:inset 0 2px 5px #0009}
+.bar>div{background:linear-gradient(180deg,#83c783,#3d8756)}.bar.enemy>div{background:linear-gradient(180deg,#d67b66,#922e2c)}
+#rpgItemSort{background:#282a24;color:#eedbb5;border:1px solid #977549}
+#items #itemDetail:not(:empty){background:linear-gradient(150deg,#39362b,#1d2420);border:1px solid #a4834f;box-shadow:0 -6px 19px #000b}
+.loot-slot,.loot-cell,.skill{background:linear-gradient(145deg,#333329,#222723);box-shadow:inset 0 1px 0 #d3b77717}
+.rpg-art-icon{filter:drop-shadow(0 2px 3px #000b)}
+@media(max-width:420px){h1{letter-spacing:.015em}h2{letter-spacing:.025em}body.rpg-running nav[aria-label="Spielnavigation"] button{font-size:12px}}
+@media(prefers-reduced-motion:reduce){button{transition:none!important}}
 </style></head><body><main><header class="game-header"><div class="game-mark"><span data-rpg-icon="swords"></span></div><div><div class="game-kicker">ECLIPSE · IDLE RPG</div><h1>Dunkler Krieger <span class="hud-version">HUD V2</span></h1></div><a class="header-talents" href="talentplaner.html" aria-label="Talentplaner öffnen"><span data-rpg-icon="tree"></span> Talente ↗</a></header>
 <section class="panel" id="battle"><div class="battle-top"><div class="wave-card"><span class="hud-label">AKTUELLE WELLE</span><b id="wave"></b></div><div class="currency-card"><span class="hud-label">DEINE WÄHRUNGEN</span><b id="money"></b></div></div>
 <div class="scene"><div class="actors"><span id="heroActor" aria-label="Dunkler Krieger"><canvas id="heroSprite" width="128" height="192" style="display:none" aria-hidden="true"></canvas><span id="heroFallback">🛡️</span></span><span id="enemyIcon">👺</span></div></div>
