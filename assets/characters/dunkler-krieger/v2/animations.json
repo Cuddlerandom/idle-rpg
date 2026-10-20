@@ -1,0 +1,71 @@
+{
+  "name": "dark-knight",
+  "frameWidth": 768,
+  "frameHeight": 768,
+  "anchor": "bottom-center",
+  "background": "transparent",
+  "rows": [
+    "idle",
+    "attack",
+    "hit",
+    "death"
+  ],
+  "animations": {
+    "idle": {
+      "frames": [
+        "assets/characters/dunkler-krieger/v2/idle/idle_01.png",
+        "assets/characters/dunkler-krieger/v2/idle/idle_02.png",
+        "assets/characters/dunkler-krieger/v2/idle/idle_03.png",
+        "assets/characters/dunkler-krieger/v2/idle/idle_04.png"
+      ],
+      "frameCount": 4,
+      "fps": 6,
+      "loop": true,
+      "holdLast": false
+    },
+    "attack": {
+      "frames": [
+        "assets/characters/dunkler-krieger/v2/attack/attack_01.png",
+        "assets/characters/dunkler-krieger/v2/attack/attack_02.png",
+        "assets/characters/dunkler-krieger/v2/attack/attack_03.png",
+        "assets/characters/dunkler-krieger/v2/attack/attack_04.png",
+        "assets/characters/dunkler-krieger/v2/attack/attack_05.png"
+      ],
+      "frameCount": 5,
+      "fps": 12,
+      "loop": false,
+      "holdLast": false
+    },
+    "hit": {
+      "frames": [
+        "assets/characters/dunkler-krieger/v2/hit/hit_01.png",
+        "assets/characters/dunkler-krieger/v2/hit/hit_02.png",
+        "assets/characters/dunkler-krieger/v2/hit/hit_03.png"
+      ],
+      "frameCount": 3,
+      "fps": 10,
+      "loop": false,
+      "holdLast": false
+    },
+    "death": {
+      "frames": [
+        "assets/characters/dunkler-krieger/v2/death/death_01.png",
+        "assets/characters/dunkler-krieger/v2/death/death_02.png",
+        "assets/characters/dunkler-krieger/v2/death/death_03.png",
+        "assets/characters/dunkler-krieger/v2/death/death_04.png",
+        "assets/characters/dunkler-krieger/v2/death/death_05.png"
+      ],
+      "frameCount": 5,
+      "fps": 8,
+      "loop": false,
+      "holdLast": true
+    }
+  },
+  "notes": {
+    "idle": "4 Frames, loop, ca. 6 fps. Frame 1 ist die Originalfigur.",
+    "attack": "5 Frames, einmal, ca. 12 fps. Ausholen, Ueberkopf, Schlag, Ausfall, Rueckkehr.",
+    "hit": "3 Frames, einmal, ca. 10 fps. Zusammenzucken, zurueckgeworfen, abfangen.",
+    "death": "5 Frames, einmal, ca. 8 fps, letztes Frame halten. Augen im letzten Frame dunkel."
+  },
+  "path": "assets/characters/dunkler-krieger/v2"
+}
