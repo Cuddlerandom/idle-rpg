@@ -19,7 +19,10 @@ pause:'<path d="M8 5v14M16 5v14"/>',
 play:'<path d="m8 5 12 7-12 7V5Z"/>',
 skull:'<path d="M4 12a8 8 0 1 1 16 0v5h-3v4h-3v-4h-4v4H7v-4H4v-5ZM9 12h1M14 12h1"/>'
 };
-const svg=name=>'<svg class="rpg-icon" viewBox="0 0 24 24" aria-hidden="true">'+(paths[name]||paths.spark)+'</svg>';
+const images={swords:'kampf',shield:'kampf',tree:'talente',hammer:'werkstatt',bag:'inventar',book:'einstellungen',upgrade:'upgrades',chest:'inventar',scroll:'einstellungen',spark:'faehigkeiten',play:'kampf',pause:'kampf'};
+const svg=name=>images[name]
+ ?'<img class="rpg-art-icon" src="assets/ui/icons/'+images[name]+'.png" alt="" draggable="false" loading="eager">'
+ :'<svg class="rpg-icon" viewBox="0 0 24 24" aria-hidden="true">'+(paths[name]||paths.spark)+'</svg>';
 window.RPGIcon=svg;
 function decorate(root){
  for(const el of root.querySelectorAll('[data-rpg-icon]')){const name=el.dataset.rpgIcon;if(el.dataset.iconReady===name)continue;el.innerHTML=svg(name);el.dataset.iconReady=name;}
@@ -28,7 +31,7 @@ function swapHome(){
  const home=document.getElementById('rpgHome');if(!home)return;
  const emblem=home.querySelector('.rpg-home-symbol');if(emblem&&!emblem.dataset.iconReady){emblem.innerHTML=svg('swords');emblem.dataset.iconReady='1'}
  const actions=home.querySelectorAll('.rpg-home-actions > *');
- for(const [i,name] of ['play','hammer','tree','book'].entries()){const el=actions[i];if(!el||el.dataset.iconReady)continue;el.innerHTML=svg(name)+' '+el.textContent.replace(/^[^A-Za-zÄÖÜäöü]+/,'');el.dataset.iconReady='1'}
+ for(const [i,name] of ['play','hammer','tree','book'].entries()){const el=actions[i];if(!el||el.dataset.iconReady)continue;const label=el.textContent.replace(/^[^A-Za-zÄÖÜäöü]+/,'');el.innerHTML=svg(name)+' <span>'+label+'</span>';el.dataset.iconReady='1'}
 }
 decorate(document);swapHome();
 })();
