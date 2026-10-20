@@ -1,12 +1,12 @@
-/* Dunkler Krieger: finale Idle-PNGs. Nur visuelle Darstellung. */
+/* Dunkler Krieger: freigegebene Idle-PNGs. Nur visuelle Darstellung. */
 (function(){
 'use strict';
 const canvas=document.getElementById('heroSprite'),fallback=document.getElementById('heroFallback');
 if(!canvas||!fallback)return;
 const ctx=canvas.getContext('2d',{alpha:true});if(!ctx)return;
 const BASE='assets/characters/dunkler-krieger/v1/';
-const frames=Array.from({length:32},(_,i)=>{const im=new Image();im.src=BASE+'frame_'+String(i).padStart(3,'0')+'.png';return im;});
-const fps=25;let loaded=0,errors=0,last=-1;
+const frames=Array.from({length:6},(_,i)=>{const im=new Image();im.src=BASE+'Idle_'+String(i+1).padStart(2,'0')+'.png';return im;});
+const fps=5;let loaded=0,errors=0,last=-1;
 ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
 for(const im of frames){
  im.onload=()=>{loaded++;if(loaded===1){canvas.style.display='block';fallback.style.display='none';canvas.dataset.ready='true'}};
@@ -27,8 +27,8 @@ function render(time){
 canvas.dataset.animation='idle';
 window.DarkWarriorSprite={
  play:()=>true,
- inspect:()=>({animation:'idle',ready:loaded>0,loaded,total:32,errors,frame:last,dead:false}),
- manifest:{character:'dark_warrior',version:'idle-v3-final',animations:{idle:{frames:32,fps,loop:true}}}
+ inspect:()=>({animation:'idle',ready:loaded>0,loaded,total:6,errors,frame:last,dead:false}),
+ manifest:{character:'dark_warrior',version:'idle-v2',animations:{idle:{frames:6,fps,loop:true}}}
 };
 requestAnimationFrame(render);
 })();
