@@ -188,6 +188,10 @@ body.rpg-running nav[aria-label="Spielnavigation"] button{background:linear-grad
 
 /* Painted idle artwork should be smoothly scaled, not pixelated. */
 #heroSprite{image-rendering:auto!important}
+
+/* Lightweight diagnostic: screen refresh FPS, not animation pose FPS. */
+#fpsCounter{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);right:8px;z-index:99999;background:#111b1fe8;color:#e7e2d0;border:1px solid #a88b55;border-radius:8px;padding:6px 9px;font:700 12px/1.3 ui-monospace,SFMono-Regular,monospace;pointer-events:none;min-width:86px;text-align:center;font-variant-numeric:tabular-nums;box-shadow:0 2px 10px #0008}
+#fpsCounter[data-status="good"]{color:#94e2a1}#fpsCounter[data-status="medium"]{color:#f5d47d}#fpsCounter[data-status="low"]{color:#ff8989}
 </style></head><body><main><header class="game-header"><div class="game-mark"><span data-rpg-icon="swords"></span></div><div><div class="game-kicker">ECLIPSE · IDLE RPG</div><h1>Dunkler Krieger <span class="hud-version">HUD V2</span></h1></div><a class="header-talents" href="talentplaner.html" aria-label="Talentplaner öffnen"><span data-rpg-icon="tree"></span> Talente ↗</a></header>
 <section class="panel" id="battle"><div class="battle-top"><div class="wave-card"><span class="hud-label">AKTUELLE WELLE</span><b id="wave"></b></div><div class="currency-card"><span class="hud-label">DEINE WÄHRUNGEN</span><b id="money"></b></div></div>
 <div class="scene"><div class="actors"><span id="heroActor" aria-label="Dunkler Krieger"><canvas id="heroSprite" width="128" height="192" style="display:none" aria-hidden="true"></canvas><span id="heroFallback">🛡️</span></span><span id="enemyIcon">👺</span></div></div>
@@ -205,4 +209,30 @@ body.rpg-running nav[aria-label="Spielnavigation"] button{background:linear-grad
 <p>Bei Run-Ende bekommst du Seelen für besiegte Meilensteine ab Welle 10, danach alle fünf Wellen (+1, +2, +3 usw.). Wiederholte Runs vergüten volle Seelen. Gold und Run-Level gehen verloren; Münzen, Seelen, Talentpunkte und Werkstatt bleiben.</p>
 <p>Testmodus im Talentplaner: 51 Punkte kostenlos für Experimentier-Runs, ohne permanente Belohnungen. Der aktive Run hält seinen Build unverändert fest.</p>
 <p class="muted">Kampfsystem V0.3: Technische Spielversion; Balancing und Browser-Regressionsprüfung folgen. Ausrüstung V0.4 wird schrittweise integriert; Tränke und endgültige Pixel-Art sind noch nicht enthalten.</p></section>
-</main><script src="warrior-system.js"></script><script src="loot-system.js"></script><script src="game.js"></script><script src="warrior-sprite.js"></script><script src="mobile-hud.js"></script><script src="fantasy-icons.js"></script></body></html>
+</main><div id="fpsCounter" aria-label="Bildrate">FPS --</div><script>
+/* FPS diagnostic: sampled requestAnimationFrame callbacks over one-second windows. */
+(function(){
+'use strict';
+const badge=document.getElementById('fpsCounter');
+if(!badge)return;
+let start=0,frames=0,last=0,slow=0,visible=!document.hidden;
+function reset(){start=0;frames=0;last=0;slow=0;badge.textContent='FPS --';badge.dataset.status='medium'}
+document.addEventListener('visibilitychange',()=>{visible=!document.hidden;reset()});
+function sample(now){
+ if(!visible){requestAnimationFrame(sample);return}
+ if(!start){start=now;last=now;requestAnimationFrame(sample);return}
+ const dt=now-last;last=now;
+ if(dt>34)slow++;
+ frames++;
+ const elapsed=now-start;
+ if(elapsed>=1000){
+  const fps=Math.round(frames*1000/elapsed);
+  badge.textContent=fps+' FPS · '+slow+' Drops';
+  badge.dataset.status=fps>=55?'good':fps>=40?'medium':'low';
+  frames=0;slow=0;start=now;
+ }
+ requestAnimationFrame(sample);
+}
+reset();requestAnimationFrame(sample);
+})();
+</script><script src="warrior-system.js"></script><script src="loot-system.js"></script><script src="game.js"></script><script src="warrior-sprite.js"></script><script src="mobile-hud.js"></script><script src="fantasy-icons.js"></script></body></html>
