@@ -24,7 +24,7 @@ function buyPrestige(id){
 }
 function renderPrestige(){
  const branches=[['Reichtum','💰'],['Entwicklung','🔮'],['Meisterschaft','⚡']];
- $('prestigeTree').innerHTML='<div class="prestige-wallet"><span>🪙 '+fmt(state.coins)+' Münzen</span><small>Wähle einen Knoten für den nächsten Bonus</small></div><div class="prestige-grid">'+branches.map(([branch,icon])=>'<section class="prestige-column"><h3>'+icon+' '+branch+'</h3>'+PRESTIGE.filter(n=>n.branch===branch).map((n,i)=>{
+ updateHtml('prestigeTree','<div class="prestige-wallet"><span>🪙 '+fmt(state.coins)+' Münzen</span><small>Wähle einen Knoten für den nächsten Bonus</small></div><div class="prestige-grid">'+branches.map(([branch,icon])=>'<section class="prestige-column"><h3>'+icon+' '+branch+'</h3>'+PRESTIGE.filter(n=>n.branch===branch).map((n,i)=>{
  const rank=prestigeRank(n.id),locked=!!(n.req&&!prestigeRank(n.req)),max=rank>=n.max,price=prestigePrice(n);
  const affordable=state.coins>=price,canBuy=!locked&&!max&&affordable&&!state.run.preview;
  const v=x=>n.id==='speed'?x+'×':x+' %';
@@ -39,10 +39,10 @@ function renderPrestige(){
  '<div class="prestige-detail" id="'+detailId+'" hidden><p>'+n.desc+'</p><div class="prestige-stat">Aktuell <b>'+v(current)+'</b></div><div class="prestige-stat">Nächste Stufe <b class="prestige-gain">'+(max?'MAX':v(next)+' (+'+v(n.step)+')')+'</b></div>'+
  (locked?'<div class="prestige-requirement">🔒 Benötigt: '+PRESTIGE.find(x=>x.id===n.req).name+' Rang 1</div>':'')+
  '<button class="prestige-buy" '+(canBuy?'':'disabled')+' onclick="buyPrestige(\''+n.id+'\')">'+(max?'✓ Maximiert':state.run.preview?'Im Testmodus gesperrt':'🪙 '+fmt(price)+' Münzen · Kaufen')+'</button></div></article>';
- }).join('')+'</section>').join('')+'</div>';
+ }).join('')+'</section>').join('')+'</div>');
  const cap=1+prestigeBonus('speed');
  state.gameSpeed=clamp(Number(state.gameSpeed)||1,1,cap);
- $('prestigeSpeed').innerHTML='<label>⏩ Spieltempo: '+state.gameSpeed+'× (freigeschaltet bis '+cap+'×) <select onchange="setGameSpeed(this.value)">'+Array.from({length:cap},(_,i)=>i+1).map(v=>'<option value="'+v+'" '+(v===state.gameSpeed?'selected':'')+'>'+v+'×</option>').join('')+'</select></label>';
+ updateHtml('prestigeSpeed','<label>⏩ Spieltempo: '+state.gameSpeed+'× (freigeschaltet bis '+cap+'×) <select onchange="setGameSpeed(this.value)">'+Array.from({length:cap},(_,i)=>i+1).map(v=>'<option value="'+v+'" '+(v===state.gameSpeed?'selected':'')+'>'+v+'×</option>').join('')+'</select></label>');
  if(prestigeExpanded&&$('prestige-detail-'+prestigeExpanded)){
   const detail=$('prestige-detail-'+prestigeExpanded);detail.hidden=false;
   detail.closest('.prestige-node').classList.add('prestige-expanded');
@@ -355,6 +355,13 @@ function renderInventory(){
  const actions=inBag?act('equip',item.id,'Ausrüsten',item.required>r.level)+' '+act('sell',item.id,'Verkaufen · '+fmt(item.sell)+' Gold',false,true):onGround?act('pickup',item.id,'Aufheben',bag.length>=50):act('unequip',item.slot,'Ablegen',bag.length>=50,true);
  $('itemDetail').innerHTML=desc+'<div class="loot-actions">'+actions+'</div>';
 }
+// Avoid rebuilding unchanged DOM subtrees on every 200 ms UI refresh.
+const renderHtmlCache=new Map();
+function updateHtml(id,html){
+ if(renderHtmlCache.get(id)===html)return;
+ renderHtmlCache.set(id,html);
+ const node=$(id);if(node)node.innerHTML=html;
+}
 function render(){
  const r=state.run,s=stats(),f=available();
  const blessPanel=$('blessingPanel');blessPanel.classList.toggle('hidden',!r.active||!r.blessingPending);
@@ -381,8 +388,8 @@ function render(){
  $('combatStats').textContent='⚔️ '+fmt(s.atk)+' · 🛡️ '+fmt(s.def);
  $('log').textContent=message;$('pauseBtn').textContent=r.paused?'▶️ Fortsetzen':'⏸ Pausieren';$('pauseBtn').disabled=!r.active;
  $('effects').textContent=(r.preview?'🧪 TESTMODUS · ':'')+'🩸 '+bleeds()+' Blutungen · 🌑 '+corrupt()+' Verderbnis · 🛡️ '+resolve()+' Entschlossenheit';
- $('skills').innerHTML=f.map(sk=>{const remaining=Math.max(0,Math.ceil((nval(fx.cd[sk.id])-fx.time)/1000));return '<div class="skill"><button '+(!r.active||r.paused||remaining?'disabled':'')+' onclick="cast(\''+sk.id+'\')">'+sk.name+(remaining?' · '+remaining+'s':'')+'</button><label class="auto"><input type="checkbox" '+(state.settings.auto[sk.id]?'checked':'')+' onchange="toggleAuto(\''+sk.id+'\')"> Auto</label></div>'}).join('');
- $('runUpgrades').innerHTML=upgradeRows(false);$('workshop').innerHTML=upgradeRows(true);renderPrestige();
+ updateHtml('skills',f.map(sk=>{const remaining=Math.max(0,Math.ceil((nval(fx.cd[sk.id])-fx.time)/1000));return '<div class="skill"><button '+(!r.active||r.paused||remaining?'disabled':'')+' onclick="cast(\''+sk.id+'\')">'+sk.name+(remaining?' · '+remaining+'s':'')+'</button><label class="auto"><input type="checkbox" '+(state.settings.auto[sk.id]?'checked':'')+' onchange="toggleAuto(\''+sk.id+'\')"> Auto</label></div>'}).join(''));
+ updateHtml('runUpgrades',upgradeRows(false));updateHtml('workshop',upgradeRows(true));renderPrestige();
 }
 if(!state.run.active){$('runEnd').classList.remove('hidden');$('summary').textContent='Letzter Run beendet. Höchste Welle: '+fmt(state.run.highest)+'. Starte einen neuen Run.'}else state.run.hp=clamp(state.run.hp,0,stats().hp);
 window.inspectItem=inspectItem;window.itemAction=itemAction;window.viewRecentLoot=viewRecentLoot;window.dismissRecentLoot=dismissRecentLoot;
