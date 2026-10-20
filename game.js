@@ -239,7 +239,7 @@ function upgrade(k,permanent){
  if(k==='hp')heal(15);state.run.hp=Math.min(state.run.hp,stats().hp);save();render();
 }
 function tick(dt){
- const r=state.run;if(!r.active||r.paused||r.blessingPending||inventoryOpen||document.hidden)return;
+ const r=state.run;if(!r.active||r.paused||r.blessingPending||document.hidden)return;
  r.elapsed+=dt/1000;dt*=clamp(Number(state.gameSpeed)||1,1,1+prestigeBonus('speed'));fx.time+=dt;const s=stats();
  heal(s.regen*dt/1000);
  fx.resolve=fx.resolve.filter(x=>x>fx.time);fx.corrupt=fx.corrupt.filter(x=>x>fx.time);
