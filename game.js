@@ -323,7 +323,9 @@ function compareEquipment(item,equipment){
 }
 function renderInventory(){
  const r=state.run,loot=r.loot,bag=loot.inventory,bonus=gear();
- $('lootInfo').textContent='Inventar '+bag.length+'/50 · Am Boden '+loot.ground.length+(r.active?' · ⏸ Kampf pausiert':' · Run beendet');
+ const sortMode=$('rpgItemSort')?.value||'default';const rarityRank={common:1,uncommon:2,rare:3,epic:4,legendary:5};
+ const displayBag=bag.slice();if(sortMode==='rarity')displayBag.sort((x,y)=>(rarityRank[y.rarity]||0)-(rarityRank[x.rarity]||0)||y.level-x.level);else if(sortMode==='level')displayBag.sort((x,y)=>y.level-x.level);else if(sortMode==='slot')displayBag.sort((x,y)=>String(x.slot).localeCompare(String(y.slot)));
+ $('lootInfo').textContent='Inventar '+bag.length+'/50 · Am Boden '+loot.ground.length+(r.active?' · ⚔️ Kampf läuft':' · Run beendet');
  const color=item=>Loot.rarity[item.rarity]?.color||'#b5c6c0';
  $('gearSlots').innerHTML=Loot.slots.map(slot=>{
   const item=loot.equipment[slot.id];
@@ -331,7 +333,7 @@ function renderInventory(){
     '<span>'+slot.icon+' '+slot.name+'</span><small>'+(item?safeHtml(item.name):'Leer')+'</small></button>';
  }).join('');
  $('inventoryGrid').innerHTML=Array.from({length:50},(_,i)=>{
-  const item=bag[i];
+  const item=displayBag[i];
   return '<button class="loot-cell" '+(item?'style="border-color:'+color(item)+'" onclick=\''+itemOnclick('inspectItem',item.id)+'\'':'disabled')+'>'+
     '<span>'+(item?Loot.slots.find(s=>s.id===item.slot)?.icon||'🎁':'·')+'</span><small>'+(item?safeHtml(item.name):'')+'</small></button>';
  }).join('');
