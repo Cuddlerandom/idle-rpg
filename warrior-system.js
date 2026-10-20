@@ -79,11 +79,11 @@ function load(){
 }
 function save(){try{root.localStorage.setItem(KEY,JSON.stringify(state));return true}catch(e){return false}}
 function get(){syncSouls();return copy(load())}
-function soulCost(n){return 5+asInt(n,0,50)}
+function soulCost(n){return 5+13*asInt(n,0,50)}
 function remainingCore(){const p=load();return p.earnedCore-p.core.reduce((a,b)=>a+b,0)}
 function unlockedSpecs(){return load().earnedCore>=1}
 function earnThrough(wave){const p=load(),old=p.earnedCore;while(p.earnedCore<9&&wave>=MILESTONES[p.earnedCore])p.earnedCore++;if(old!==p.earnedCore)save();return p.earnedCore-old}
-function soulReward(highest){const w=Math.max(0,Math.floor(Number(highest)||0));if(w<11)return 0;const n=Math.floor((w-10)/5)+1;return n*(n+1)/2}
+function soulReward(defeatedWave){const w=Math.max(0,Math.floor(Number(defeatedWave)||0));if(w<10)return 0;const n=Math.floor((w-10)/5)+1;return n*(n+1)/2}
 function awardSouls(highest){
  const p=load(),earned=soulReward(highest),before=syncSouls();
  if(earned===0)return 0;
