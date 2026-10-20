@@ -216,6 +216,19 @@ body.rpg-running nav[aria-label="Spielnavigation"] button{background:linear-grad
 const badge=document.getElementById('fpsCounter');
 if(!badge)return;
 let start=0,frames=0,last=0,slow=0,visible=!document.hidden;
+const key='idle-rpg-fps-report-v1';
+let log={started:new Date().toISOString(),seconds:0,samples:0,sum:0,min:null,max:null,drops:0,under60:0,under55:0,under30:0};
+try{const saved=JSON.parse(localStorage.getItem(key)||'null');if(saved&&typeof saved.samples==='number')log=saved}catch{}
+function report(){return 'Idle RPG FPS-Testbericht\\n'+
+ 'Beginn: '+log.started+'\\nMessdauer: '+log.seconds+' Sekunden\\n'+
+ 'Durchschnitt: '+(log.samples?(log.sum/log.samples).toFixed(1):'--')+' FPS\\n'+
+ 'Minimum / Maximum: '+(log.min??'--')+' / '+(log.max??'--')+' FPS\\n'+
+ 'Drops: '+log.drops+'\\nSekunden unter 60 FPS: '+log.under60+
+ '\\nSekunden unter 55 FPS: '+log.under55+'\\nSekunden unter 30 FPS: '+log.under30+
+ '\\nHinweis: Browser-rAF-Messung; Hintergrundzeiten ausgeschlossen.'}
+function persist(){try{localStorage.setItem(key,JSON.stringify(log))}catch{}}
+window.IdleFPSReport={get:report,reset:()=>{log={started:new Date().toISOString(),seconds:0,samples:0,sum:0,min:null,max:null,drops:0,under60:0,under55:0,under30:0};persist();reset()},copy:async()=>{const value=report();try{await navigator.clipboard.writeText(value);return true}catch{return false}}};
+
 function reset(){start=0;frames=0;last=0;slow=0;badge.textContent='FPS --';badge.dataset.status='medium'}
 document.addEventListener('visibilitychange',()=>{visible=!document.hidden;reset()});
 function sample(now){
@@ -229,10 +242,26 @@ function sample(now){
   const fps=Math.round(frames*1000/elapsed);
   badge.textContent=fps+' FPS · '+slow+' Drops';
   badge.dataset.status=fps>=55?'good':fps>=40?'medium':'low';
+  log.seconds+=elapsed/1000;log.samples++;log.sum+=fps;
+  log.min=log.min===null?fps:Math.min(log.min,fps);log.max=log.max===null?fps:Math.max(log.max,fps);
+  log.drops+=slow;if(fps<60)log.under60++;if(fps<55)log.under55++;if(fps<30)log.under30++;
+  persist();
   frames=0;slow=0;start=now;
  }
  requestAnimationFrame(sample);
 }
 reset();requestAnimationFrame(sample);
 })();
+</script><div id="fpsReportControls" style="position:fixed;right:8px;top:calc(env(safe-area-inset-top,0px) + 44px);z-index:99998;display:flex;gap:4px">
+<button type="button" id="fpsCopy" style="padding:5px 7px;font-size:11px;background:#24383b;color:#f4ead5;border:1px solid #a88b55">FPS-Bericht kopieren</button>
+<button type="button" id="fpsReset" style="padding:5px 7px;font-size:11px;background:#24383b;color:#f4ead5;border:1px solid #a88b55">Reset</button>
+</div><script>
+document.getElementById('fpsCopy').addEventListener('click',async function(){
+ const data=window.IdleFPSReport.get();
+ const copied=await window.IdleFPSReport.copy();
+ if(!copied){const file=new Blob([data],{type:'text/plain'});const url=URL.createObjectURL(file);const a=document.createElement('a');a.href=url;a.download='idle-rpg-fps-bericht.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+ this.textContent=copied?'Kopiert ✓':'Bericht gespeichert ✓';
+ setTimeout(()=>this.textContent='FPS-Bericht kopieren',2000);
+});
+document.getElementById('fpsReset').addEventListener('click',()=>window.IdleFPSReport.reset());
 </script><script src="warrior-system.js"></script><script src="loot-system.js"></script><script src="game.js"></script><script src="warrior-sprite.js"></script><script src="mobile-hud.js"></script><script src="fantasy-icons.js"></script></body></html>
