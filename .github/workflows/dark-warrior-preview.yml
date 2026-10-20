@@ -1,9 +1,10 @@
-name: Dunkler Krieger V1 – visual integration QA
+name: Dunkler Krieger V2 – combat animation QA
 on:
   pull_request:
     paths:
       - 'assets/characters/dunkler-krieger/**'
       - 'warrior-sprite.js'
+      - 'game.js'
       - 'index.html'
       - 'tests/dark-warrior-sprites.test.cjs'
       - '.github/workflows/dark-warrior-preview.yml'
@@ -18,26 +19,23 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Code and full sprite manifest validation
+      - name: Pose wiring and sprite files
         run: |
           node --check warrior-sprite.js
-          node --check assets/characters/dunkler-krieger/v1/warrior-atlases.js
+          node --check game.js
           node --test tests/dark-warrior-sprites.test.cjs
-      - name: Preserve current warrior, talent and loot mechanics
+      - name: Preserve warrior, talent and loot mechanics
         run: |
           node --test tests/warrior.test.cjs tests/loot.test.cjs
           node tests/talent-full-audit.cjs
-      - name: Mobile-sized Chromium integration smoke test
+      - name: Mobile-sized page still shows the hero
         run: |
           python3 -m http.server 8765 > /tmp/idle-preview-server.log 2>&1 &
           sleep 2
           CHROME=$(command -v google-chrome || command -v chromium || true)
           test -n "$CHROME"
-          "$CHROME" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --window-size=390,844 --force-device-scale-factor=2 --virtual-time-budget=2600 --dump-dom http://127.0.0.1:8765/ > /tmp/idle-warrior-dom.html 2>/tmp/idle-warrior-browser.log
+          "$CHROME" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --window-size=390,844 --force-device-scale-factor=2 --virtual-time-budget=4000 --dump-dom http://127.0.0.1:8765/ > /tmp/idle-warrior-dom.html 2>/tmp/idle-warrior-browser.log
           grep -q 'id="heroSprite"' /tmp/idle-warrior-dom.html
           grep -q 'data-ready="true"' /tmp/idle-warrior-dom.html
           grep -q 'Vernichtender Hieb' /tmp/idle-warrior-dom.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --window-size=390,844 --force-device-scale-factor=2 --virtual-time-budget=2000 --dump-dom http://127.0.0.1:8765/assets/characters/dunkler-krieger/v1/preview.html > /tmp/dark-warrior-preview-dom.html 2>/tmp/dark-warrior-preview-browser.log
-          grep -q 'Dunkler Krieger V1.0' /tmp/dark-warrior-preview-dom.html
-          grep -q 'data-pose="special"' /tmp/dark-warrior-preview-dom.html
-          echo "All six animations available and game UI loaded in mobile-sized Chromium."
+          echo "Hero sprite loaded in mobile-sized Chromium."

@@ -118,6 +118,7 @@ function enemyFor(w){
 let enemy=enemyFor(state.run.wave),enemyHp=state.run.enemyHp>0?Math.min(enemy.maxHp,state.run.enemyHp):enemy.maxHp;
 let heroClock=Math.max(0,nval(state.run.heroClock)),enemyClock=Math.max(0,nval(state.run.enemyClock));
 let last=performance.now(),renderClock=0,saveClock=0,message='Der Kampf beginnt.';
+function warriorPose(name){try{window.dispatchEvent(new CustomEvent('rpg-warrior-pose',{detail:name}))}catch(e){}}
 Warrior.earnThrough(Math.max(0,Math.floor(nval(state.best))-1)); // Nur nachweislich früher abgeschlossene Wellen übernehmen.
 function save(){state.run.fx=fx;state.run.heroClock=heroClock;state.run.enemyClock=enemyClock;state.run.enemyHp=enemyHp;try{localStorage.setItem(KEY,JSON.stringify(state))}catch{}}
 function heal(raw){const h=Math.max(0,raw*healingMult());state.run.hp=Math.min(stats().hp,state.run.hp+h)}
@@ -159,11 +160,11 @@ function attack(power=1,kind='normal'){
  if(base)fx.armorUntil=fx.time+debuffDuration(5000);
  if(isNormal)applyBleed(false,true);
  if(isNormal||expiring(fx.darkUntil))applyCorrupt(expiring(fx.darkUntil),isNormal);
- applyResolve();return dmg;
+ applyResolve();warriorPose('attack');return dmg;
 }
 function counter(){
  const s=stats(),dmg=Math.max(1,.75*s.atk-enemy.def*(expiring(fx.armorUntil)?.75:1))*damageMult()*executeMult()*(1+.03*R(2,11)*resolve())*(expiring(fx.bastionUntil)?1.15:1)*(1+gear().counter);
- enemyHp-=dmg;heal(dmg*(.01*R(2,1)+gear().lifeSteal));return dmg;
+ enemyHp-=dmg;heal(dmg*(.01*R(2,1)+gear().lifeSteal));warriorPose('attack');return dmg;
 }
 function cast(id){
  const skill=available().find(x=>x.id===id);
@@ -217,6 +218,7 @@ function finish(reason){
  let souls=0;if(!r.claimed){r.claimed=true;if(!r.preview)souls=Warrior.awardSouls(Math.max(0,r.highest-1))}
  $('summary').textContent=reason+' · Höchste Welle: '+fmt(r.highest)+' · Besiegte Gegner: '+fmt(r.kills)+' · Bosse: '+fmt(r.bosses)+' · Zeit: '+Math.floor(r.elapsed/60)+' Min. · '+(r.preview?'Testmodus – keine permanenten Belohnungen':'+'+souls+' Seelen · Gesamt: '+Warrior.load().souls);
  $('runEnd').classList.remove('hidden');message=reason;save();render();
+ if(String(reason).includes('Besiegt'))warriorPose('death');else warriorPose('idle');
 }
 function startRun(){
  recentLoot=null;
@@ -229,6 +231,7 @@ function startRun(){
  fx=blankFx();inventoryOpen=false;selectedItemId=null;tab('run');enemy=enemyFor(1);enemyHp=enemy.maxHp;heroClock=enemyClock=0;
  state.run.hp=stats().hp;$('runEnd').classList.add('hidden');
  message=state.run.preview?'🧪 Test-Run – keine dauerhaften Belohnungen.':'Neuer Run gestartet!';
+ warriorPose('idle');
  save();render();
 }
 function togglePause(){const r=state.run;if(!r.active)return;r.paused=!r.paused;message=r.paused?'⏸ Pausiert':'▶️ Kampf läuft';save();render()}
@@ -257,6 +260,7 @@ function tick(dt){
   if(expiring(fx.bastionUntil))incoming*=.7;
   incoming*=Math.pow(.90,blessingCount('guard'));incoming*=1-gear().reduction;incoming*=1-prestigeBonus('guard')/100;
   r.hp-=Math.max(1,incoming);
+  warriorPose('hit');
   if(r.hp<=0){r.hp=0;finish('💀 Besiegt');return}
   fx.revenge=true;
   if(specTotal(2)>0)applyResolve(true);
