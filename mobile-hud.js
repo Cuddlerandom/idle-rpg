@@ -37,6 +37,7 @@ function sync(){
  $('rpgHomeStats').textContent='🪙 '+(data.coins||0)+' Münzen · Beste Welle: '+(data.best||1);
  const blessing=$('blessingPanel');if(blessing&&blessing.parentElement!==drawer&&active&&!blessing.classList.contains('hidden')){ /* blessing remains visible above battle */ }
 }
+const sort=$('rpgItemSort');if(sort)sort.addEventListener('change',()=>{const selected=document.querySelector('#inventoryGrid .loot-cell');if(typeof window.tab==='function')window.tab('items');});
 const itemNote=$('items').querySelector('p.muted');if(itemNote)itemNote.textContent='Ausrüstung und Beute gelten nur für diesen Run. Der Kampf läuft beim Öffnen weiter.';
 sync();setInterval(sync,350);
 })();
