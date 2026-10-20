@@ -110,6 +110,23 @@ body.rpg-running .menu-heading{display:none}
 
 /* Mandatory blessing choices remain reachable without scrolling the battlefield. */
 body.rpg-running #blessingPanel:not(.hidden){position:fixed;z-index:110;top:15dvh;left:50%;transform:translateX(-50%);width:min(94vw,540px);max-height:75dvh;overflow-y:auto;box-shadow:0 0 0 100vmax #0009,0 15px 55px #000b}
+
+/* Compact mobile RPG inventory */
+#items .rpg-inventory-title{margin:2px 0 5px}
+#items>p.muted{margin:3px 0 8px}
+#items>h2:not(.rpg-inventory-title){font-size:14px;margin:12px 0 5px}
+#items .loot-slot-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin:5px 0}
+#items .loot-slot{min-height:54px;padding:5px;font-size:10px}
+#items .loot-slot small{font-size:9px}
+#items .loot-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;max-height:31dvh;min-height:105px;padding:4px}
+#items .loot-cell{min-height:49px;font-size:17px;padding:2px}
+#items .loot-cell small{font-size:8px}
+#items .rpg-inventory-toolbar{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:#d2decf;margin:5px 0}
+#rpgItemSort{background:#273c43;color:#f4ead5;border:1px solid #56726e;border-radius:7px;padding:6px;font:inherit}
+#items #itemDetail:not(:empty){position:sticky;bottom:0;z-index:3;background:#21343b;border:1px solid #8a9b7d;border-radius:10px;padding:10px;margin-top:7px;box-shadow:0 -5px 16px #0009;max-height:35dvh;overflow-y:auto}
+#items .loot-attrs{margin:5px 0}
+#items #setBonuses{margin:4px 0;font-size:11px}
+#items #groundLoot{max-height:90px;overflow-y:auto}
 </style></head><body><main><header class="game-header"><div class="game-mark">⚔️</div><div><div class="game-kicker">ECLIPSE · IDLE RPG</div><h1>Dunkler Krieger <span class="hud-version">HUD V2</span></h1></div><a class="header-talents" href="talentplaner.html" aria-label="Talentplaner öffnen">🌳 Talente ↗</a></header>
 <section class="panel" id="battle"><div class="battle-top"><div class="wave-card"><span class="hud-label">AKTUELLE WELLE</span><b id="wave"></b></div><div class="currency-card"><span class="hud-label">DEINE WÄHRUNGEN</span><b id="money"></b></div></div>
 <div class="scene"><div class="actors"><span id="heroActor" aria-label="Dunkler Krieger"><canvas id="heroSprite" width="128" height="192" style="display:none" aria-hidden="true"></canvas><span id="heroFallback">🛡️</span></span><span id="enemyIcon">👺</span></div></div>
@@ -120,7 +137,7 @@ body.rpg-running #blessingPanel:not(.hidden){position:fixed;z-index:110;top:15dv
 <div class="menu-heading"><span class="hud-label">VERWALTUNG</span><h2>Dein Abenteuer</h2></div><nav aria-label="Spielnavigation"><button id="tabRun" class="active" onclick="tab('run')"><span class="nav-symbol">⬆️</span>Upgrades</button><button id="tabShop" onclick="tab('shop')"><span class="nav-symbol">🔨</span>Werkstatt</button><button id="tabItems" onclick="tab('items')"><span class="nav-symbol">🎒</span>Beute</button><button id="tabInfo" onclick="tab('info')"><span class="nav-symbol">📖</span>Info</button></nav>
 <section class="panel" id="run"><h2>Gold-Upgrades</h2><div id="runUpgrades"></div></section>
 <section class="panel hidden" id="shop"><h2>🔨 Permanente Werkstatt</h2><p class="muted">Münzen bleiben nach jedem Run erhalten. Werkstatt-Upgrades gelten dauerhaft und für alle Klassen.</p><div id="workshop"></div><h2>🌳 Prestige-Skilltree</h2><p class="muted">Dauerhafte, klassenübergreifende Münz-Upgrades. Tippe auf einen Talentknoten, um den aktuellen Bonus, die nächste Stufe und die Kosten zu sehen.</p><div id="prestigeTree"></div><div id="prestigeSpeed"></div></section>
-<section class="panel hidden" id="items"><h2>🎒 Ausrüstung und Inventar</h2><p class="muted">Das Öffnen des Inventars pausiert den Kampf. Ausrüstung und Beute gelten nur für diesen Run.</p><div class="run-note" id="lootInfo"></div><h2>🛡️ Ausrüstung · 9 Slots</h2><div class="loot-slot-grid" id="gearSlots"></div><p class="run-note" id="setBonuses"></p><h2>🎒 Inventar · 50 Plätze</h2><div class="loot-grid" id="inventoryGrid"></div><div class="loot-detail" id="itemDetail"></div><h2>🎁 Beute am Boden</h2><p class="muted">Bei vollem Inventar bleibt Beute 5 weitere Wellen liegen.</p><div id="groundLoot"></div></section>
+<section class="panel hidden" id="items"><h2 class="rpg-inventory-title">🎒 Inventar</h2><p class="muted">Das Öffnen des Inventars pausiert den Kampf. Ausrüstung und Beute gelten nur für diesen Run.</p><div class="run-note" id="lootInfo"></div><h2>🛡️ Ausrüstung · 9 Slots</h2><div class="loot-slot-grid" id="gearSlots"></div><p class="run-note" id="setBonuses"></p><h2>🎒 Inventar · 50 Plätze</h2><div class="rpg-inventory-toolbar"><span>Gegenstände</span><select id="rpgItemSort" aria-label="Inventar sortieren"><option value="default">Eingang</option><option value="rarity">Seltenheit</option><option value="level">Itemlevel</option><option value="slot">Slot</option></select></div><div class="loot-grid" id="inventoryGrid"></div><div class="loot-detail" id="itemDetail"></div><h2>🎁 Beute am Boden</h2><p class="muted">Bei vollem Inventar bleibt Beute 5 weitere Wellen liegen.</p><div id="groundLoot"></div></section>
 <section class="panel hidden" id="info"><h2>Spielregeln</h2>
 <p>Alle fünf besiegten Wellen wählst du einen von drei zufälligen Run-Segen. Der Kampf wartet auf deine Wahl. Run-Segen verschwinden beim Run-Ende und gelten auch im Testmodus nur für den jeweiligen Run.</p><p>Angriffe laufen automatisch. Für jede aktive Fähigkeit kannst du separat «Auto» aktivieren. Abklingzeiten laufen über Wellen hinweg und werden beim neuen Run zurückgesetzt.</p>
 <p>Beim ersten Abschluss der Wellen 10, 15, 20, 25, 30, 35, 40, 45 und 50 erhältst du je einen Hauptbaum-Punkt. Nach dem Sieg über Welle 10 werden die Spezialisierungen freigeschaltet. Die neun Hauptbaum-Punkte kannst du unabhängig davon verteilen.</p>
