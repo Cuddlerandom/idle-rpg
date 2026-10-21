@@ -113,7 +113,8 @@ function stats(){
 }
 function enemyFor(w){
  const boss=w%10===0,zone=w%50===0,decade=Math.floor((w-1)/10);
- return {wave:w,name:zone?'Zonenfürst':boss?'Wellenboss':w%5===0?'Waldwolf':w%3===0?'Goblin-Krieger':'Waldgoblin',icon:zone?'🐉':boss?'👹':w%5===0?'🐺':'👺',maxHp:Math.round((36+6*w)*(1+.16*decade)*(boss?3:1)*(zone?1.45:1)),atk:Math.max(1,Math.round((3+.42*w)*(1+.1*decade)*(boss?1.2:1)*(zone?1.15:1))),def:Math.floor((w-1)/15),speed:zone?1650:boss?1700:1950,boss,zone};
+ const kind=zone?'zonenfuerst':boss?'boss':w%5===0?'wolf':w%3===0?'goblin-krieger':'goblin';
+ return {wave:w,name:zone?'Zonenfürst':boss?'Wellenboss':w%5===0?'Waldwolf':w%3===0?'Goblin-Krieger':'Waldgoblin',art:'assets/enemies/'+kind+'.png',kind,maxHp:Math.round((36+6*w)*(1+.16*decade)*(boss?3:1)*(zone?1.45:1)),atk:Math.max(1,Math.round((3+.42*w)*(1+.1*decade)*(boss?1.2:1)*(zone?1.15:1))),def:Math.floor((w-1)/15),speed:zone?1650:boss?1700:1950,boss,zone};
 }
 let enemy=enemyFor(state.run.wave),enemyHp=state.run.enemyHp>0?Math.min(enemy.maxHp,state.run.enemyHp):enemy.maxHp;
 let heroClock=Math.max(0,nval(state.run.heroClock)),enemyClock=Math.max(0,nval(state.run.enemyClock)),bossPhase=0,strikeFlash=0;
@@ -400,9 +401,11 @@ function render(){
  $('wave').textContent='Welle '+fmt(r.wave)+(r.wave%50===0?' · Zonenboss':r.wave%10===0?' · Boss':'');
  $('money').textContent=fmt(r.gold)+' Gold';
  const icon=$('enemyIcon');
- icon.textContent=enemy.icon;
- icon.classList.remove('boss','windup','struck');
- if(r.wave%10===0)icon.classList.add('boss');
+ const sprite=$('enemySprite');
+ if(sprite&&sprite.tagName==='IMG'&&enemy.art&&sprite.getAttribute('src')!==enemy.art){sprite.src=enemy.art;sprite.alt=enemy.name||''}
+ icon.classList.remove('boss','zone','windup','struck');
+ if(enemy.zone)icon.classList.add('zone');
+ else if(enemy.boss)icon.classList.add('boss');
  if(enemy.boss&&bossPhase%4===3)icon.classList.add('windup');
  if(strikeFlash>fx.time)icon.classList.add('struck');
  const stage=$('battleScene');if(stage)stage.classList.toggle('danger',s.hp>0&&r.hp/s.hp<.2);
