@@ -147,6 +147,8 @@ function applyResolve(forced=false){
  if(resolve()>=5)fx.resolve.shift();
  fx.resolve.push(fx.time+8000);return true;
 }
+function playHero(name,force){const s=window.DarkWarriorSprite;if(s&&s.play)s.play(name,!!force)}
+function playFoe(name){const s=window.EnemySprite;if(!s)return;if(name==='death'){if(s.die)s.die(enemy.kind)}else if(s.has&&s.has(enemy.kind)&&s.play)s.play(name)}
 function attack(power=1,kind='normal'){
  const s=stats(),isNormal=kind==='normal',base=kind==='base',wasBleeding=bleeds()>0,wasCorrupt=corrupt()>0;
  let defense=enemy.def*(expiring(fx.armorUntil)?1-(10+R(0,3)+R(1,3)+R(2,3))/100:1);
@@ -162,11 +164,15 @@ function attack(power=1,kind='normal'){
  if(base)fx.armorUntil=fx.time+debuffDuration(5000);
  if(isNormal)applyBleed(false,true);
  if(isNormal||expiring(fx.darkUntil))applyCorrupt(expiring(fx.darkUntil),isNormal);
- applyResolve();return dmg;
+ applyResolve();
+ if(typeof playHero==='function'){playHero('attack');playFoe('hit')}
+ return dmg;
 }
 function counter(){
  const s=stats(),dmg=Math.max(1,.75*s.atk-enemy.def*(expiring(fx.armorUntil)?.75:1))*damageMult()*executeMult()*(1+.03*R(2,11)*resolve())*(expiring(fx.bastionUntil)?1.15:1)*(1+gear().counter);
- enemyHp-=dmg;heal(dmg*(.01*R(2,1)+gear().lifeSteal));return dmg;
+ enemyHp-=dmg;heal(dmg*(.01*R(2,1)+gear().lifeSteal));
+ if(typeof playHero==='function'){playHero('attack');playFoe('hit')}
+ return dmg;
 }
 function cast(id){
  const skill=available().find(x=>x.id===id);
@@ -210,6 +216,7 @@ function win(killedByBleed=false){
  if(!r.preview)state.best=Math.max(state.best,r.highest);
  if(w%5===0)offerBlessings();
  const milestone=r.preview?0:Warrior.earnThrough(w);
+ if(typeof playFoe==='function')playFoe('death');
  enemy=enemyFor(r.wave);enemyHp=enemy.maxHp;heroClock=enemyClock=bossPhase=0;
  message=(boss?'👑 Boss besiegt! ':'')+'+'+fmt(gold)+' Gold'+(r.preview?' (Testmodus)':' · +'+fmt(coins)+' Münzen')+(milestone?' · ⭐ Hauptbaum-Punkt!':'')+(dropped?' · 🎁 '+dropped.name+(r.loot.inventory.some(x=>x.id===dropped.id)?'':' (liegt am Boden)'):'');
  save();
@@ -227,6 +234,7 @@ function finish(reason){
  r.active=false;r.paused=true;state.runs++;if(!r.preview)state.best=Math.max(state.best,r.highest);
  let souls=0;if(!r.claimed){r.claimed=true;if(!r.preview)souls=Warrior.awardSouls(Math.max(0,r.wave))}
  const hint=String(reason).includes('Besiegt')?deathHint():'';
+ if(String(reason).includes('Besiegt')&&typeof playHero==='function')playHero('death');
  const waveNode=$('summaryWave');if(waveNode)waveNode.textContent='Welle '+fmt(r.wave);
  const soulsNode=$('summarySouls');if(soulsNode)soulsNode.textContent=souls?('+'+souls+' Seelen'):'Keine Seelen für diese Welle';
  $('summary').textContent=reason+hint;
@@ -243,6 +251,7 @@ function startRun(){
  fx=blankFx();inventoryOpen=false;selectedItemId=null;tab('run');enemy=enemyFor(1);enemyHp=enemy.maxHp;heroClock=enemyClock=bossPhase=0;
  state.run.hp=stats().hp;$('runEnd').classList.add('hidden');
  message=state.run.preview?'🧪 Test-Run – keine dauerhaften Belohnungen.':'Neuer Run gestartet!';
+ if(typeof playHero==='function')playHero('idle',true);
  save();render();
 }
 function togglePause(){const r=state.run;if(!r.active)return;r.paused=!r.paused;message=r.paused?'⏸ Pausiert':'▶️ Kampf läuft';save();render()}
@@ -275,6 +284,7 @@ function tick(dt){
   incoming*=Math.pow(.90,blessingCount('guard'));incoming*=1-gear().reduction;incoming*=1-prestigeBonus('guard')/100;
   if(R(2,0)>0)incoming*=1-Math.min(.2,.08+.01*(R(2,0)-1));
   if(enemy.boss&&bossPhase%4===0){incoming=Math.round(incoming*2.5);message='💥 Schwerer Schlag!';strikeFlash=fx.time+500}
+  if(typeof playFoe==='function'){playFoe('attack');playHero('hit')}
   r.hp-=Math.max(1,incoming);
   if(r.hp<=0){r.hp=0;finish('💀 Besiegt');return}
   fx.revenge=true;
@@ -409,9 +419,12 @@ function render(){
  $('money').textContent=fmt(r.gold)+' Gold';
  const icon=$('enemyIcon');
  let sprite=$('enemySprite');
- const art=(enemy.art||'assets/enemies/goblin.png')+'?v=e9';
- if((!sprite||sprite.tagName!=='IMG')&&icon.replaceChildren){icon.replaceChildren();sprite=document.createElement('img');sprite.id='enemySprite';sprite.draggable=false;icon.appendChild(sprite)}
- if(sprite&&sprite.tagName==='IMG'&&sprite.getAttribute('src')!==art){sprite.src=art;sprite.alt=enemy.name||'Gegner'}
+ const art=(enemy.art||'assets/enemies/goblin.png')+'?v=e10';
+ if(window.EnemySprite&&EnemySprite.has(enemy.kind))EnemySprite.show(enemy.kind);
+ else{
+  if(window.EnemySprite)EnemySprite.release();
+  if(sprite&&sprite.tagName==='IMG'&&sprite.getAttribute('src')!==art){sprite.src=art;sprite.alt=enemy.name||'Gegner'}
+ }
  icon.classList.remove('boss','zone','windup','struck');
  if(enemy.zone)icon.classList.add('zone');
  else if(enemy.boss)icon.classList.add('boss');
