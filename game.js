@@ -291,16 +291,6 @@ function lootPaused(){
  const items=document.getElementById('items');
  return !items||!items.classList.contains('hidden');
 }
-function alignHero(){
- const hero=$('heroActor'),foe=$('enemyIcon');
- if(!hero||!foe||!foe.offsetHeight)return;
- const box=Math.round(foe.offsetHeight/0.836);
- hero.style.height=box+'px';
- hero.style.width=Math.round(box*665/591)+'px';
- hero.style.transform='translate(-8px,'+Math.round(box*0.083)+'px)';
- const canvas=$('heroSprite');
- if(canvas){canvas.style.width='100%';canvas.style.height='100%'}
-}
 function tab(id){inventoryOpen=id==='items';for(const x of ['run','shop','items','info']){$(x).classList.toggle('hidden',x!==id);$('tab'+x[0].toUpperCase()+x.slice(1)).classList.toggle('active',x===id)}if(inventoryOpen)renderInventory();save()}
 function upgradeRows(permanent){return (permanent?FIELDS:RUN_FIELDS).map(k=>{
  const lvl=permanent?state.work[k]:state.run.runUp[k],c=cost(k,permanent),can=(permanent?state.coins:state.run.gold)>=c;
@@ -419,7 +409,7 @@ function render(){
  $('money').textContent=fmt(r.gold)+' Gold';
  const icon=$('enemyIcon');
  let sprite=$('enemySprite');
- const art=(enemy.art||'assets/enemies/goblin.png')+'?v=e5';
+ const art=(enemy.art||'assets/enemies/goblin.png')+'?v=e6';
  if((!sprite||sprite.tagName!=='IMG')&&icon.replaceChildren){icon.replaceChildren();sprite=document.createElement('img');sprite.id='enemySprite';sprite.draggable=false;icon.appendChild(sprite)}
  if(sprite&&sprite.tagName==='IMG'&&sprite.getAttribute('src')!==art){sprite.src=art;sprite.alt=enemy.name||'Gegner'}
  icon.classList.remove('boss','zone','windup','struck');
@@ -427,8 +417,7 @@ function render(){
  else if(enemy.boss)icon.classList.add('boss');
  if(enemy.boss&&bossPhase%4===3)icon.classList.add('windup');
  if(strikeFlash>fx.time)icon.classList.add('struck');
- alignHero();
- const stage=$('battleScene');if(stage)stage.classList.toggle('danger',s.hp>0&&r.hp/s.hp<.2);
+ const stage=$('battleScene');if(stage){stage.classList.toggle('danger',s.hp>0&&r.hp/s.hp<.2);stage.classList.toggle('boss-stage',!!(enemy.boss||enemy.zone))}
  $('enemyName').textContent=enemy.name;$('hpBar').style.width=clamp(r.hp/s.hp*100,0,100)+'%';$('enemyBar').style.width=clamp(enemyHp/enemy.maxHp*100,0,100)+'%';
  $('hpText').textContent=fmt(r.hp)+' / '+fmt(s.hp)+' HP';$('enemyHpText').textContent=fmt(Math.max(0,enemyHp))+' / '+fmt(enemy.maxHp)+' HP';
  $('level').textContent='Level '+r.level+' · XP '+fmt(r.xp)+'/'+fmt(r.level*40);
