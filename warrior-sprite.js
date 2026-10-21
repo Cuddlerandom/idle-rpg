@@ -2,15 +2,15 @@
 (function(){
 'use strict';
 const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const V='?v=e12';
+const V='?v=e13';
 function load(list){return list.map(src=>{const im=new Image();im.src=src+V;return im})}
 function pack(frames,holds,loop,extra){return Object.assign({frames:load(frames),holds,loop,hold:false,ping:false,fade:140},extra||{})}
 const H='assets/characters/dunkler-krieger/v3/';
 const hero={
- idle:pack([H+'idle/idle_01.png',H+'idle/idle_02.png'],[520,520],true,{ping:true,fade:260}),
- attack:pack([H+'attack/attack_01.png',H+'attack/attack_02.png',H+'attack/attack_03.png'],[300,240,480],false,{fade:130}),
- hit:pack([H+'hit/hit_01.png'],[560],false,{fade:150}),
- death:pack([H+'death/death_01.png',H+'death/death_02.png'],[480,680],false,{hold:true,fade:160})
+ idle:pack([H+'idle/idle_01.png',H+'idle/idle_02.png'],[480,480],true,{ping:true,fade:180}),
+ attack:pack([H+'attack/attack_01.png',H+'attack/attack_02.png',H+'attack/attack_03.png',H+'attack/attack_04.png',H+'attack/attack_05.png',H+'attack/attack_06.png'],[160,160,160,160,180,180],false,{fade:70}),
+ hit:pack([H+'hit/hit_01.png'],[480],false,{fade:90}),
+ death:pack([H+'death/death_01.png',H+'death/death_02.png',H+'death/death_03.png'],[260,280,420],false,{hold:true,fade:90})
 };
 const G='assets/enemies/goblin/anim/';
 const K='assets/enemies/goblin-krieger/anim/';
@@ -52,6 +52,7 @@ function playHero(name,force){
  if(!force&&name==='hit'&&heroClip==='attack')return;
  if(!force&&name==='idle'&&heroClip==='idle')return;
  heroClip=name;heroAt=performance.now();
+ if(canvas&&canvas.parentElement)canvas.parentElement.classList.toggle('striking',name==='attack');
 }
 if(ctx){ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high'}
 function paint(im,alpha){
