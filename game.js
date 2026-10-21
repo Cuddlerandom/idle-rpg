@@ -409,7 +409,7 @@ function render(){
  $('money').textContent=fmt(r.gold)+' Gold';
  const icon=$('enemyIcon');
  let sprite=$('enemySprite');
- const art=(enemy.art||'assets/enemies/goblin.png')+'?v=e7';
+ const art=(enemy.art||'assets/enemies/goblin.png')+'?v=e8';
  if((!sprite||sprite.tagName!=='IMG')&&icon.replaceChildren){icon.replaceChildren();sprite=document.createElement('img');sprite.id='enemySprite';sprite.draggable=false;icon.appendChild(sprite)}
  if(sprite&&sprite.tagName==='IMG'&&sprite.getAttribute('src')!==art){sprite.src=art;sprite.alt=enemy.name||'Gegner'}
  icon.classList.remove('boss','zone','windup','struck');
