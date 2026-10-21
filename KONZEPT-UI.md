@@ -93,8 +93,8 @@ Sie kommen an ihren Ort, wenn der Lauf sie braucht. Sie werden nicht schon leer 
 
 ## Was heute schon so ist
 
-Kampf oben, Verwaltung unten. Gold nur für Angriff und Leben. Leben des Ritters im Rahmen oben links. Eine Kampflog-Zeile. Der Hieb ohne Auto, bis der erste Punkt gekauft ist. Beute pausiert. Segen als drei Karten, während der Kampf weiterläuft. Die Zusammenfassung nach dem Tod.
+Kampf oben, Verwaltung unten. Gold nur für Angriff und Leben, auf dem Kampfbildschirm. Leben des Ritters im Rahmen oben links. Eine Zeile. Der Hieb ohne Auto, bis der erste Punkt gekauft ist. Die zwei Käufe unter dem Schlag. Pause zugeklappt. Beute pausiert den Kampf. Segen als drei Karten. Die Zusammenfassung nach dem Tod mit Welle, einem Satz und den zwei Knöpfen. Der schwere Schlag zeigt sich am Gegner. Unter einem Fünftel Leben wird der Bühnenrand rot.
 
-## Was noch nur Konzept ist
+## Was noch offen ist
 
-Münzen und Seelen vom Kampfbildschirm nehmen. Die Bühne so hoch, dass Ritter und Gegner auf einer Linie stehen, ohne den Ritter zu vergrößern. Den schweren Schlag am Gegner zeigen. Pause und Lauf-Ende zuklappen. Effekte und Tempo aus dem Kampf nehmen. Die Todesseite auf Welle, einen Satz und zwei Knöpfe kürzen. Den Beutel nach den drei Gegenstands-Stufen zeichnen.
+Ob die höhere Bühne auf dem iPhone den Ritter und den Gegner wirklich auf eine Linie stellt, ohne dass der Schlag aus dem Daumenbereich rutscht. Das sagt nur ein Lauf auf dem Gerät.

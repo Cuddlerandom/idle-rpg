@@ -33,11 +33,12 @@ function sync(){
  if(active!==previousActive){previousActive=active;close();window.scrollTo(0,0);}
  document.body.classList.toggle('rpg-running',active);document.body.classList.toggle('rpg-home',!active);
  home.hidden=active;nav.hidden=!active;
- const end=$('runEnd');if(end)end.classList.toggle('rpg-end-hidden',!active);
+ const end=$('runEnd');
+ if(end&&!active&&!end.classList.contains('hidden')&&end.nextElementSibling!==home)home.before(end);
  $('rpgHomeStats').textContent='🪙 '+(data.coins||0)+' Münzen · Beste Welle: '+(data.best||1);
  const blessing=$('blessingPanel');if(blessing&&blessing.parentElement!==drawer&&active&&!blessing.classList.contains('hidden')){ /* blessing remains visible above battle */ }
 }
 const sort=$('rpgItemSort');if(sort)sort.addEventListener('change',()=>{const selected=document.querySelector('#inventoryGrid .loot-cell');if(typeof window.tab==='function')window.tab('items');});
-const itemNote=$('items').querySelector('p.muted');if(itemNote)itemNote.textContent='Ausrüstung und Beute gelten nur für diesen Run. Der Kampf läuft beim Öffnen weiter.';
+const itemNote=$('items').querySelector('p.muted');if(itemNote)itemNote.textContent='Ausrüstung gilt nur für diesen Lauf. Solange die Beute offen ist, steht der Kampf.';
 sync();setInterval(sync,350);
 })();

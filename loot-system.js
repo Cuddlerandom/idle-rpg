@@ -102,7 +102,10 @@ function repair(raw){
  return r;
 }
 function rarityFor(wave,boss,random){
- const boost=clamp((wave-1)/600,0,.25)+(boss?.10:0),n=random();
+ const n=random();
+ if(wave<=10)return n<.35?'uncommon':'common';
+ if(wave<30)return boss&&n<.06?'rare':n<.4?'uncommon':'common';
+ const boost=clamp((wave-1)/600,0,.25)+(boss?.10:0);
  if(n<.012+boost*.11)return 'legendary';
  if(n<.07+boost*.42)return 'epic';
  if(n<.25+boost*.9)return 'rare';
@@ -118,8 +121,22 @@ function attrValue(stat,wave,rarity,random){
  return Math.round((perc[stat]+wave*.000015)*r.mult*variance*1000)/1000;
 }
 function makeAffixes(slot,rarity,wave,random){
- const options=AFFIX.filter(x=>x.slots.includes(slot)).map(x=>x.stat),count=RARITY[rarity].affixes,chosen=[];
- for(let i=0;i<count&&options.length;i++){let j=Math.floor(random()*options.length),key=options.splice(j,1)[0];chosen.push({stat:key,value:attrValue(key,wave,rarity,random)})}
+ const allow=wave<=10?['atk','hp']:wave<30?['atk','hp','bleed','shadow','reduction']:null;
+ let options=AFFIX.filter(x=>x.slots.includes(slot)&&(!allow||allow.includes(x.stat))).map(x=>x.stat);
+ const count=wave<=10?1:Math.min(RARITY[rarity].affixes,Math.max(1,options.length));
+ const chosen=[];
+ if(wave>10&&wave<30){
+  const mechanic=options.filter(s=>s==='bleed'||s==='shadow'||s==='reduction');
+  if(mechanic.length&&chosen.length<count){
+   const key=mechanic[Math.floor(random()*mechanic.length)];
+   options=options.filter(s=>s!==key);
+   chosen.push({stat:key,value:attrValue(key,wave,rarity,random)});
+  }
+ }
+ while(chosen.length<count&&options.length){
+  const key=options.splice(Math.floor(random()*options.length),1)[0];
+  chosen.push({stat:key,value:attrValue(key,wave,rarity,random)});
+ }
  return chosen;
 }
 function roll(options){
@@ -129,7 +146,7 @@ function roll(options){
  if(!boss&&random()>=dropChance)return null;
  const rarity=rarityFor(wave,boss,random),slot=one(SLOT,random).id;
  let chosenUnique=null;
- if(rarity==='legendary'&&random()<(boss?.7:.45)){chosenUnique=one(UNIQUE,random)}
+ if(wave>=30&&rarity==='legendary'&&random()<(boss?.7:.45)){chosenUnique=one(UNIQUE,random)}
  // Named uniques may use any of their nine valid item slots.
  const actualSlot=chosenUnique?chosenUnique.slot:slot;
  const itemLevel=Math.max(1,Math.floor(wave/2)+1);

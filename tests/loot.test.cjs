@@ -34,8 +34,13 @@ test('legendary gear has a unique effect and two pieces activate set bonus',()=>
  const x=l.bonuses(eq);
  assert.equal(x.bloodbath,.3);assert.ok(Math.abs(x.bleed-.35)<1e-9);
  assert.equal(x.sets.length,1);
- const unique=l.roll({wave:10,level:10,boss:true,random:()=>.01,seq:4});
+ const unique=l.roll({wave:30,level:10,boss:true,random:()=>.01,seq:4});
  assert.equal(unique.rarity,'legendary');assert.ok(unique.unique);assert.equal(unique.affixes.length,3);
+ const early=l.roll({wave:5,level:1,boss:true,random:()=>0,seq:9});
+ assert.equal(early.unique,null);
+ assert.ok(early.rarity==='common'||early.rarity==='uncommon');
+ assert.ok(early.affixes.every(a=>a.stat==='atk'||a.stat==='hp'));
+ assert.equal(early.affixes.length,1);
 });
 test('full bag creates ground loot that expires after five additional waves',()=>{
  const l=env().loot,r=l.emptyRun();

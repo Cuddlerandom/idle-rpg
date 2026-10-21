@@ -82,6 +82,6 @@ Kein Fortschritt, während die Seite zu ist. Kein zweiter Talentbaum, den man be
 
 ## Was schon gilt und was noch Konzept ist
 
-Im Spiel sind heute der Lauf ab Welle 1, Gold nur für Angriff und Leben, der Boss mit schwerem Schlag im Kampflog, die billigen ersten Talentpunkte und der Hinweis beim Tod.
+Im Spiel sind heute der Lauf ab Welle 1, Gold nur für Angriff und Leben, der Boss mit schwerem Schlag auf der Bühne, die billigen ersten Talentpunkte, ein spürbarer erster Punkt je Weg, Seelen auch beim Tod auf der Boss-Welle, Gegenstände in drei Wellenstufen und der knappe Kampfbildschirm.
 
-Zum Konzept, noch nicht umgesetzt: Gegenstände nach diesen drei Wellenstufen, der schwere Schlag sichtbar am Gegner, ein spürbarer erster Punkt je Weg, Seelen auch beim Tod am Boss, und das Spieltempo als Weg zu Welle 500.
+Noch offen bleibt nur der Feinschliff nach einem echten Lauf auf dem Handy: ob die Bühne hoch genug ist und ob Welle 10 und Welle 20 sich richtig anfühlen.
