@@ -1,6 +1,6 @@
 # Dunkler Krieger — Spielkonzept
 
-Stand: 21. Oktober 2026. Dieses Dokument legt das Spielziel fest. Ältere Abschnitte in `GAME_DESIGN.md` gelten nur noch, wo sie hier nicht widersprechen.
+Stand: 21. Oktober 2026. Dieses Dokument legt das Spielziel fest. Die Oberfläche steht in [KONZEPT-UI.md](KONZEPT-UI.md). Ältere Abschnitte in `GAME_DESIGN.md` gelten nur noch, wo sie hier nicht widersprechen.
 
 ## Worum es geht
 
