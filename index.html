@@ -223,26 +223,36 @@ body.rpg-running nav[aria-label="Spielnavigation"] button{background:linear-grad
 #battle .hero-vital #hpBar{height:100%;background:linear-gradient(#ff6663,#d11b27 40%,#850c18);border-radius:4px;box-shadow:inset 0 1px 2px #ffc6a0}
 #battle .enemy-vital{width:100%;box-sizing:border-box;margin-top:10px}
 #fpsCounter,#fpsReportControls{display:none!important}
-body.rpg-running #battleScene.scene{height:clamp(320px,40dvh,390px)}
-#battleScene .actors{bottom:8px}
-#battleScene{--stand:62%}
-#battleScene.boss-stage{--stand:74%}
+body.rpg-running #battleScene.scene{height:clamp(340px,44dvh,430px)}
+#battleScene{--hero:94%;--foe:42%}
+#battleScene.boss-stage{--foe:100%}
 #battleScene .actors{top:0;bottom:0;height:auto;align-items:flex-end}
-#battleScene #heroActor{width:auto;height:calc(var(--stand) / 0.836);aspect-ratio:665/591;max-width:54%;flex:0 1 auto;transform:translate(-6px,8%)}
+#battleScene #heroActor{width:auto;height:var(--hero);aspect-ratio:665/591;max-width:none;flex:0 0 auto;margin-right:-14%;z-index:1;transform:translate(-10px,8%)}
 #battleScene #heroSprite{width:100%;height:100%}
-#enemyIcon{position:relative;z-index:3;display:flex;align-items:flex-end;justify-content:flex-end;flex:0 1 auto;min-width:0;width:auto;max-width:46%;height:var(--stand);margin:0 2px 0 -8px}
+#enemyIcon{position:relative;z-index:3;display:flex;align-items:flex-end;justify-content:flex-end;flex:0 1 auto;min-width:0;width:auto;max-width:40%;height:var(--foe);margin:0 4px 0 0}
 #enemySprite{display:block;width:auto;height:100%;max-width:100%;max-height:none;object-fit:contain;object-position:bottom right;image-rendering:auto;filter:drop-shadow(0 10px 8px #000c);pointer-events:none}
-#enemyIcon.boss,#enemyIcon.zone{height:var(--stand);max-width:50%}
+#enemyIcon.boss,#enemyIcon.zone{height:var(--foe);max-width:72%}
 #enemyIcon.boss #enemySprite,#enemyIcon.zone #enemySprite{max-height:none;height:100%}
-#enemyIcon.windup #enemySprite{transform:translateY(-7px) scale(1.04);filter:drop-shadow(0 0 12px #ff3a2e) drop-shadow(0 8px 6px #000c)}
+#enemyIcon.windup #enemySprite{transform:translateY(-6px);filter:drop-shadow(0 0 12px #ff3a2e) drop-shadow(0 8px 6px #000c)}
 #enemyIcon.struck #enemySprite{filter:brightness(1.45) drop-shadow(0 0 16px #ffd2c6)}
-#battleScene.scene{background:radial-gradient(ellipse at 70% 18%,#2a241c 0%,transparent 42%),linear-gradient(#12161a 0 58%,#3a2c22 58% 74%,#1a1511 74%);border-color:#6d5840}
+#battleScene.scene{background:radial-gradient(ellipse at 50% 118%,#4a3428 0%,transparent 42%),linear-gradient(#100e0c 0 64%,#3a2e24 64% 72%,#17130f 72%);border:1px solid #8d7048;border-radius:4px;box-shadow:inset 0 0 36px #000c,inset 0 0 0 1px #2a2118,inset 0 -16px 20px #0008}
 #battleScene.scene:before{content:none}
-#battle .enemy-vital{background:#1b1714;border-color:#6a5340;box-shadow:none}
+.hud-version{display:none}
+body.rpg-running #battle{background:linear-gradient(180deg,#1c1814,#100e0c);border:1px solid #7a6246;border-radius:8px;box-shadow:inset 0 1px 0 #e7d0a033,inset 0 0 0 1px #241c14,0 10px 24px #000a;padding:8px}
+#battle .wave-card,#battle .currency-card{background:linear-gradient(180deg,#2c261e,#14110e);border:1px solid #8a6a44;border-radius:3px;box-shadow:inset 0 1px 0 #f0d7a426,inset 0 -2px 0 #000a;padding:6px 8px}
+#battle .wave-card b{font-family:Georgia,"Times New Roman",serif;font-size:22px;color:#f3d7a4;letter-spacing:.04em}
+#battle .currency-card b{color:#e6c78a;font-family:Georgia,"Times New Roman",serif;font-size:15px}
+#battle .enemy-vital{background:linear-gradient(180deg,#2a1a18,#120e0c);border:1px solid #7a463c;border-radius:3px;box-shadow:inset 0 1px 0 #f0b0a022,inset 0 -2px 0 #000a}
 #battle .enemy-vital::before,#battle .enemy-vital::after{display:none}
-#battle .wave-card,#battle .currency-card{background:#1a1816;box-shadow:none}
-#battle .battle-message{background:transparent;border:0;border-left:2px solid #8a7048;padding:4px 8px;margin:6px 0}
-#battleBuys{gap:6px}
+#battle .enemy-vital .vital-heading b{font-family:Georgia,"Times New Roman",serif;color:#f0c2b4;letter-spacing:.03em}
+#battle .enemy-vital .bar{height:13px;border:1px solid #8d5a4c;border-radius:2px;background:#140c0c;box-shadow:inset 0 2px 4px #000c}
+#battle .battle-message{background:transparent;border:0;border-left:2px solid #a68448;padding:2px 8px;margin:6px 0 2px}
+#battle .log{color:#eadcc4;font-size:13px}
+#battle #skills .skill{background:linear-gradient(180deg,#241c18,#161310);border-color:#6d5640}
+#battle #skills .skill:first-child button{min-height:56px;font-size:16px;background:linear-gradient(180deg,#7c2422,#3d1214);color:#f8e7d8;border:1px solid #e2b56a;text-shadow:0 1px 1px #000}
+#battleBuys{display:grid;gap:6px;margin:8px 0 2px}
+#battleBuys .row{border:0;padding:0}
+#battleBuys button{min-height:46px;min-width:120px;background:linear-gradient(180deg,#3a3228,#1c1814);color:#f3e6cc;border:1px solid #8d7048;box-shadow:inset 0 1px 0 #f0d7a222}
 #battleScene.danger{box-shadow:inset 0 0 0 4px #9d221c,inset 0 0 28px #7a120c99}
 #blessingActive:empty{display:none}
 #blessingActive{display:block;margin-top:4px;font-size:11px;color:#e4c68a}
@@ -257,7 +267,7 @@ body.rpg-running #battleScene.scene{height:clamp(320px,40dvh,390px)}
 </style>
 </head><body><main><header class="game-header"><div class="game-mark"><span data-rpg-icon="swords"></span></div><div><div class="game-kicker">ECLIPSE · IDLE RPG</div><h1>Dunkler Krieger <span class="hud-version">HUD V2</span></h1></div><a class="header-talents" href="talentplaner.html" aria-label="Talentplaner öffnen"><span data-rpg-icon="tree"></span> Talente ↗</a></header>
 <section class="panel" id="battle"><div class="battle-top"><div class="wave-card"><span class="hud-label">WELLE</span><b id="wave"></b><span id="blessingActive" aria-live="polite"></span></div><div class="currency-card"><span class="hud-label">GOLD DIESER LAUF</span><b id="money"></b></div></div>
-<div class="scene" id="battleScene"><div class="vital-card hero-vital"><span id="hpText"></span><div class="bar"><div id="hpBar"></div></div></div><div class="actors"><span id="heroActor" aria-label="Dunkler Krieger"><canvas id="heroSprite" width="665" height="591" style="display:none" aria-hidden="true"></canvas><span id="heroFallback">🛡️</span></span><span id="enemyIcon" class="enemy-figure"><img id="enemySprite" src="assets/enemies/goblin.png?v=e6" alt="Waldgoblin" draggable="false"></span></div></div>
+<div class="scene" id="battleScene"><div class="vital-card hero-vital"><span id="hpText"></span><div class="bar"><div id="hpBar"></div></div></div><div class="actors"><span id="heroActor" aria-label="Dunkler Krieger"><canvas id="heroSprite" width="665" height="591" style="display:none" aria-hidden="true"></canvas><span id="heroFallback">🛡️</span></span><span id="enemyIcon" class="enemy-figure"><img id="enemySprite" src="assets/enemies/goblin.png?v=e7" alt="Waldgoblin" draggable="false"></span></div></div>
 <div class="combat-vitals"><div class="vital-card enemy-vital"><div class="vital-heading"><b id="enemyName"></b><span id="enemyHpText"></span></div><div class="bar enemy"><div id="enemyBar"></div></div></div></div>
 <div id="lootNotice" class="loot-notice hidden" role="status" aria-live="polite"><span class="loot-notice-icon" data-rpg-icon="chest"></span><div class="loot-notice-copy"><span class="hud-label">NEUE BEUTE</span><b id="lootNoticeName"></b><small id="lootNoticeMeta"></small></div><button type="button" onclick="viewRecentLoot()">Ansehen ↗</button><button type="button" class="loot-dismiss" onclick="dismissRecentLoot()" aria-label="Beutehinweis schliessen">✕</button></div><div class="battle-message"><p class="log" id="log"></p></div><div class="ability-header"><h2><span data-rpg-icon="spark"></span> Schlag</h2></div><div class="skill-list" id="skills"></div><div id="battleBuys"></div><details class="battle-details"><summary>Pause</summary><div class="hero-overview"><span id="level"></span><span id="combatStats"></span></div><div class="effect-row" id="effects"></div><div class="row run-controls"><button class="alt" id="pauseBtn" onclick="togglePause()">⏸ Pausieren</button><button class="alt" onclick="endRun()">🏁 Run beenden</button></div></details></section>
 <section class="panel hidden" id="blessingPanel" aria-live="polite"><h2>✨ Run-Segen wählen</h2><p class="run-note">Der Kampf läuft während deiner Wahl weiter. Alle Segen gelten nur für diesen Run; gleiche Segen können sich in späteren Wellen stapeln.</p><div id="blessingChoices" class="blessing-grid"></div></section><section class="panel hidden" id="runEnd"><p class="hud-label">LAUF BEENDET</p><b id="summaryWave"></b><p id="summary" class="run-note"></p><p id="summarySouls"></p><p class="muted" id="summaryLost">Gold, Segen und Ausrüstung sind fort.</p><p class="death-actions"><button onclick="startRun()">Neuer Lauf</button><a class="death-talents" href="talentplaner.html">Talente</a></p></section>
@@ -327,4 +337,4 @@ document.getElementById('fpsCopy').addEventListener('click',async function(){
  setTimeout(()=>this.textContent='FPS-Bericht kopieren',2000);
 });
 document.getElementById('fpsReset').addEventListener('click',()=>window.IdleFPSReport.reset());
-</script><script src="warrior-system.js?v=e6"></script><script src="loot-system.js?v=e6"></script><script src="game.js?v=e6"></script><script src="warrior-sprite.js?v=e6"></script><script src="mobile-hud.js?v=e6"></script><script src="fantasy-icons.js?v=e6"></script></body></html>
+</script><script src="warrior-system.js?v=e7"></script><script src="loot-system.js?v=e7"></script><script src="game.js?v=e7"></script><script src="warrior-sprite.js?v=e7"></script><script src="mobile-hud.js?v=e7"></script><script src="fantasy-icons.js?v=e7"></script></body></html>
