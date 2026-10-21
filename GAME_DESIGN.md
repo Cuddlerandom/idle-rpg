@@ -2,6 +2,8 @@
 
 Stand: 21. Oktober 2026 · Repository: `Cuddlerandom/idle-rpg`
 
+Das Spielziel steht in [KONZEPT.md](KONZEPT.md) (21.10.2026). Bei Widerspruch gilt `KONZEPT.md`.
+
 ## Kampfklarheit (21.10.2026, vom Spieler freigegeben)
 
 Diese Entscheidung gilt vor älteren Formeln zur frühen Bossskalierung und zu den Gold-Upgrades im Lauf.
