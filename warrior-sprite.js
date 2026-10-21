@@ -1,16 +1,16 @@
-/* Kampfbilder: Idle, Angriff, Treffer, Tod. Nur Darstellung. Flüssigere Timings für Attack/Hit/Death. */
+/* Kampfbilder: Idle, Angriff, Treffer, Tod. Nur Darstellung. Dichte Timings + starkes Cross-Fade für flüssigere Bewegung. */
 (function(){
 'use strict';
 const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const V='?v=e15';
+const V='?v=e16';
 function load(list){return list.map(src=>{const im=new Image();im.src=src+V;return im})}
-function pack(frames,holds,loop,extra){return Object.assign({frames:load(frames),holds,loop,hold:false,ping:false,fade:80},extra||{})}
+function pack(frames,holds,loop,extra){return Object.assign({frames:load(frames),holds,loop,hold:false,ping:false,fade:40},extra||{})}
 const H='assets/characters/dunkler-krieger/v3/';
 const hero={
- idle:pack([H+'idle/idle_01.png',H+'idle/idle_02.png'],[600,600],true,{ping:true,fade:160}),
- attack:pack([H+'attack/attack_01.png',H+'attack/attack_02.png',H+'attack/attack_03.png',H+'attack/attack_04.png',H+'attack/attack_05.png',H+'attack/attack_06.png'],[70,80,90,120,100,80],false,{fade:40}),
- hit:pack([H+'hit/hit_01.png',H+'hit/hit_02.png'],[140,180],false,{fade:60}),
- death:pack([H+'death/death_01.png',H+'death/death_02.png',H+'death/death_03.png'],[160,200,320],false,{hold:true,fade:70})
+ idle:pack([H+'idle/idle_01.png',H+'idle/idle_02.png'],[480,480],true,{ping:true,fade:120}),
+ attack:pack([H+'attack/attack_01.png',H+'attack/attack_02.png',H+'attack/attack_03.png',H+'attack/attack_04.png',H+'attack/attack_05.png',H+'attack/attack_06.png'],[45,50,55,70,55,45],false,{fade:25}),
+ hit:pack([H+'hit/hit_01.png',H+'hit/hit_02.png'],[90,110],false,{fade:35}),
+ death:pack([H+'death/death_01.png',H+'death/death_02.png',H+'death/death_03.png'],[100,130,220],false,{hold:true,fade:40})
 };
 const G='assets/enemies/goblin/anim/';
 const K='assets/enemies/goblin-krieger/anim/';
@@ -50,7 +50,7 @@ const PRIORITY={idle:0,walk:1,attack:3,special:3,hit:4,death:5};
 function playHero(name,force){
  if(!hero[name])return;
  if(!force&&heroClip==='death'&&name!=='idle')return;
- if(!force&&name!=='death'&&PRIORITY[name]<heroPriority&&(performance.now()-heroAt)<span(hero[heroClip])*0.5)return;
+ if(!force&&name!=='death'&&PRIORITY[name]<heroPriority&&(performance.now()-heroAt)<span(hero[heroClip])*0.45)return;
  heroClip=name;heroAt=performance.now();heroPriority=PRIORITY[name]||0;
  if(canvas&&canvas.parentElement)canvas.parentElement.classList.toggle('striking',name==='attack');
 }
@@ -70,7 +70,7 @@ function drawHero(now){
  if(im!==heroShown){heroFrom=heroShown;heroShown=im;heroBlend=now}
  if(fallback)fallback.style.display='none';
  canvas.style.display='block';
- const fade=def.fade||80,t=heroFrom?Math.min(1,(now-heroBlend)/fade):1;
+ const fade=def.fade||40,t=heroFrom?Math.min(1,(now-heroBlend)/fade):1;
  ctx.clearRect(0,0,canvas.width,canvas.height);
  if(t<1)paint(heroFrom,1-t);
  paint(heroShown,t<1?t:1);
@@ -109,7 +109,7 @@ function drawFoe(now){
  img.style.opacity='0';
  img.src=im.src;
  img.alt=foeKind;
- requestAnimationFrame(()=>{img.style.transition='opacity '+(def.fade||100)+'ms linear';img.style.opacity='1'});
+ requestAnimationFrame(()=>{img.style.transition='opacity '+(def.fade||80)+'ms linear';img.style.opacity='1'});
 }
 function frame(now){drawHero(now);drawFoe(now);requestAnimationFrame(frame)}
 requestAnimationFrame(frame);
