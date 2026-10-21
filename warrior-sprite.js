@@ -2,14 +2,15 @@
 (function(){
 'use strict';
 const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const V='?v=e10';
+const V='?v=e12';
 function load(list){return list.map(src=>{const im=new Image();im.src=src+V;return im})}
 function pack(frames,holds,loop,extra){return Object.assign({frames:load(frames),holds,loop,hold:false,ping:false,fade:140},extra||{})}
+const H='assets/characters/dunkler-krieger/v3/';
 const hero={
- idle:pack(['assets/characters/dunkler-krieger/v2/idle/idle_01.png','assets/characters/dunkler-krieger/v2/idle/idle_02.png','assets/characters/dunkler-krieger/v2/idle/idle_03.png','assets/characters/dunkler-krieger/v2/idle/idle_04.png'],[340,360,340,360],true,{fade:220}),
- attack:pack(['assets/characters/dunkler-krieger/v2/attack/attack_01.png','assets/characters/dunkler-krieger/v2/attack/attack_02.png','assets/characters/dunkler-krieger/v2/attack/attack_03.png','assets/characters/dunkler-krieger/v2/attack/attack_04.png','assets/characters/dunkler-krieger/v2/attack/attack_05.png'],[220,200,160,280,260],false,{fade:120}),
- hit:pack(['assets/characters/dunkler-krieger/v2/hit/hit_01.png','assets/characters/dunkler-krieger/v2/hit/hit_02.png','assets/characters/dunkler-krieger/v2/hit/hit_03.png'],[220,280,240],false,{fade:110}),
- death:pack(['assets/characters/dunkler-krieger/v2/death/death_01.png','assets/characters/dunkler-krieger/v2/death/death_02.png','assets/characters/dunkler-krieger/v2/death/death_03.png','assets/characters/dunkler-krieger/v2/death/death_04.png','assets/characters/dunkler-krieger/v2/death/death_05.png'],[200,220,260,300,340],false,{hold:true,fade:140})
+ idle:pack([H+'idle/idle_01.png',H+'idle/idle_02.png'],[520,520],true,{ping:true,fade:260}),
+ attack:pack([H+'attack/attack_01.png',H+'attack/attack_02.png',H+'attack/attack_03.png'],[300,240,480],false,{fade:130}),
+ hit:pack([H+'hit/hit_01.png'],[560],false,{fade:150}),
+ death:pack([H+'death/death_01.png',H+'death/death_02.png'],[480,680],false,{hold:true,fade:160})
 };
 const G='assets/enemies/goblin/anim/';
 const K='assets/enemies/goblin-krieger/anim/';
