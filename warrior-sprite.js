@@ -1,25 +1,25 @@
-/* Kampfbilder: Idle, Angriff, Treffer, Tod. Nur Darstellung. */
+/* Kampfbilder: Idle, Angriff, Treffer, Tod. Nur Darstellung. Bereinigte Version mit besseren Prioritäten und Timings. */
 (function(){
 'use strict';
 const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const V='?v=e13';
+const V='?v=e14';
 function load(list){return list.map(src=>{const im=new Image();im.src=src+V;return im})}
-function pack(frames,holds,loop,extra){return Object.assign({frames:load(frames),holds,loop,hold:false,ping:false,fade:140},extra||{})}
+function pack(frames,holds,loop,extra){return Object.assign({frames:load(frames),holds,loop,hold:false,ping:false,fade:120},extra||{})}
 const H='assets/characters/dunkler-krieger/v3/';
 const hero={
- idle:pack([H+'idle/idle_01.png',H+'idle/idle_02.png'],[480,480],true,{ping:true,fade:180}),
- attack:pack([H+'attack/attack_01.png',H+'attack/attack_02.png',H+'attack/attack_03.png',H+'attack/attack_04.png',H+'attack/attack_05.png',H+'attack/attack_06.png'],[160,160,160,160,180,180],false,{fade:70}),
- hit:pack([H+'hit/hit_01.png'],[480],false,{fade:90}),
- death:pack([H+'death/death_01.png',H+'death/death_02.png',H+'death/death_03.png'],[260,280,420],false,{hold:true,fade:90})
+ idle:pack([H+'idle/idle_01.png',H+'idle/idle_02.png'],[520,520],true,{ping:true,fade:200}),
+ attack:pack([H+'attack/attack_01.png',H+'attack/attack_02.png',H+'attack/attack_03.png',H+'attack/attack_04.png',H+'attack/attack_05.png',H+'attack/attack_06.png'],[90,110,140,160,130,110],false,{fade:50}),
+ hit:pack([H+'hit/hit_01.png',H+'hit/hit_02.png'],[180,220],false,{fade:70}),
+ death:pack([H+'death/death_01.png',H+'death/death_02.png',H+'death/death_03.png'],[200,240,380],false,{hold:true,fade:80})
 };
 const G='assets/enemies/goblin/anim/';
 const K='assets/enemies/goblin-krieger/anim/';
 function goblin(prefix){
  return {
   idle:pack([prefix+'idle_01.png',prefix+'idle_02.png'],[580,580],true,{ping:true,fade:280}),
-  attack:pack([prefix+'attack_01.png',prefix+'attack_02.png'],[360,480],false,{fade:140}),
-  hit:pack([prefix+'hit_01.png'],[560],false,{fade:160}),
-  death:pack([prefix+'death_01.png',prefix+'death_02.png'],[460,620],false,{hold:true,fade:160})
+  attack:pack([prefix+'attack_01.png',prefix+'attack_02.png'],[280,360],false,{fade:100}),
+  hit:pack([prefix+'hit_01.png'],[420],false,{fade:120}),
+  death:pack([prefix+'death_01.png',prefix+'death_02.png'],[380,520],false,{hold:true,fade:140})
  };
 }
 const foes={goblin:goblin(G),'goblin-krieger':goblin(K)};
@@ -45,13 +45,13 @@ function cursor(def,started,now){
 function done(def,started,now){return !def.loop&&!def.hold&&(now-started)>=span(def)}
 const canvas=document.getElementById('heroSprite'),fallback=document.getElementById('heroFallback');
 const ctx=canvas&&canvas.getContext?canvas.getContext('2d',{alpha:true}):null;
-let heroClip='idle',heroAt=performance.now(),heroShown=null,heroFrom=null,heroBlend=0;
+let heroClip='idle',heroAt=performance.now(),heroShown=null,heroFrom=null,heroBlend=0,heroPriority=0;
+const PRIORITY={idle:0,walk:1,attack:3,special:3,hit:4,death:5};
 function playHero(name,force){
  if(!hero[name])return;
- if(!force&&heroClip==='death')return;
- if(!force&&name==='hit'&&heroClip==='attack')return;
- if(!force&&name==='idle'&&heroClip==='idle')return;
- heroClip=name;heroAt=performance.now();
+ if(!force&&heroClip==='death'&&name!=='idle')return;
+ if(!force&&name!=='death'&&PRIORITY[name]<heroPriority&&(performance.now()-heroAt)<span(hero[heroClip])*0.6)return;
+ heroClip=name;heroAt=performance.now();heroPriority=PRIORITY[name]||0;
  if(canvas&&canvas.parentElement)canvas.parentElement.classList.toggle('striking',name==='attack');
 }
 if(ctx){ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high'}
@@ -63,14 +63,14 @@ function paint(im,alpha){
 }
 function drawHero(now){
  if(!ctx)return;
- if(done(hero[heroClip],heroAt,now))playHero('idle',true);
+ if(done(hero[heroClip],heroAt,now)&&heroClip!=='death')playHero('idle',true);
  const def=hero[heroClip];
  const im=def.frames[cursor(def,heroAt,now)];
  if(!(im&&im.complete&&im.naturalWidth))return;
  if(im!==heroShown){heroFrom=heroShown;heroShown=im;heroBlend=now}
  if(fallback)fallback.style.display='none';
  canvas.style.display='block';
- const fade=def.fade||140,t=heroFrom?Math.min(1,(now-heroBlend)/fade):1;
+ const fade=def.fade||120,t=heroFrom?Math.min(1,(now-heroBlend)/fade):1;
  ctx.clearRect(0,0,canvas.width,canvas.height);
  if(t<1)paint(heroFrom,1-t);
  paint(heroShown,t<1?t:1);
@@ -96,7 +96,7 @@ function playFoe(name,force){
 function drawFoe(now){
  if(!foeOn||!img)return;
  const book=foes[foeKind];if(!book)return;
- if(done(book[foeClip],foeAt,now))playFoe('idle',true);
+ if(done(book[foeClip],foeAt,now)&&foeClip!=='death')playFoe('idle',true);
  const def=book[foeClip];
  const i=cursor(def,foeAt,now);
  if(i===foeFrame)return;
@@ -109,16 +109,16 @@ function drawFoe(now){
  img.style.opacity='0';
  img.src=im.src;
  img.alt=foeKind;
- requestAnimationFrame(()=>{img.style.transition='opacity '+(def.fade||140)+'ms linear';img.style.opacity='1'});
+ requestAnimationFrame(()=>{img.style.transition='opacity '+(def.fade||120)+'ms linear';img.style.opacity='1'});
 }
 function frame(now){drawHero(now);drawFoe(now);requestAnimationFrame(frame)}
 requestAnimationFrame(frame);
-window.DarkWarriorSprite={play:playHero,inspect:()=>({animation:heroClip,dead:heroClip==='death'})};
+window.DarkWarriorSprite={play:playHero,inspect:()=>({animation:heroClip,dead:heroClip==='death',priority:heroPriority})};
 window.EnemySprite={
  has:kind=>!!foes[kind],
  show(kind){if(foeLock)return;foeOn=true;if(kind!==foeKind||foeClip==='death'){foeKind=kind;playFoe('idle',true)}},
  play:name=>playFoe(name,false),
- die(kind){if(!foes[kind])return;foeOn=true;foeKind=kind;playFoe('death',true);foeLock=true;setTimeout(()=>{foeLock=false},1800)},
+ die(kind){if(!foes[kind])return;foeOn=true;foeKind=kind;playFoe('death',true);foeLock=true;setTimeout(()=>{foeLock=false},2000)},
  release(){foeOn=false;foeKind='';foeClip='idle';foeLock=false;if(under)under.style.opacity='0'}
 };
 })();
