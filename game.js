@@ -401,8 +401,10 @@ function render(){
  $('wave').textContent='Welle '+fmt(r.wave)+(r.wave%50===0?' · Zonenboss':r.wave%10===0?' · Boss':'');
  $('money').textContent=fmt(r.gold)+' Gold';
  const icon=$('enemyIcon');
- const sprite=$('enemySprite');
- if(sprite&&sprite.tagName==='IMG'&&enemy.art&&sprite.getAttribute('src')!==enemy.art){sprite.src=enemy.art;sprite.alt=enemy.name||''}
+ let sprite=$('enemySprite');
+ const art=(enemy.art||'assets/enemies/goblin.png')+'?v=e3';
+ if((!sprite||sprite.tagName!=='IMG')&&icon.replaceChildren){icon.replaceChildren();sprite=document.createElement('img');sprite.id='enemySprite';sprite.draggable=false;icon.appendChild(sprite)}
+ if(sprite&&sprite.tagName==='IMG'&&sprite.getAttribute('src')!==art){sprite.src=art;sprite.alt=enemy.name||'Gegner'}
  icon.classList.remove('boss','zone','windup','struck');
  if(enemy.zone)icon.classList.add('zone');
  else if(enemy.boss)icon.classList.add('boss');
