@@ -79,7 +79,7 @@ function load(){
 }
 function save(){try{root.localStorage.setItem(KEY,JSON.stringify(state));return true}catch(e){return false}}
 function get(){syncSouls();return copy(load())}
-function soulCost(n){return 5+13*asInt(n,0,50)}
+function soulCost(n){n=asInt(n,0,50);if(n<10)return 5+n;return Math.ceil(14*Math.pow(1.15,n-10))}
 function remainingCore(){const p=load();return p.earnedCore-p.core.reduce((a,b)=>a+b,0)}
 function unlockedSpecs(){return load().earnedCore>=1}
 function earnThrough(wave){const p=load(),old=p.earnedCore;while(p.earnedCore<9&&wave>=MILESTONES[p.earnedCore])p.earnedCore++;if(old!==p.earnedCore)save();return p.earnedCore-old}

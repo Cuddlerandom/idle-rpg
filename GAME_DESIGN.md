@@ -1,6 +1,20 @@
 # IDLE RPG – Verbindliches Spielkonzept und Entwicklungsstand
 
-Stand: 19. Oktober 2026 · Repository: `Cuddlerandom/idle-rpg`
+Stand: 21. Oktober 2026 · Repository: `Cuddlerandom/idle-rpg`
+
+## Kampfklarheit (21.10.2026, vom Spieler freigegeben)
+
+Diese Entscheidung gilt vor älteren Formeln zur frühen Bossskalierung und zu den Gold-Upgrades im Lauf.
+
+- Normale Wellen wachsen flach. Leben: `(36 + 6 × Welle) × (1 + 0,16 × Jahrzehnt)`. Schaden: `(3 + 0,42 × Welle) × (1 + 0,10 × Jahrzehnt)`. Jahrzehnt ist 0 in den Wellen 1–10, 1 in 11–20, danach analog.
+- Ein Boss jede 10. Welle hat das Dreifache dieser Lebenspunkte und 20 % mehr Schaden. Nicht mehr das Vierfache bei fast gleichem Schlag. Ein Zonenboss jede 50. Welle zusätzlich ×1,45 Leben und ×1,15 Schaden.
+- Jeder vierte Bossschlag trifft 2,5-mal so hart und wird im Kampflog mit „holt aus“ angekündigt.
+- Gold in diesem Lauf kauft nur Angriff und Leben. Verteidigung, Tempo, kritische Treffer und Regeneration bleiben Werkstatt, Talente oder Beute.
+- Vernichtender Hieb wird von Hand gedrückt, bis der erste Spezialisierungspunkt gekauft ist.
+- Die ersten zehn Talentpunkte kosten 5 bis 14 Seelen. Ab dem elften Punkt steigt der Preis um 15 % je weiterem Punkt.
+- Die Todeszusammenfassung nennt den fehlenden Kauf.
+
+Beute-Affixe, die einzelnen Talentwirkungen und das Helden-Layout bleiben unverändert.
 
 ## Aktuell gültige Seelenregel (19.10.2026 – ersetzt ältere Klassenseelen-Regeln)
 

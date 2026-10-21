@@ -1,7 +1,7 @@
 /* Idle RPG V0.3 – Dunkler Krieger, vollständiges Kampfsystem */
 (function(){
 'use strict';
-const KEY='idle-rpg-core-v01',FIELDS=['atk','hp','def','regen','speed','crit'];
+const KEY='idle-rpg-core-v01',FIELDS=['atk','hp','def','regen','speed','crit'],RUN_FIELDS=['atk','hp'];
 const LABELS={atk:'⚔️ Angriff',hp:'❤️ Max. Leben',def:'🛡️ Verteidigung',regen:'💚 Regeneration',speed:'⚡ Angriffstempo',crit:'🎯 Krit-Chance'};
 const BASE_COST={atk:15,hp:15,def:22,regen:30,speed:40,crit:45};
 const PRESTIGE=[
@@ -112,11 +112,11 @@ function stats(){
  };
 }
 function enemyFor(w){
- const boss=w%10===0,zone=w%50===0,scale=Math.pow(1.055,w-1);
- return {wave:w,name:zone?'Zonenfürst':boss?'Wellenboss':w%5===0?'Waldwolf':w%3===0?'Goblin-Krieger':'Waldgoblin',icon:zone?'🐉':boss?'👹':w%5===0?'🐺':'👺',maxHp:Math.round((45+2*w)*scale*(zone?8:boss?4:1)),atk:Math.max(1,Math.round((4+w*.38)*Math.pow(1.045,w-1)*(zone?2.2:boss?1.6:1)*(boss?.65:1))),def:Math.floor(w/6),speed:zone?1650:boss?1700:1950};
+ const boss=w%10===0,zone=w%50===0,decade=Math.floor((w-1)/10);
+ return {wave:w,name:zone?'Zonenfürst':boss?'Wellenboss':w%5===0?'Waldwolf':w%3===0?'Goblin-Krieger':'Waldgoblin',icon:zone?'🐉':boss?'👹':w%5===0?'🐺':'👺',maxHp:Math.round((36+6*w)*(1+.16*decade)*(boss?3:1)*(zone?1.45:1)),atk:Math.max(1,Math.round((3+.42*w)*(1+.1*decade)*(boss?1.2:1)*(zone?1.15:1))),def:Math.floor((w-1)/15),speed:zone?1650:boss?1700:1950,boss,zone};
 }
 let enemy=enemyFor(state.run.wave),enemyHp=state.run.enemyHp>0?Math.min(enemy.maxHp,state.run.enemyHp):enemy.maxHp;
-let heroClock=Math.max(0,nval(state.run.heroClock)),enemyClock=Math.max(0,nval(state.run.enemyClock));
+let heroClock=Math.max(0,nval(state.run.heroClock)),enemyClock=Math.max(0,nval(state.run.enemyClock)),bossPhase=0;
 let last=performance.now(),renderClock=0,saveClock=0,message='Der Kampf beginnt.';
 Warrior.earnThrough(Math.max(0,Math.floor(nval(state.best))-1)); // Nur nachweislich früher abgeschlossene Wellen übernehmen.
 function save(){state.run.fx=fx;state.run.heroClock=heroClock;state.run.enemyClock=enemyClock;state.run.enemyHp=enemyHp;try{localStorage.setItem(KEY,JSON.stringify(state))}catch{}}
@@ -190,7 +190,7 @@ function skillAuto(id){
  if(id==='bastion')return state.run.hp/stats().hp<.6;
  return false;
 }
-function autoCast(){for(const skill of available()){if(state.settings.auto[skill.id]===true&&fx.cd[skill.id]<=fx.time&&skillAuto(skill.id)){cast(skill.id);break}}}
+function autoCast(){for(const skill of available()){if(skill.id==='base'&&Warrior.load().purchased<1)continue;if(state.settings.auto[skill.id]===true&&fx.cd[skill.id]<=fx.time&&skillAuto(skill.id)){cast(skill.id);break}}}
 function toggleAuto(id){state.settings.auto[id]=!state.settings.auto[id];save();render()}
 function gainLevel(){const r=state.run;while(r.xp>=r.level*40){r.xp-=r.level*40;r.level++;heal(10);message='⭐ Level '+r.level+' erreicht!'}}
 function win(killedByBleed=false){
@@ -207,15 +207,24 @@ function win(killedByBleed=false){
  if(!r.preview)state.best=Math.max(state.best,r.highest);
  if(w%5===0)offerBlessings();
  const milestone=r.preview?0:Warrior.earnThrough(w);
- enemy=enemyFor(r.wave);enemyHp=enemy.maxHp;heroClock=enemyClock=0;
+ enemy=enemyFor(r.wave);enemyHp=enemy.maxHp;heroClock=enemyClock=bossPhase=0;
  message=(boss?'👑 Boss besiegt! ':'')+'+'+fmt(gold)+' Gold'+(r.preview?' (Testmodus)':' · +'+fmt(coins)+' Münzen')+(milestone?' · ⭐ Hauptbaum-Punkt!':'')+(dropped?' · 🎁 '+dropped.name+(r.loot.inventory.some(x=>x.id===dropped.id)?'':' (liegt am Boden)'):'');
  save();
+}
+function deathHint(){
+ const boughtAtk=state.run.runUp.atk>=2,boughtHp=state.run.runUp.hp>=2;
+ if(!boughtAtk&&!boughtHp) return ' Es fehlte Angriff oder Leben, bevor der Boss kam.';
+ if(!boughtAtk) return ' Es fehlte Angriff. Leben allein trägt den Boss nicht.';
+ if(!boughtHp) return ' Es fehlte Leben. Angriff allein trägt den Boss nicht.';
+ if(enemy.boss) return ' Der Boss schlägt jedes vierte Mal schwer zu. Achte auf „holt aus“.';
+ return ' Gold allein reicht hier nicht mehr. Werkstatt, Talente oder Beute müssen mittragen.';
 }
 function finish(reason){
  const r=state.run;if(!r.active)return;
  r.active=false;r.paused=true;state.runs++;if(!r.preview)state.best=Math.max(state.best,r.highest);
  let souls=0;if(!r.claimed){r.claimed=true;if(!r.preview)souls=Warrior.awardSouls(Math.max(0,r.highest-1))}
- $('summary').textContent=reason+' · Höchste Welle: '+fmt(r.highest)+' · Besiegte Gegner: '+fmt(r.kills)+' · Bosse: '+fmt(r.bosses)+' · Zeit: '+Math.floor(r.elapsed/60)+' Min. · '+(r.preview?'Testmodus – keine permanenten Belohnungen':'+'+souls+' Seelen · Gesamt: '+Warrior.load().souls);
+ const hint=String(reason).includes('Besiegt')?deathHint():'';
+ $('summary').textContent=reason+hint+' · Höchste Welle: '+fmt(r.highest)+' · Besiegte Gegner: '+fmt(r.kills)+' · Bosse: '+fmt(r.bosses)+' · Zeit: '+Math.floor(r.elapsed/60)+' Min. · '+(r.preview?'Testmodus – keine permanenten Belohnungen':'+'+souls+' Seelen · Gesamt: '+Warrior.load().souls);
  $('runEnd').classList.remove('hidden');message=reason;save();render();
 }
 function startRun(){
@@ -226,7 +235,7 @@ function startRun(){
  // Der Snapshot wird zu Beginn fixiert und bleibt auch bei späteren Änderungen im Planer stabil.
  const b=state.run.build;
  snapshot.core=b.core;snapshot.specs=b.specs;
- fx=blankFx();inventoryOpen=false;selectedItemId=null;tab('run');enemy=enemyFor(1);enemyHp=enemy.maxHp;heroClock=enemyClock=0;
+ fx=blankFx();inventoryOpen=false;selectedItemId=null;tab('run');enemy=enemyFor(1);enemyHp=enemy.maxHp;heroClock=enemyClock=bossPhase=0;
  state.run.hp=stats().hp;$('runEnd').classList.add('hidden');
  message=state.run.preview?'🧪 Test-Run – keine dauerhaften Belohnungen.':'Neuer Run gestartet!';
  save();render();
@@ -235,6 +244,7 @@ function togglePause(){const r=state.run;if(!r.active)return;r.paused=!r.paused;
 function endRun(){if(state.run.active&&confirm('Run wirklich beenden? Gold und Level werden zurückgesetzt. Du erhältst Seelen für die höchste Welle.'))finish('Run freiwillig beendet')}
 function cost(k,permanent){let lvl=permanent?state.work[k]:state.run.runUp[k];return Math.max(1,Math.round(BASE_COST[k]*(permanent?2:1)*Math.pow(permanent?1.22:1.5,lvl)*(permanent?1-prestigeBonus('discount')/100:1)))}
 function upgrade(k,permanent){
+ if(!permanent&&k!=='atk'&&k!=='hp')return;
  const c=cost(k,permanent);if(permanent){if(state.run.preview||state.coins<c)return;state.coins-=c;state.work[k]++}else{if(!state.run.active||state.run.gold<c)return;state.run.gold-=c;state.run.runUp[k]++}
  if(k==='hp')heal(15);state.run.hp=Math.min(state.run.hp,stats().hp);save();render();
 }
@@ -251,11 +261,14 @@ function tick(dt){
  if(heroClock>=s.speed){heroClock-=s.speed;attack();if(enemyHp<=0){win();return}}
  if(enemyClock>=enemy.speed*(corrupt()>0?1+.02*R(1,10):1)){
   enemyClock-=enemy.speed*(corrupt()>0?1+.02*R(1,10):1);
+  bossPhase++;
+  if(enemy.boss&&bossPhase%4===3) message='⚠️ '+enemy.name+' holt aus.';
   let incoming=Math.max(1,enemy.atk*(corrupt()>0?1-.02*R(1,4):1)-stats().def);
   incoming*=Math.max(.1,1-.02*resolve())*(1-.05*C(7))*(1-.02*R(2,4))*(corrupt()>0?1-.02*R(1,14):1);
   if(r.hp/stats().hp<.4)incoming*=1-.02*R(2,10);
   if(expiring(fx.bastionUntil))incoming*=.7;
   incoming*=Math.pow(.90,blessingCount('guard'));incoming*=1-gear().reduction;incoming*=1-prestigeBonus('guard')/100;
+  if(enemy.boss&&bossPhase%4===0){incoming=Math.round(incoming*2.5);message='💥 Schwerer Schlag!'}
   r.hp-=Math.max(1,incoming);
   if(r.hp<=0){r.hp=0;finish('💀 Besiegt');return}
   fx.revenge=true;
@@ -266,7 +279,7 @@ function tick(dt){
  autoCast();
 }
 function tab(id){inventoryOpen=false;for(const x of ['run','shop','items','info']){$(x).classList.toggle('hidden',x!==id);$('tab'+x[0].toUpperCase()+x.slice(1)).classList.toggle('active',x===id)}if(inventoryOpen)renderInventory();save()}
-function upgradeRows(permanent){return FIELDS.map(k=>{
+function upgradeRows(permanent){return (permanent?FIELDS:RUN_FIELDS).map(k=>{
  const lvl=permanent?state.work[k]:state.run.runUp[k],c=cost(k,permanent),can=(permanent?state.coins:state.run.gold)>=c;
  return '<div class="row item"><span>'+LABELS[k]+' <span class="muted">Stufe '+lvl+'</span></span><button '+(!can||(permanent&&state.run.preview)||(!permanent&&!state.run.active)?'disabled':'')+' onclick="upgrade(\''+k+'\','+permanent+')">'+(permanent?'🪙':'💰')+' '+fmt(c)+'</button></div>'
  }).join('')}
@@ -388,7 +401,7 @@ function render(){
  $('combatStats').textContent='⚔️ '+fmt(s.atk)+' · 🛡️ '+fmt(s.def);
  $('log').textContent=message;$('pauseBtn').textContent=r.paused?'▶️ Fortsetzen':'⏸ Pausieren';$('pauseBtn').disabled=!r.active;
  $('effects').textContent=(r.preview?'🧪 TESTMODUS · ':'')+'🩸 '+bleeds()+' Blutungen · 🌑 '+corrupt()+' Verderbnis · 🛡️ '+resolve()+' Entschlossenheit';
- updateHtml('skills',f.map(sk=>{const remaining=Math.max(0,Math.ceil((nval(fx.cd[sk.id])-fx.time)/1000));return '<div class="skill"><button '+(!r.active||r.paused||remaining?'disabled':'')+' onclick="cast(\''+sk.id+'\')">'+sk.name+(remaining?' · '+remaining+'s':'')+'</button><label class="auto"><input type="checkbox" '+(state.settings.auto[sk.id]?'checked':'')+' onchange="toggleAuto(\''+sk.id+'\')"> Auto</label></div>'}).join(''));
+ updateHtml('skills',f.map(sk=>{const remaining=Math.max(0,Math.ceil((nval(fx.cd[sk.id])-fx.time)/1000));const manual=sk.id==='base'&&Warrior.load().purchased<1;return '<div class="skill"><button '+(!r.active||r.paused||remaining?'disabled':'')+' onclick="cast(\''+sk.id+'\')">'+sk.name+(remaining?' · '+remaining+'s':'')+'</button>'+(manual?'<span class="muted">Selbst drücken</span>':'<label class="auto"><input type="checkbox" '+(state.settings.auto[sk.id]?'checked':'')+' onchange="toggleAuto(\''+sk.id+'\')"> Auto</label>')+'</div>'}).join(''));
  updateHtml('runUpgrades',upgradeRows(false));updateHtml('workshop',upgradeRows(true));renderPrestige();
 }
 if(!state.run.active){$('runEnd').classList.remove('hidden');$('summary').textContent='Letzter Run beendet. Höchste Welle: '+fmt(state.run.highest)+'. Starte einen neuen Run.'}else state.run.hp=clamp(state.run.hp,0,stats().hp);
