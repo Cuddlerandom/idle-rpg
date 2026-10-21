@@ -254,7 +254,7 @@ function upgrade(k,permanent){
  if(k==='hp')heal(15);state.run.hp=Math.min(state.run.hp,stats().hp);save();render();
 }
 function tick(dt){
- const r=state.run;if(!r.active||r.paused||inventoryOpen||document.hidden)return;
+ const r=state.run;if(!r.active||r.paused||lootPaused()||document.hidden)return;
  r.elapsed+=dt/1000;dt*=clamp(Number(state.gameSpeed)||1,1,1+prestigeBonus('speed'));fx.time+=dt;const s=stats();
  heal(s.regen*dt/1000);
  fx.resolve=fx.resolve.filter(x=>x>fx.time);fx.corrupt=fx.corrupt.filter(x=>x>fx.time);
@@ -283,6 +283,23 @@ function tick(dt){
   if(enemyHp<=0){win();return}
  }
  autoCast();
+}
+function lootPaused(){
+ if(typeof document.querySelector!=='function')return inventoryOpen;
+ const drawer=document.querySelector('#rpgDrawer.open');
+ if(!drawer)return document.getElementById('rpgDrawer')?false:inventoryOpen;
+ const items=document.getElementById('items');
+ return !items||!items.classList.contains('hidden');
+}
+function alignHero(){
+ const hero=$('heroActor'),foe=$('enemyIcon');
+ if(!hero||!foe||!foe.offsetHeight)return;
+ const box=Math.round(foe.offsetHeight/0.836);
+ hero.style.height=box+'px';
+ hero.style.width=Math.round(box*665/591)+'px';
+ hero.style.transform='translate(-8px,'+Math.round(box*0.083)+'px)';
+ const canvas=$('heroSprite');
+ if(canvas){canvas.style.width='100%';canvas.style.height='100%'}
 }
 function tab(id){inventoryOpen=id==='items';for(const x of ['run','shop','items','info']){$(x).classList.toggle('hidden',x!==id);$('tab'+x[0].toUpperCase()+x.slice(1)).classList.toggle('active',x===id)}if(inventoryOpen)renderInventory();save()}
 function upgradeRows(permanent){return (permanent?FIELDS:RUN_FIELDS).map(k=>{
@@ -402,7 +419,7 @@ function render(){
  $('money').textContent=fmt(r.gold)+' Gold';
  const icon=$('enemyIcon');
  let sprite=$('enemySprite');
- const art=(enemy.art||'assets/enemies/goblin.png')+'?v=e4';
+ const art=(enemy.art||'assets/enemies/goblin.png')+'?v=e5';
  if((!sprite||sprite.tagName!=='IMG')&&icon.replaceChildren){icon.replaceChildren();sprite=document.createElement('img');sprite.id='enemySprite';sprite.draggable=false;icon.appendChild(sprite)}
  if(sprite&&sprite.tagName==='IMG'&&sprite.getAttribute('src')!==art){sprite.src=art;sprite.alt=enemy.name||'Gegner'}
  icon.classList.remove('boss','zone','windup','struck');
@@ -410,6 +427,7 @@ function render(){
  else if(enemy.boss)icon.classList.add('boss');
  if(enemy.boss&&bossPhase%4===3)icon.classList.add('windup');
  if(strikeFlash>fx.time)icon.classList.add('struck');
+ alignHero();
  const stage=$('battleScene');if(stage)stage.classList.toggle('danger',s.hp>0&&r.hp/s.hp<.2);
  $('enemyName').textContent=enemy.name;$('hpBar').style.width=clamp(r.hp/s.hp*100,0,100)+'%';$('enemyBar').style.width=clamp(enemyHp/enemy.maxHp*100,0,100)+'%';
  $('hpText').textContent=fmt(r.hp)+' / '+fmt(s.hp)+' HP';$('enemyHpText').textContent=fmt(Math.max(0,enemyHp))+' / '+fmt(enemy.maxHp)+' HP';
